@@ -107,7 +107,7 @@ alter table public.track_points enable row level security;
 -- Policy: Allow users to select track points for their own workouts.
 -- This policy ensures that users can only read track points associated with workouts they own.
 -- It works by checking the user_id on the related workouts table.
-create policy "Allow authenticated users to select track points for their own workouts"
+create policy "Allow select own track_points"
 on public.track_points for select
 to authenticated
 using (
@@ -121,7 +121,7 @@ using (
 
 -- Policy: Allow users to insert track points for their own workouts.
 -- This policy ensures that users can only add track points to workouts they own.
-create policy "Allow authenticated users to insert track points for their own workouts"
+create policy "Allow insert own track_points"
 on public.track_points for insert
 to authenticated
 with check (
@@ -135,7 +135,7 @@ with check (
 
 -- Policy: Allow users to update track points for their own workouts.
 -- This policy ensures that users can only modify track points associated with workouts they own.
-create policy "Allow authenticated users to update track points for their own workouts"
+create policy "Allow update own track_points"
 on public.track_points for update
 to authenticated
 using (
@@ -149,7 +149,7 @@ using (
 
 -- Policy: Allow users to delete track points for their own workouts.
 -- This policy ensures that users can only remove track points associated with workouts they own.
-create policy "Allow authenticated users to delete track points for their own workouts"
+create policy "Allow delete on own track_points"
 on public.track_points for delete
 to authenticated
 using (
