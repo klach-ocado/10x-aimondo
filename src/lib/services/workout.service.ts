@@ -32,7 +32,7 @@ export class WorkoutService {
     const workoutToInsert = {
       user_id: command.user_id,
       name: command.name,
-      date: trackPoints[0].time ? new Date(trackPoints[0].time) : new Date(),
+      date: (trackPoints[0].time ? new Date(trackPoints[0].time) : new Date()).toISOString(),
       type: 'run', // Mock data
       distance: 10000, // Mock data
       duration: 3600, // Mock data
@@ -53,7 +53,7 @@ export class WorkoutService {
       workout_id: workout.id,
       location: `POINT(${point.longitude} ${point.latitude})`,
       elevation: point.elevation,
-      timestamp: point.time ? new Date(point.time) : null,
+      timestamp: point.time ? new Date(point.time).toISOString() : null,
       sequence_number: index,
     }));
 
