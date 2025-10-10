@@ -6,30 +6,30 @@
 
 Przechowuje metadane dotyczące treningów wgranych przez użytkowników.
 
-| Nazwa kolumny | Typ danych        | Ograniczenia                               | Opis                                                                 |
-| :-------------- | :---------------- | :----------------------------------------- | :------------------------------------------------------------------- |
-| `id`            | `UUID`            | `PRIMARY KEY`, `default gen_random_uuid()` | Unikalny identyfikator treningu.                                     |
-| `user_id`       | `UUID`            | `NOT NULL`, `FOREIGN KEY (auth.users.id)`  | Identyfikator użytkownika z tabeli `auth.users`.                     |
-| `name`          | `VARCHAR(300)`    | `NOT NULL`                                 | Nazwa treningu nadana przez użytkownika.                             |
-| `date`          | `TIMESTAMPTZ`     | `NOT NULL`, `default now()`                | Data i czas treningu.                                                |
-| `type`          | `VARCHAR(50)`     |                                            | Typ aktywności (np. "bieganie", "rower").                            |
-| `distance`      | `INTEGER`         |                                            | Całkowity dystans treningu w metrach.                                |
-| `duration`      | `INTEGER`         |                                            | Całkowity czas trwania treningu w sekundach.                         |
-| `created_at`    | `TIMESTAMPTZ`     | `NOT NULL`, `default now()`                | Znacznik czasu utworzenia rekordu.                                   |
-| `updated_at`    | `TIMESTAMPTZ`     | `NOT NULL`, `default now()`                | Znacznik czasu ostatniej aktualizacji rekordu.                       |
+| Nazwa kolumny   | Typ danych        | Ograniczenia                               | Opis                                             |
+| :-------------- | :---------------- | :----------------------------------------- | :----------------------------------------------- |
+| `id`            | `UUID`            | `PRIMARY KEY`, `default gen_random_uuid()` | Unikalny identyfikator treningu.                 |
+| `user_id`       | `UUID`            | `NOT NULL`, `FOREIGN KEY (auth.users.id)`  | Identyfikator użytkownika z tabeli `auth.users`. |
+| `name`          | `VARCHAR(300)`    | `NOT NULL`                                 | Nazwa treningu nadana przez użytkownika.         |
+| `date`          | `TIMESTAMPTZ`     | `NOT NULL`                                 | Data i czas treningu.                            |
+| `type`          | `VARCHAR(50)`     | `NOT NULL`                                 | Typ aktywności (np. "run", "bike").              |
+| `distance`      | `INTEGER`         | `NOT NULL`                                 | Całkowity dystans treningu w metrach.            |
+| `duration`      | `INTEGER`         |                                            | Całkowity czas trwania treningu w sekundach.     |
+| `created_at`    | `TIMESTAMPTZ`     | `NOT NULL`, `default now()`                | Znacznik czasu utworzenia rekordu.               |
+| `updated_at`    | `TIMESTAMPTZ`     | `NOT NULL`, `default now()`                | Znacznik czasu ostatniej aktualizacji rekordu.   |
 
 ### Tabela: `public.track_points`
 
 Przechowuje punkty geograficzne (współrzędne) dla każdego treningu.
 
-| Nazwa kolumny      | Typ danych             | Ograniczenia                                                 | Opis                                                              |
-| :----------------- | :--------------------- | :----------------------------------------------------------- | :---------------------------------------------------------------- |
-| `id`               | `BIGSERIAL`            | `PRIMARY KEY`                                                | Unikalny identyfikator punktu na trasie.                          |
+| Nazwa kolumny      | Typ danych             | Ograniczenia                                                     | Opis                                                              |
+| :----------------- | :--------------------- | :--------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `id`               | `BIGSERIAL`            | `PRIMARY KEY`                                                    | Unikalny identyfikator punktu na trasie.                          |
 | `workout_id`       | `UUID`                 | `NOT NULL`, `FOREIGN KEY (public.workouts.id) ON DELETE CASCADE` | Identyfikator treningu, do którego należy punkt.                  |
-| `location`         | `GEOMETRY(Point, 4326)`| `NOT NULL`                                                   | Współrzędne geograficzne punktu (długość, szerokość).             |
-| `elevation`        | `REAL`                 |                                                              | Wysokość n.p.m. w metrach.                                        |
-| `timestamp`        | `TIMESTAMPTZ`          | `NOT NULL`                                                   | Znacznik czasu zarejestrowania punktu.                            |
-| `sequence_number`  | `INTEGER`              | `NOT NULL`                                                   | Numer sekwencyjny punktu w ramach danego treningu.                |
+| `location`         | `GEOMETRY(Point, 4326)`| `NOT NULL`                                                       | Współrzędne geograficzne punktu (długość, szerokość).             |
+| `elevation`        | `REAL`                 |                                                                  | Wysokość n.p.m. w metrach.                                        |
+| `timestamp`        | `TIMESTAMPTZ`          |                                                                  | Znacznik czasu zarejestrowania punktu.                            |
+| `sequence_number`  | `INTEGER`              | `NOT NULL`                                                       | Numer sekwencyjny punktu w ramach danego treningu.                |
 
 ---
 
