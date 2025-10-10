@@ -19,7 +19,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 ### 3.2. Zarządzanie treningami
 
 - Wgrywanie treningów: Użytkownik może wgrać plik w formacie GPX za pomocą formularza w oknie modalnym, podając jednocześnie jego nazwę.
-- Przetwarzanie danych: Po wgraniu pliku system parsuje wszystkie ścieżki (`<trk>`) i segmenty (`<trkseg>`), łącząc je w jeden trening. Zapisywane są współrzędne, timestampy i wysokość dla każdego punktu. Dodatkowo obliczany jest geohash dla współrzędnych oraz dodawany numer sekwencyjny.
+- Przetwarzanie danych: Po wgraniu pliku system parsuje wszystkie ścieżki (`<trk>`) i segmenty (`<trkseg>`), łącząc je w jeden trening. Zapisywane są współrzędne, timestampy i wysokość dla każdego punktu. Dodatkowo dodawany jest numer sekwencyjny, oraz opcjonalnie obliczany jest geohash dla współrzędnych (jeśli okaże się przydatny do optymalnego generowania heatmapy).
 - Obliczanie statystyk: Podczas importu jednorazowo obliczane i zapisywane w bazie danych są dystans i czas trwania treningu.
 - Edycja treningu: Użytkownik może zmienić nazwę, datę i typ treningu w dedykowanym oknie modalnym.
 - Usuwanie treningu: Użytkownik może trwale usunąć trening. Operacja ta wymaga dodatkowego potwierdzenia.
