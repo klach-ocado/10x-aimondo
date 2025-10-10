@@ -1,6 +1,7 @@
 import type { CreateWorkoutCommand, WorkoutDto } from '../../types';
 import type { SupabaseClient } from '../../db/supabase.client';
-import { parseGPX } from '@we-gold/gpxjs';
+import { parseGPXWithCustomParser } from '@we-gold/gpxjs';
+import { DOMParser } from 'xmldom-qsa';
 
 export class WorkoutService {
   private supabase: SupabaseClient;
@@ -10,7 +11,10 @@ export class WorkoutService {
   }
 
   async createWorkout(command: CreateWorkoutCommand): Promise<WorkoutDto> {
-    const [parsedGpx, error] = parseGPX(command.gpxFileContent);
+    const customParseMethod = (txt: string): Document | null => {
+      return new DOMParser().parseFromString(txt, "text/xml");
+    };
+    const [parsedGpx, error] = parseGPXWithCustomParser(command.gpxFileContent, customParseMethod);
 
     if (error) {
       // TODO: Create a custom error for this
