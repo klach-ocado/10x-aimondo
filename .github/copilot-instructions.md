@@ -1,6 +1,6 @@
-# AI Rules for {{project-name}}
+# AI Rules for 10x-aimondo
 
-{{project-description}}
+10x-aimondo is a web application that allows users to update their workouts in a GPX format and visualize them on a map, especially in a heatmap style.
 
 ## Tech Stack
 
