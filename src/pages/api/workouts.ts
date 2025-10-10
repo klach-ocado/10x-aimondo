@@ -1,6 +1,8 @@
 
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
+import type { GetWorkoutsCommand } from '../../types';
+import { WorkoutService } from '../../lib/services/workout.service';
 
 export const prerender = false;
 
@@ -14,9 +16,6 @@ const GetWorkoutsQuerySchema = z.object({
   sortBy: z.string().optional().default('date'),
   order: z.enum(['asc', 'desc']).optional().default('desc'),
 });
-
-import type { GetWorkoutsCommand } from '../../types';
-import { WorkoutService } from '../../lib/services/workout.service';
 
 export const GET: APIRoute = async ({ request, locals }) => {
   const { user, supabase } = locals;
