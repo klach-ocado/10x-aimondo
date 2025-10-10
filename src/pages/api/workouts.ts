@@ -1,6 +1,7 @@
 
 import type { APIContext } from 'astro';
-import { WorkoutCreateSchema } from '../../types';
+import { CreateWorkoutCommand, WorkoutCreateSchema } from '../../types';
+import { WorkoutService } from '../../lib/services/workout.service';
 
 export const prerender = false;
 
@@ -37,7 +38,21 @@ export async function POST(context: APIContext): Promise<Response> {
     });
   }
 
-  // TODO: Create CreateWorkoutCommand and call WorkoutService
+  try {
+    const gpxFileContent = await gpxFile.text();
 
-  return new Response(JSON.stringify({ message: 'Validation successful' }), { status: 200 });
+    const command: CreateWorkoutCommand = {
+      name: validationResult.data.name,
+      user_id: context.locals.user.id,
+      gpxFileContent,
+    };
+
+    const workoutService = new WorkoutService(context.locals.supabase);
+    const workout = await workoutService.createWorkout(command);
+
+    return new Response(JSON.stringify(workout), { status: 201 });
+  } catch (error) {
+    console.error(error);
+    return new Response(JSON.stringify({ message: 'Internal Server Error' }), { status: 500 });
+  }
 }
