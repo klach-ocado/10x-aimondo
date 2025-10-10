@@ -1,5 +1,5 @@
-import { CreateWorkoutCommand, WorkoutDto } from '../../types';
-import { SupabaseClient } from '../../db/supabase.client';
+import type { CreateWorkoutCommand, WorkoutDto } from '../../types';
+import type { SupabaseClient } from '../../db/supabase.client';
 import { parseGPX } from '@we-gold/gpxjs';
 
 export class WorkoutService {
@@ -51,8 +51,8 @@ export class WorkoutService {
 
     const trackPointsToInsert = trackPoints.map((point, index) => ({
       workout_id: workout.id,
-      location: `POINT(${point.lon} ${point.lat})`,
-      elevation: point.ele,
+      location: `POINT(${point.longitude} ${point.latitude})`,
+      elevation: point.elevation,
       timestamp: point.time ? new Date(point.time) : null,
       sequence_number: index,
     }));

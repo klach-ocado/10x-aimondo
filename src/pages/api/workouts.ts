@@ -1,6 +1,6 @@
 
 import type { APIContext } from 'astro';
-import { CreateWorkoutCommand, WorkoutCreateSchema } from '../../types';
+import { type CreateWorkoutCommand, WorkoutCreateSchema } from '../../types';
 import { WorkoutService } from '../../lib/services/workout.service';
 
 export const prerender = false;
