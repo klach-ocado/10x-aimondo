@@ -1,4 +1,9 @@
-import type { CreateWorkoutCommand, WorkoutDto } from '../../types';
+import type {
+  CreateWorkoutCommand,
+  GetWorkoutsCommand,
+  PaginatedWorkoutsDto,
+  WorkoutDto,
+} from '../../types';
 import type { SupabaseClient } from '../../db/supabase.client';
 import { parseGPXWithCustomParser } from '@we-gold/gpxjs';
 import { DOMParser } from 'xmldom-qsa';
@@ -8,6 +13,51 @@ export class WorkoutService {
 
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
+  }
+
+  async getWorkouts(command: GetWorkoutsCommand): Promise<PaginatedWorkoutsDto> {
+    const { userId, page, limit, name, dateFrom, dateTo, type, sortBy, order } = command;
+
+    const query = this.supabase
+      .from('workouts')
+      .select('*', { count: 'exact' })
+      .eq('user_id', userId);
+
+    if (name) {
+      query.ilike('name', `%${name}%`);
+    }
+    if (dateFrom) {
+      query.gte('date', dateFrom);
+    }
+    if (dateTo) {
+      query.lte('date', dateTo);
+    }
+    if (type) {
+      query.eq('type', type);
+    }
+
+    query.order(sortBy, { ascending: order === 'asc' });
+    query.range((page - 1) * limit, page * limit - 1);
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      // TODO: Create a custom error for this
+      throw new Error('Failed to fetch workouts');
+    }
+
+    const totalItems = count ?? 0;
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      pagination: {
+        page,
+        limit,
+        totalItems,
+        totalPages,
+      },
+      data: data || [],
+    };
   }
 
   async createWorkout(command: CreateWorkoutCommand): Promise<WorkoutDto> {

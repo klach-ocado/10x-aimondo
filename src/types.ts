@@ -79,6 +79,23 @@ export type CreateWorkoutCommand = Pick<WorkoutDto, 'name' | 'user_id'> & {
 export type UpdateWorkoutCommand = Partial<Pick<WorkoutDto, 'name' | 'date' | 'type'>>;
 
 /**
+ * Command model for fetching a paginated list of workouts.
+ * This object is passed to the service layer, containing validated
+ * and parsed query parameters.
+ */
+export type GetWorkoutsCommand = {
+  userId: string;
+  page: number;
+  limit: number;
+  name?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  type?: string;
+  sortBy: string;
+  order: 'asc' | 'desc';
+};
+
+/**
  * Represents a single point for the heatmap visualization.
  * The format is a tuple of [latitude, longitude].
  */
