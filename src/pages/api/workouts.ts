@@ -1,58 +1,70 @@
 
-import type { APIContext } from 'astro';
-import { type CreateWorkoutCommand, WorkoutCreateSchema } from '../../types';
-import { WorkoutService } from '../../lib/services/workout.service';
+import type { APIRoute } from 'astro';
+import { z } from 'zod';
 
 export const prerender = false;
 
-const MAX_GPX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const GetWorkoutsQuerySchema = z.object({
+  page: z.coerce.number().int().positive().optional().default(1),
+  limit: z.coerce.number().int().positive().optional().default(20),
+  name: z.string().optional(),
+  dateFrom: z.string().optional(),
+  dateTo: z.string().optional(),
+  type: z.string().optional(),
+  sortBy: z.string().optional().default('date'),
+  order: z.enum(['asc', 'desc']).optional().default('desc'),
+});
 
-export async function POST(context: APIContext): Promise<Response> {
-  if (!context.locals.user) {
-    return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
+import type { GetWorkoutsCommand } from '../../types';
+import { WorkoutService } from '../../lib/services/workout.service';
+
+export const GET: APIRoute = async ({ request, locals }) => {
+  const { user, supabase } = locals;
+
+  if (!user) {
+    return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
-  const formData = await context.request.formData();
-  const name = formData.get('name');
-  const gpxFile = formData.get('gpxFile');
+  const url = new URL(request.url);
+  const queryParams = Object.fromEntries(url.searchParams.entries());
 
-  const validationResult = WorkoutCreateSchema.safeParse({ name });
+  const validationResult = GetWorkoutsQuerySchema.safeParse(queryParams);
 
   if (!validationResult.success) {
-    return new Response(JSON.stringify({ message: 'Invalid input', errors: validationResult.error.flatten() }), {
-      status: 400,
-    });
-  }
-
-  if (!gpxFile || !(gpxFile instanceof File)) {
-    return new Response(JSON.stringify({ message: 'GPX file is required' }), { status: 400 });
-  }
-
-  if (gpxFile.size > MAX_GPX_FILE_SIZE) {
-    return new Response(JSON.stringify({ message: 'GPX file is too large' }), { status: 413 });
-  }
-
-  if (!gpxFile.name.endsWith('.gpx')) {
-    return new Response(JSON.stringify({ message: 'Invalid file type. Only .gpx files are accepted' }), {
-      status: 400,
-    });
+    return new Response(
+      JSON.stringify({
+        message: 'Invalid query parameters',
+        errors: validationResult.error.flatten(),
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
   }
 
   try {
-    const gpxFileContent = await gpxFile.text();
-
-    const command: CreateWorkoutCommand = {
-      name: validationResult.data.name,
-      user_id: context.locals.user.id,
-      gpxFileContent,
+    const command: GetWorkoutsCommand = {
+      ...validationResult.data,
+      userId: user.id,
     };
 
-    const workoutService = new WorkoutService(context.locals.supabase);
-    const workout = await workoutService.createWorkout(command);
+    const workoutService = new WorkoutService(supabase);
+    const paginatedWorkouts = await workoutService.getWorkouts(command);
 
-    return new Response(JSON.stringify(workout), { status: 201 });
+    return new Response(JSON.stringify(paginatedWorkouts), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
+    // TODO: Implement better logging
     console.error(error);
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), { status: 500 });
+    return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
-}
+};
