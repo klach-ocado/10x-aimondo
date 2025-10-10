@@ -11,11 +11,13 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 ## 3. Wymagania funkcjonalne
 
 ### 3.1. Uwierzytelnianie i zarządzanie użytkownikami
+
 - Użytkownicy muszą mieć możliwość założenia konta i logowania się.
 - System uwierzytelniania będzie oparty o usługę Supabase Auth.
 - Każdy użytkownik ma dostęp wyłącznie do swoich danych.
 
 ### 3.2. Zarządzanie treningami
+
 - Wgrywanie treningów: Użytkownik może wgrać plik w formacie GPX za pomocą formularza w oknie modalnym, podając jednocześnie jego nazwę.
 - Przetwarzanie danych: Po wgraniu pliku system parsuje wszystkie ścieżki (`<trk>`) i segmenty (`<trkseg>`), łącząc je w jeden trening. Zapisywane są współrzędne, timestampy i wysokość dla każdego punktu. Dodatkowo obliczany jest geohash dla współrzędnych oraz dodawany numer sekwencyjny.
 - Obliczanie statystyk: Podczas importu jednorazowo obliczane i zapisywane w bazie danych są dystans i czas trwania treningu.
@@ -23,6 +25,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 - Usuwanie treningu: Użytkownik może trwale usunąć trening. Operacja ta wymaga dodatkowego potwierdzenia.
 
 ### 3.3. Widok listy treningów
+
 - Domyślnym widokiem po zalogowaniu jest tabela z listą treningów.
 - Tabela zawiera kolumny: Nazwa, Data, Typ, Dystans, Czas trwania.
 - Lista jest paginowana w celu obsługi dużej liczby wpisów.
@@ -30,6 +33,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 - Lista jest sortowana domyślnie po dacie (od najnowszych).
 
 ### 3.4. Wizualizacja na mapie
+
 - Dostawca map: Mapy będą dostarczane przez openfreemap.org ze stylem "bright".
 - Technologia: Zostanie wykorzystana biblioteka Maplibre GL JS.
 - Widok pojedynczego treningu: Po kliknięciu w trening na liście, użytkownik jest przenoszony do widoku mapy, na której narysowana jest linia trasy. Pod mapą wyświetlane są statystyki (dystans, czas trwania).
@@ -37,6 +41,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 - Optymalizacja heatmapy: W celu zapewnienia wydajności, heatmapa jest generowana na podstawie maksymalnie 10 000 losowo wybranych punktów z aktualnego widoku mapy. Użytkownik może manualnie odświeżyć dane dla nowego obszaru mapy za pomocą przycisku.
 
 ### 3.5. Interfejs i doświadczenie użytkownika (UX)
+
 - Stany ładowania: Aplikacja wyświetla wskaźnik ładowania (spinner) podczas wczytywania danych na mapę lub listę.
 - Pusty stan: Gdy lista treningów jest pusta, wyświetlany jest komunikat powitalny zachęcający do dodania pierwszej aktywności.
 - Walidacja formularzy: System waliduje wgrywane pliki po stronie backendu, informując o błędach (np. zbyt duży rozmiar pliku, plik uszkodzony lub bez współrzędnych).
@@ -45,15 +50,18 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 ## 4. Granice produktu
 
 ### Co wchodzi w skład MVP:
+
 - Pełna funkcjonalność opisana w wymaganiach funkcjonalnych, w tym uwierzytelnianie, CRUD na treningach oraz wizualizacja na mapie (linia i heatmapa).
 
 ### Co nie wchodzi w skład MVP:
+
 - Współdzielenie danych i tras między użytkownikami.
 - Integracje z zewnętrznymi serwisami sportowymi (np. Strava, Garmin Connect).
 - Płatne subskrypcje i zaawansowane plany dla użytkowników.
 - Wyliczanie i wyświetlanie miniatury trasy (short polyline).
 
 ### Uproszczenia i znane ograniczenia:
+
 - Typ treningu jest polem tekstowym, co może prowadzić do niespójności danych przy filtrowaniu. W przyszłości może zostać zastąpione predefiniowaną listą.
 - Próbkowanie danych dla heatmapy jest losowe, co może powodować wizualne przerwy w trasach. W przyszłości można zbadać algorytmy agregacji.
 

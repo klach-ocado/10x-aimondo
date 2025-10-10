@@ -19,6 +19,7 @@ AImondo is designed for users who regularly track their activities (like running
 ## Tech Stack
 
 ### Frontend
+
 - **Framework**: [Astro 5](https://astro.build/)
 - **UI Library**: [React 19](https://react.dev/) for interactive components
 - **Language**: [TypeScript 5](https://www.typescriptlang.org/)
@@ -27,12 +28,14 @@ AImondo is designed for users who regularly track their activities (like running
 - **Maps**: [Maplibre GL JS](https://maplibre.org/)
 
 ### Backend
+
 - **Platform**: [Supabase](https://supabase.com/)
   - PostgreSQL Database
   - Backend-as-a-Service (BaaS)
   - User Authentication
 
 ### CI/CD & Hosting
+
 - **CI/CD**: [GitHub Actions](https://github.com/features/actions)
 - **Hosting**: [DigitalOcean](https://www.digitalocean.com/) via Docker
 
@@ -51,22 +54,27 @@ To run this project locally, follow these steps.
 ### Installation
 
 1.  **Clone the repository:**
+
     ```sh
     git clone https://github.com/your-username/10x-aimondo.git
     cd 10x-aimondo
     ```
 
 2.  **Install dependencies:**
+
     ```sh
     npm install
     ```
 
 3.  **Set up environment variables:**
     Create a `.env` file by copying the example file. You will need to provide your Supabase project URL and anon key.
+
     ```sh
     cp .env.example .env
     ```
+
     Your `.env` file should look like this:
+
     ```
     PUBLIC_SUPABASE_URL="your-supabase-url"
     PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
@@ -93,19 +101,19 @@ The following scripts are available in the `package.json`:
 
 ### Included in MVP
 
--   User authentication (login/registration).
--   Full CRUD (Create, Read, Update, Delete) functionality for workouts.
--   GPX file uploading and parsing.
--   A paginated and filterable list view of all workouts.
--   Map visualization for individual workout tracks.
--   A global heatmap view generated from all user workouts.
+- User authentication (login/registration).
+- Full CRUD (Create, Read, Update, Delete) functionality for workouts.
+- GPX file uploading and parsing.
+- A paginated and filterable list view of all workouts.
+- Map visualization for individual workout tracks.
+- A global heatmap view generated from all user workouts.
 
 ### Not Included in MVP
 
--   Sharing routes or data between users.
--   Integrations with third-party services like Strava or Garmin Connect.
--   Paid subscriptions or advanced user plans.
--   Generation of route thumbnails (short polylines).
+- Sharing routes or data between users.
+- Integrations with third-party services like Strava or Garmin Connect.
+- Paid subscriptions or advanced user plans.
+- Generation of route thumbnails (short polylines).
 
 ## Project Status
 
