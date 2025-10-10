@@ -1,8 +1,8 @@
-# Dokument wymagań produktu (PRD) - Aimondo
+# Dokument wymagań produktu (PRD) - AImondo
 
 ## 1. Przegląd produktu
 
-Aimondo to aplikacja internetowa zaprojektowana dla entuzjastów aktywności na świeżym powietrzu, którzy chcą wizualizować swoje treningi zarejestrowane w formacie GPX. Główne funkcje aplikacji to importowanie plików GPX, zarządzanie listą treningów oraz wyświetlanie tras na interaktywnej mapie. Kluczowym elementem jest możliwość wizualizacji wszystkich treningów w formie globalnej heatmapy, co pozwala użytkownikom na łatwe zidentyfikowanie najczęściej uczęszczanych ścieżek oraz odkrywanie nowych, nieodwiedzonych dotąd miejsc. Aplikacja będzie korzystać z prostego systemu uwierzytelniania, aby zapewnić prywatność danych każdego użytkownika.
+AImondo to aplikacja internetowa zaprojektowana dla entuzjastów aktywności na świeżym powietrzu, którzy chcą wizualizować swoje treningi zarejestrowane w formacie GPX. Główne funkcje aplikacji to importowanie plików GPX, zarządzanie listą treningów oraz wyświetlanie tras na interaktywnej mapie. Kluczowym elementem jest możliwość wizualizacji wszystkich treningów w formie globalnej heatmapy, co pozwala użytkownikom na łatwe zidentyfikowanie najczęściej uczęszczanych ścieżek oraz odkrywanie nowych, nieodwiedzonych dotąd miejsc. Aplikacja będzie korzystać z prostego systemu uwierzytelniania, aby zapewnić prywatność danych każdego użytkownika.
 
 ## 2. Problem użytkownika
 
@@ -84,6 +84,8 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
   - Na stronie głównej widzę przycisk "Dodaj trening".
   - Po kliknięciu przycisku otwiera się okno modalne z formularzem.
   - Formularz pozwala mi wybrać plik GPX z dysku i wpisać nazwę treningu.
+  - Nazwa musi mieć od 3 do 300 znaków.
+  - Plik GPX nie może przekraczać 5 MB.
   - Po zatwierdzeniu formularza, plik jest przesyłany i przetwarzany.
   - Nowy trening pojawia się na górze listy treningów.
   - W przypadku błędu (np. zły format pliku, za duży rozmiar), widzę czytelny komunikat o błędzie.
@@ -126,6 +128,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
   - Po jej kliknięciu otwiera się okno modalne z formularzem edycji.
   - Formularz jest wypełniony aktualnymi danymi treningu (nazwa, data, typ).
   - Mogę zmodyfikować dane i zapisać zmiany.
+  - Formularz waliduje dane (np. nazwa 3-300 znaków, typ 3-50 znaków).
   - Po zapisaniu zmian, zaktualizowane dane są widoczne na liście.
 
 - ID: US-008
@@ -143,7 +146,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 - Kryteria akceptacji:
   - Na stronie głównej znajduje się przycisk "Pokaż heatmapę".
   - Po jego kliknięciu widok przełącza się na mapę z heatmapą.
-  - Heatmapa jest generowana na podstawie punktów ze wszystkich moich treningów (z uwzględnieniem filtrów).
+  - Heatmapa jest generowana na podstawie maksymalnie 10 000 losowo wybranych punktów ze wszystkich moich treningów (z uwzględnieniem filtrów).
   - Intensywność koloru na heatmapie odpowiada zagęszczeniu punktów.
 
 - ID: US-010

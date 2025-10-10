@@ -9,6 +9,7 @@
 - React 19
 - Tailwind 4
 - Shadcn/ui
+- Maplibre GL JS
 
 ## Project Structure
 
