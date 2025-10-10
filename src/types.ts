@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { Tables } from './db/database.types';
 
 /**
@@ -89,3 +90,11 @@ export type HeatmapPoint = [number, number];
 export type HeatmapDto = {
   points: HeatmapPoint[];
 };
+
+/**
+ * Zod schema for validating the creation of a workout.
+ * 'name' must be between 3 and 300 characters.
+ */
+export const WorkoutCreateSchema = z.object({
+  name: z.string().min(3).max(300),
+});
