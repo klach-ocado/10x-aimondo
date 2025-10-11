@@ -90,6 +90,24 @@ export function useWorkoutsDashboard() {
     }
   };
 
+  const deleteWorkout = async (id: string) => {
+    try {
+      const response = await fetch(`/api/workouts/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.status !== 204) {
+        const errorData = await response.json().catch(() => ({ message: 'Failed to delete workout.' }));
+        return { success: false, error: errorData.message || 'An unknown error occurred.' };
+      }
+
+      await fetchWorkouts();
+      return { success: true };
+    } catch (e) {
+      return { success: false, error: e instanceof Error ? e.message : 'An unknown error occurred.' };
+    }
+  };
+
   useEffect(() => {
     fetchWorkouts();
   }, [fetchWorkouts]);
@@ -107,5 +125,6 @@ export function useWorkoutsDashboard() {
     setPage,
     refresh: fetchWorkouts,
     updateWorkout,
+    deleteWorkout,
   };
 }

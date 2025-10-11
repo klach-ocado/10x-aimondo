@@ -6,6 +6,7 @@ import { DataTableSkeleton } from "./dashboard/DataTableSkeleton";
 import { FiltersPanel } from "./dashboard/FiltersPanel";
 import type { WorkoutListItemDto } from "@/types";
 import { EditWorkoutDialog } from "./dashboard/EditWorkoutDialog";
+import { DeleteConfirmationDialog } from "./dashboard/DeleteConfirmationDialog";
 import { Toaster } from "@/components/ui/sonner";
 
 export default function DashboardView() {
@@ -19,13 +20,15 @@ export default function DashboardView() {
     sort, 
     setSort, 
     setPage, 
-    updateWorkout
+    updateWorkout,
+    deleteWorkout
   } = useWorkoutsDashboard();
 
   const [editingWorkout, setEditingWorkout] = useState<WorkoutListItemDto | null>(null);
+  const [deletingWorkout, setDeletingWorkout] = useState<WorkoutListItemDto | null>(null);
 
   const handleEdit = (workout: WorkoutListItemDto) => setEditingWorkout(workout);
-  const handleDelete = (workout: WorkoutListItemDto) => console.log("Delete:", workout);
+  const handleDelete = (workout: WorkoutListItemDto) => setDeletingWorkout(workout);
 
   return (
     <div className="space-y-8">
@@ -58,6 +61,13 @@ export default function DashboardView() {
         onOpenChange={(isOpen) => !isOpen && setEditingWorkout(null)}
         workout={editingWorkout}
         onSuccess={updateWorkout}
+      />
+
+      <DeleteConfirmationDialog
+        isOpen={!!deletingWorkout}
+        onOpenChange={(isOpen) => !isOpen && setDeletingWorkout(null)}
+        workout={deletingWorkout}
+        onConfirm={deleteWorkout}
       />
     </div>
   );
