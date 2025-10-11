@@ -16,6 +16,8 @@ interface BaseMapProps {
   className?: string;
   // Callback for when the map view changes by user interaction
   onMoveEnd?: (viewState: MapViewState, bounds: [[number, number], [number, number]]) => void;
+  // Callback for when the map has finished its initial load
+  onLoad?: (bounds: [[number, number], [number, number]]) => void;
 }
 
 interface TrackMapProps extends BaseMapProps {
@@ -47,7 +49,7 @@ const HEATMAP_LAYER_ID = 'heatmap-layer';
 // --- COMPONENT ---
 
 const Map: React.FC<MapProps> = (props) => {
-  const { displayMode, className, onMoveEnd } = props;
+  const { displayMode, className, onMoveEnd, onLoad } = props;
 
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -118,6 +120,12 @@ const Map: React.FC<MapProps> = (props) => {
       });
 
       setIsLoaded(true); // Signal that the map is ready for data updates
+
+      // Trigger the onLoad callback with initial bounds
+      if (onLoad) {
+        const bounds = mapInstance.getBounds().toArray() as [[number, number], [number, number]];
+        onLoad(bounds);
+      }
     });
 
     // --- MOVE/SAVE STATE HANDLER ---

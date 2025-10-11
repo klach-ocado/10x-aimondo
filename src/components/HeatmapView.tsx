@@ -17,7 +17,8 @@ const HeatmapView = () => {
     error,
     handleFiltersChange,
     handleMapMove,
-    refreshData,
+    handleMapLoad,
+    handleManualRefresh,
     clearError,
   } = useHeatmap();
 
@@ -41,7 +42,7 @@ const HeatmapView = () => {
           <BackButton onClick={handleBack} />
           <h1 className="text-xl font-semibold">Heatmap</h1>
         </div>
-        <RefreshButton onClick={refreshData} isDisabled={isLoading} />
+        <RefreshButton onClick={handleManualRefresh} isDisabled={isLoading} />
       </header>
 
       <div className="p-4">
@@ -70,7 +71,7 @@ const HeatmapView = () => {
           initialViewState={mapViewState}
           heatmapData={heatmapData}
           onMoveEnd={handleMapMove}
-          isLoading={isLoading}
+          onLoad={handleMapLoad}
           className="h-full w-full"
         />
       </div>

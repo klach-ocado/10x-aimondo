@@ -1,9 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import type { FeatureCollection, Point } from 'geojson';
 import type { HeatmapFiltersViewModel } from '../heatmap/HeatmapFilterPanel';
 import type { MapViewState } from '../Map';
-
-const LOCAL_STORAGE_KEY = 'heatmapViewState';
 
 export interface HeatmapDataDto {
     points: [number, number][]; // [lat, lng]
@@ -14,37 +12,12 @@ export const useHeatmap = () => {
   const [mapViewState, setMapViewState] = useState<MapViewState | null>(null);
   const [mapBbox, setMapBbox] = useState<string | null>(null);
   const [heatmapData, setHeatmapData] = useState<FeatureCollection<Point> | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  useEffect(() => {
-    const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedState) {
-      setMapViewState(JSON.parse(savedState));
-    }
-    setIsLoading(false);
-  }, []);
-
-  const handleFiltersChange = useCallback((newFilters: HeatmapFiltersViewModel) => {
-    setFilters(newFilters);
-  }, []);
-
-  const handleMapMove = useCallback((newViewState: MapViewState, boundsArray: [[number, number], [number, number]]) => {
-    setMapViewState(newViewState);
-    const bboxString = `${boundsArray[0][0]},${boundsArray[0][1]},${boundsArray[1][0]},${boundsArray[1][1]}`;
-    setMapBbox(bboxString);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newViewState));
-  }, []);
-
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
-
-  const refreshData = useCallback(async () => {
-    if (!mapBbox) {
-      // This can happen on the very first load before the map has initialized
-      // We will wait for the map to move and set the bounds
+  const refreshData = useCallback(async (bbox: string | null) => {
+    if (!bbox) {
+      setError(new Error("Map bounds are not available to fetch data."));
       return;
     }
 
@@ -53,7 +26,7 @@ export const useHeatmap = () => {
 
     try {
       const params = new URLSearchParams();
-      params.append('bbox', mapBbox);
+      params.append('bbox', bbox);
       if (filters.name) params.append('name', filters.name);
       if (filters.type) params.append('type', filters.type);
       if (filters.dateRange?.from) params.append('dateFrom', filters.dateRange.from.toISOString());
@@ -83,16 +56,31 @@ export const useHeatmap = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [filters, mapBbox]);
+  }, [filters]);
 
-  useEffect(() => {
-    // Fetch data on initial load once map bounds are available
-    if (mapBbox && isInitialLoad) {
-      refreshData();
-      setIsInitialLoad(false);
-    }
-  }, [mapBbox, isInitialLoad, refreshData]);
+  const handleMapLoad = useCallback((boundsArray: [[number, number], [number, number]]) => {
+    const bboxString = `${boundsArray[0][0]},${boundsArray[0][1]},${boundsArray[1][0]},${boundsArray[1][1]}`;
+    setMapBbox(bboxString);
+    refreshData(bboxString);
+  }, [refreshData]);
 
+  const handleManualRefresh = useCallback(() => {
+    refreshData(mapBbox);
+  }, [mapBbox, refreshData]);
+
+  const handleFiltersChange = useCallback((newFilters: HeatmapFiltersViewModel) => {
+    setFilters(newFilters);
+  }, []);
+
+  const handleMapMove = useCallback((newViewState: MapViewState, boundsArray: [[number, number], [number, number]]) => {
+    setMapViewState(newViewState);
+    const bboxString = `${boundsArray[0][0]},${boundsArray[0][1]},${boundsArray[1][0]},${boundsArray[1][1]}`;
+    setMapBbox(bboxString);
+  }, []);
+
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
 
   return {
     filters,
@@ -102,7 +90,8 @@ export const useHeatmap = () => {
     error,
     handleFiltersChange,
     handleMapMove,
-    refreshData,
+    handleMapLoad,
+    handleManualRefresh,
     clearError,
   };
 };
