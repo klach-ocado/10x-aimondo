@@ -102,7 +102,7 @@ const Map: React.FC<MapProps> = (props) => {
         id: HEATMAP_LAYER_ID,
         type: 'heatmap',
         source: HEATMAP_SOURCE_ID,
-        maxzoom: 9,
+        maxzoom: 16, // Increased maxzoom
         layout: { visibility: 'none' },
         paint: {
           'heatmap-weight': ['coalesce', ['get', 'mag'], 1], // Robust fix for the null error
@@ -113,7 +113,7 @@ const Map: React.FC<MapProps> = (props) => {
             0.6, 'rgb(253,219,199)', 0.8, 'rgb(239,138,98)', 1, 'rgb(178,24,43)',
           ],
           'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 9, 20],
-          'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 7, 1, 9, 0],
+          'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 9, 1, 16, 0], // Adjusted opacity range
         },
       });
 
