@@ -1,7 +1,10 @@
 import type {
   CreateWorkoutCommand,
+  GetHeatmapDataCommand,
   GetWorkoutDetailsCommand,
   GetWorkoutsCommand,
+  HeatmapDto,
+  HeatmapPoint,
   PaginatedWorkoutsDto,
   UpdateWorkoutCommand,
   WorkoutDetailsDto,
@@ -32,6 +35,29 @@ export class WorkoutService {
     }
 
     return data as WorkoutDetailsDto | null;
+  }
+
+  async getHeatmapData(command: GetHeatmapDataCommand): Promise<HeatmapDto> {
+    const { data, error } = await this.supabase.rpc("get_heatmap_points", {
+      p_user_id: command.userId,
+      min_lng: command.minLng,
+      min_lat: command.minLat,
+      max_lng: command.maxLng,
+      max_lat: command.maxLat,
+      p_name: command.name,
+      p_date_from: command.dateFrom,
+      p_date_to: command.dateTo,
+      p_type: command.type,
+    });
+
+    if (error) {
+      console.error("Error fetching heatmap data:", error);
+      throw new Error("Failed to fetch heatmap data from the database.");
+    }
+
+    const points = data ? data.map((p: { lat: number; lng: number }): HeatmapPoint => [p.lat, p.lng]) : [];
+
+    return { points };
   }
 
   async getWorkouts(command: GetWorkoutsCommand): Promise<PaginatedWorkoutsDto> {

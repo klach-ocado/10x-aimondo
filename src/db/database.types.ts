@@ -605,6 +605,23 @@ export interface Database {
         Args: { "": string };
         Returns: unknown;
       };
+      get_heatmap_points: {
+        Args: {
+          max_lat: number;
+          max_lng: number;
+          min_lat: number;
+          min_lng: number;
+          p_date_from?: string;
+          p_date_to?: string;
+          p_name?: string;
+          p_type?: string;
+          p_user_id: string;
+        };
+        Returns: {
+          lat: number;
+          lng: number;
+        }[];
+      };
       get_proj4_from_srid: {
         Args: { "": number };
         Returns: string;

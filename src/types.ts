@@ -124,6 +124,23 @@ export interface GetWorkoutDetailsCommand {
 }
 
 /**
+ * Command model for fetching heatmap data.
+ * This object is passed to the service layer, containing validated
+ * and parsed query parameters.
+ */
+export interface GetHeatmapDataCommand {
+  userId: string;
+  minLng: number;
+  minLat: number;
+  maxLng: number;
+  maxLat: number;
+  name?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  type?: string;
+}
+
+/**
  * Zod schema for validating the update of a workout.
  * 'name' must be between 3 and 300 characters.
  * 'date' must be a valid ISO 8601 datetime string.
