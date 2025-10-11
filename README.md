@@ -56,7 +56,7 @@ To run this project locally, follow these steps.
 1.  **Clone the repository:**
 
     ```sh
-    git clone https://github.com/your-username/10x-aimondo.git
+    git clone https://github.com/klach-ocado/10x-aimondo.git
     cd 10x-aimondo
     ```
 
