@@ -3,71 +3,84 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { LngLatLike } from 'maplibre-gl';
 import { cn } from '@/lib/utils';
-import type { FeatureCollection, Point, LineString } from 'geojson';
+import type { Feature, FeatureCollection, Point, LineString } from 'geojson';
+
+// --- TYPE DEFINITIONS ---
 
 export interface MapViewState {
-  center: [number, number];
+  center: [number, number]; // [lng, lat]
   zoom: number;
 }
 
 interface BaseMapProps {
-  initialViewState: MapViewState | null;
   className?: string;
+  // Callback for when the map view changes by user interaction
   onMoveEnd?: (viewState: MapViewState, bounds: [[number, number], [number, number]]) => void;
-  isLoading?: boolean;
 }
 
 interface TrackMapProps extends BaseMapProps {
   displayMode: 'track';
   trackPoints: { lat: number; lng: number }[];
   heatmapData?: never;
+  initialViewState?: null; // In track mode, view is determined by trackPoints
 }
 
 interface HeatmapMapProps extends BaseMapProps {
   displayMode: 'heatmap';
   heatmapData: FeatureCollection<Point> | null;
   trackPoints?: never;
+  initialViewState: MapViewState | null;
 }
 
 type MapProps = TrackMapProps | HeatmapMapProps;
 
+// --- CONSTANTS ---
+
 const MAP_STYLE = 'https://tiles.openfreemap.org/styles/bright';
-const ROUTE_SOURCE_ID = 'route';
+const LOCAL_STORAGE_KEY = 'mapViewState';
+
+const ROUTE_SOURCE_ID = 'route-source';
 const ROUTE_LAYER_ID = 'route-layer';
-const HEATMAP_SOURCE_ID = 'heatmap-points';
+const HEATMAP_SOURCE_ID = 'heatmap-source';
 const HEATMAP_LAYER_ID = 'heatmap-layer';
 
-const Map: React.FC<MapProps> = ({
-  displayMode,
-  trackPoints,
-  heatmapData,
-  initialViewState,
-  className,
-  onMoveEnd,
-}) => {
+// --- COMPONENT ---
+
+const Map: React.FC<MapProps> = (props) => {
+  const { displayMode, className, onMoveEnd } = props;
+
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  // --- MAP INITIALIZATION EFFECT ---
   useEffect(() => {
-    if (map.current || !mapContainer.current) return;
+    if (map.current || !mapContainer.current) return; // Initialize only once
+
+    let currentViewState: MapViewState;
+    if (props.displayMode === 'heatmap' && props.initialViewState) {
+        currentViewState = props.initialViewState;
+    } else {
+        const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
+        currentViewState = savedState ? JSON.parse(savedState) : { center: [0, 0], zoom: 2 };
+    }
 
     map.current = new maplibregl.Map({
       container: mapContainer.current,
       style: MAP_STYLE,
-      center: initialViewState?.center || [0, 0],
-      zoom: initialViewState?.zoom || 2,
+      center: currentViewState.center,
+      zoom: currentViewState.zoom,
     });
 
     const mapInstance = map.current;
-
     mapInstance.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
+    // --- LOAD EVENT HANDLER ---
     mapInstance.on('load', () => {
-      // Add sources and layers for both modes, but keep them empty initially.
-      // Visibility will be controlled by layout properties.
+      // Add all sources and layers required for all display modes.
+      // They are initialized with empty data and hidden, to be updated later.
 
-      // Track source and layer
+      // 1. Track Mode Source and Layer
       mapInstance.addSource(ROUTE_SOURCE_ID, {
         type: 'geojson',
         data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: [] } },
@@ -76,15 +89,11 @@ const Map: React.FC<MapProps> = ({
         id: ROUTE_LAYER_ID,
         type: 'line',
         source: ROUTE_SOURCE_ID,
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round',
-          visibility: 'none', // Initially hidden
-        },
+        layout: { 'line-join': 'round', 'line-cap': 'round', visibility: 'none' },
         paint: { 'line-color': '#3887be', 'line-width': 5, 'line-opacity': 0.75 },
       });
 
-      // Heatmap source and layer
+      // 2. Heatmap Mode Source and Layer
       mapInstance.addSource(HEATMAP_SOURCE_ID, {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
@@ -94,11 +103,9 @@ const Map: React.FC<MapProps> = ({
         type: 'heatmap',
         source: HEATMAP_SOURCE_ID,
         maxzoom: 9,
-        layout: {
-          visibility: 'none', // Initially hidden
-        },
+        layout: { visibility: 'none' },
         paint: {
-          'heatmap-weight': ['interpolate', ['linear'], ['get', 'mag'], 0, 0, 6, 1],
+          'heatmap-weight': ['coalesce', ['get', 'mag'], 1], // Robust fix for the null error
           'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 9, 3],
           'heatmap-color': [
             'interpolate', ['linear'], ['heatmap-density'],
@@ -110,50 +117,55 @@ const Map: React.FC<MapProps> = ({
         },
       });
 
-      setIsMapLoaded(true);
+      setIsLoaded(true); // Signal that the map is ready for data updates
     });
 
-    const handleMoveEnd = () => {
-      if (map.current && onMoveEnd) {
-        const viewState = {
-          center: map.current.getCenter().toArray() as [number, number],
-          zoom: map.current.getZoom(),
-        };
-        const rawBounds = map.current.getBounds();
-        onMoveEnd(viewState, rawBounds.toArray() as [[number, number], [number, number]]);
+    // --- MOVE/SAVE STATE HANDLER ---
+    const handleMove = () => {
+      if (!mapInstance) return;
+      const newViewState: MapViewState = {
+        center: mapInstance.getCenter().toArray() as [number, number],
+        zoom: mapInstance.getZoom(),
+      };
+      // Save state to localStorage as per ui-plan.md
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newViewState));
+      // Notify parent if callback is provided
+      if (onMoveEnd) {
+        const bounds = mapInstance.getBounds().toArray() as [[number, number], [number, number]];
+        onMoveEnd(newViewState, bounds);
       }
     };
 
-    mapInstance.on('moveend', handleMoveEnd);
-    mapInstance.on('zoomend', handleMoveEnd);
+    mapInstance.on('moveend', handleMove);
+    mapInstance.on('zoomend', handleMove);
 
+    // --- CLEANUP ---
     return () => {
-      mapInstance.off('moveend', handleMoveEnd);
-      mapInstance.off('zoomend', handleMoveEnd);
+      mapInstance.off('moveend', handleMove);
+      mapInstance.off('zoomend', handleMove);
       mapInstance.remove();
       map.current = null;
     };
-  }, [initialViewState, onMoveEnd]);
+  }, []); // This effect runs only once on mount
 
-  // Effect to update data and visibility
+
+  // --- DATA AND VISIBILITY UPDATE EFFECT ---
   useEffect(() => {
-    if (!isMapLoaded || !map.current) return;
+    if (!isLoaded || !map.current) return; // Wait for map to be fully loaded
+
     const mapInstance = map.current;
 
-    if (displayMode === 'track') {
-      if (mapInstance.getLayer(HEATMAP_LAYER_ID)) {
-        mapInstance.setLayoutProperty(HEATMAP_LAYER_ID, 'visibility', 'none');
-      }
-      if (mapInstance.getLayer(ROUTE_LAYER_ID)) {
-        mapInstance.setLayoutProperty(ROUTE_LAYER_ID, 'visibility', 'visible');
-      }
+    // Logic to switch between display modes
+    if (displayMode === 'track' && props.trackPoints) {
+      // 1. Set layer visibility
+      mapInstance.setLayoutProperty(HEATMAP_LAYER_ID, 'visibility', 'none');
+      mapInstance.setLayoutProperty(ROUTE_LAYER_ID, 'visibility', 'visible');
 
-      if (trackPoints && trackPoints.length > 0) {
-        const coordinates = trackPoints.map(p => [p.lng, p.lat]);
+      // 2. Update data and fit bounds
+      if (props.trackPoints.length > 0) {
+        const coordinates = props.trackPoints.map(p => [p.lng, p.lat]);
         const feature: Feature<LineString> = {
-            type: 'Feature',
-            properties: {},
-            geometry: { type: 'LineString', coordinates },
+          type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates },
         };
         (mapInstance.getSource(ROUTE_SOURCE_ID) as maplibregl.GeoJSONSource).setData(feature);
 
@@ -164,19 +176,17 @@ const Map: React.FC<MapProps> = ({
         mapInstance.fitBounds(bounds, { padding: 50, maxZoom: 15 });
       }
     } else if (displayMode === 'heatmap') {
-      if (mapInstance.getLayer(ROUTE_LAYER_ID)) {
-        mapInstance.setLayoutProperty(ROUTE_LAYER_ID, 'visibility', 'none');
-      }
-      if (mapInstance.getLayer(HEATMAP_LAYER_ID)) {
-        mapInstance.setLayoutProperty(HEATMAP_LAYER_ID, 'visibility', 'visible');
-      }
+      // 1. Set layer visibility
+      mapInstance.setLayoutProperty(ROUTE_LAYER_ID, 'visibility', 'none');
+      mapInstance.setLayoutProperty(HEATMAP_LAYER_ID, 'visibility', 'visible');
 
+      // 2. Update data
       const source = mapInstance.getSource(HEATMAP_SOURCE_ID) as maplibregl.GeoJSONSource;
       if (source) {
-        source.setData(heatmapData || { type: 'FeatureCollection', features: [] });
+        source.setData(props.heatmapData || { type: 'FeatureCollection', features: [] });
       }
     }
-  }, [isMapLoaded, displayMode, trackPoints, heatmapData]);
+  }, [isLoaded, displayMode, props.trackPoints, props.heatmapData]);
 
   return <div ref={mapContainer} className={cn('h-96 w-full rounded-md', className)} />;
 };
