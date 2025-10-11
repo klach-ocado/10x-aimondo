@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, X } from "lucide-react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
 
@@ -37,6 +37,15 @@ export function FiltersPanel({ filters, onFiltersChange, disabled }: FiltersPane
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onFiltersChange({ ...filters, [e.target.name]: e.target.value });
+  };
+
+  const handleClearDates = () => {
+    setDate(undefined);
+    onFiltersChange({
+      ...filters,
+      dateFrom: undefined,
+      dateTo: undefined,
+    });
   };
 
   return (
@@ -93,6 +102,17 @@ export function FiltersPanel({ filters, onFiltersChange, disabled }: FiltersPane
           />
         </PopoverContent>
       </Popover>
+      {date?.from && (
+        <Button
+          variant="ghost"
+          onClick={handleClearDates}
+          disabled={disabled}
+          className="-ml-8 h-9 w-9 p-0"
+        >
+          <X className="h-4 w-4 text-muted-foreground" />
+          <span className="sr-only">Clear date filter</span>
+        </Button>
+      )}
     </div>
   );
 }
