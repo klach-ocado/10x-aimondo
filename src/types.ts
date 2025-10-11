@@ -134,7 +134,16 @@ export const WorkoutUpdateSchema = z.object({
     .string()
     .min(3, "Name must be at least 3 characters long.")
     .max(300, "Name must be no more than 300 characters long."),
-  date: z.string().datetime("Invalid ISO 8601 date format."),
+  date: z.preprocess((arg) => {
+    if (typeof arg == "string") {
+      try {
+        return new Date(arg).toISOString();
+      } catch (error) {
+        return arg; // Return original arg if parsing fails
+      }
+    }
+    return arg;
+  }, z.string().datetime("Invalid ISO 8601 date format.")),
   type: z
     .string()
     .min(3, "Type must be at least 3 characters long.")
