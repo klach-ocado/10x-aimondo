@@ -1,8 +1,26 @@
 import * as React from "react";
 import { useWorkoutsDashboard } from "./hooks/useWorkoutsDashboard";
+import { WorkoutsDataTable } from "./dashboard/WorkoutsDataTable";
+import { DataTableSkeleton } from "./dashboard/DataTableSkeleton";
+import { FiltersPanel } from "./dashboard/FiltersPanel";
+
+import { FiltersPanel } from "./dashboard/FiltersPanel";
 
 export default function DashboardView() {
-  const { workouts, pagination, isLoading, error } = useWorkoutsDashboard();
+  const { 
+    workouts, 
+    pagination, 
+    isLoading, 
+    error, 
+    filters, 
+    setFilters, 
+    sort, 
+    setSort, 
+    setPage 
+  } = useWorkoutsDashboard();
+
+  const handleEdit = (workout: any) => console.log("Edit:", workout);
+  const handleDelete = (workout: any) => console.log("Delete:", workout);
 
   return (
     <div className="space-y-8">
@@ -11,14 +29,22 @@ export default function DashboardView() {
         {/* Placeholder for Add Workout Button */}
       </div>
 
-      {/* Placeholder for FiltersPanel */}
+      <FiltersPanel filters={filters} onFiltersChange={setFilters} disabled={isLoading} />
 
-      {isLoading && <p>Loading...</p>}
-      {error && <p>Error: {error.message}</p>}
+      {error && <p className="text-red-500">Error: {error.message}</p>}
 
-      {/* Placeholder for WorkoutsDataTable */}
-      {!isLoading && !error && (
-        <pre>{JSON.stringify({ workouts, pagination }, null, 2)}</pre>
+      {isLoading && !workouts.length ? (
+        <DataTableSkeleton />
+      ) : pagination && (
+        <WorkoutsDataTable 
+          data={workouts} 
+          pagination={pagination} 
+          sort={sort}
+          onSortChange={setSort}
+          onPageChange={setPage}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       )}
     </div>
   );
