@@ -4,8 +4,6 @@ import { WorkoutsDataTable } from "./dashboard/WorkoutsDataTable";
 import { DataTableSkeleton } from "./dashboard/DataTableSkeleton";
 import { FiltersPanel } from "./dashboard/FiltersPanel";
 
-import { FiltersPanel } from "./dashboard/FiltersPanel";
-
 export default function DashboardView() {
   const { 
     workouts, 
