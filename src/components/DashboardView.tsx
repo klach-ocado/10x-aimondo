@@ -21,12 +21,12 @@ export default function DashboardView() {
     setFilters,
     sort,
     setSort,
-        setPage, 
-        updateWorkout,
-        deleteWorkout,
-        addWorkout,
-        clearAllFilters
-      } = useWorkoutsDashboard();
+    setPage,
+    updateWorkout,
+    deleteWorkout,
+    addWorkout,
+    clearAllFilters,
+  } = useWorkoutsDashboard();
   const [editingWorkout, setEditingWorkout] = useState<WorkoutListItemDto | null>(null);
   const [deletingWorkout, setDeletingWorkout] = useState<WorkoutListItemDto | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -48,16 +48,18 @@ export default function DashboardView() {
 
       {isLoading && !workouts.length ? (
         <DataTableSkeleton />
-      ) : pagination && (
-        <WorkoutsDataTable 
-          data={workouts} 
-          pagination={pagination} 
-          sort={sort}
-          onSortChange={setSort}
-          onPageChange={setPage}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+      ) : (
+        pagination && (
+          <WorkoutsDataTable
+            data={workouts}
+            pagination={pagination}
+            sort={sort}
+            onSortChange={setSort}
+            onPageChange={setPage}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        )
       )}
 
       <EditWorkoutDialog
@@ -74,11 +76,7 @@ export default function DashboardView() {
         onConfirm={deleteWorkout}
       />
 
-      <AddWorkoutDialog
-        isOpen={isAddDialogOpen}
-        onOpenChange={setIsAddDialogOpen}
-        onSuccess={addWorkout}
-      />
+      <AddWorkoutDialog isOpen={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} onSuccess={addWorkout} />
     </div>
   );
 }

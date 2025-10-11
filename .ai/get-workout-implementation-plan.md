@@ -1,9 +1,11 @@
 # API Endpoint Implementation Plan: Get a single workout with its track
 
 ## 1. Przegląd punktu końcowego
+
 Ten punkt końcowy API umożliwia pobranie szczegółowych informacji o pojedynczym treningu na podstawie jego unikalnego identyfikatora (ID). Odpowiedź zawiera kluczowe metadane treningu, takie jak nazwa, data i dystans, a także pełną listę punktów geograficznych (trasę), które składają się na ten trening. Dostęp do danych jest ograniczony tylko do właściciela treningu.
 
 ## 2. Szczegóły żądania
+
 - **Metoda HTTP**: `GET`
 - **Struktura URL**: `/api/workouts/{id}`
 - **Parametry**:
@@ -28,6 +30,7 @@ Ten punkt końcowy API umożliwia pobranie szczegółowych informacji o pojedync
     ```
 
 ## 4. Szczegóły odpowiedzi
+
 - **Odpowiedź sukcesu**:
   - **Kod**: `200 OK`
   - **Body**: Obiekt `WorkoutDetailsDto`.
@@ -52,6 +55,7 @@ Ten punkt końcowy API umożliwia pobranie szczegółowych informacji o pojedync
   - `500 Internal Server Error`: W przypadku nieoczekiwanych błędów serwera.
 
 ## 5. Przepływ danych
+
 1.  Żądanie `GET` trafia do endpointa Astro `src/pages/api/workouts/[id].ts`.
 2.  Middleware Astro (`src/middleware/index.ts`) weryfikuje sesję użytkownika. Jeśli sesja jest nieprawidłowa, zwraca `401 Unauthorized`.
 3.  Handler endpointa pobiera `id` z parametrów ścieżki (`Astro.params`).
@@ -65,15 +69,18 @@ Ten punkt końcowy API umożliwia pobranie szczegółowych informacji o pojedync
 11. Handler zwraca odpowiedź JSON z kodem `200 OK` i obiektem `WorkoutDetailsDto`.
 
 ## 6. Względy bezpieczeństwa
+
 - **Uwierzytelnianie**: Każde żądanie musi być uwierzytelnione. Middleware Astro będzie odpowiedzialne za weryfikację tokenu sesji Supabase i odrzucenie nieautoryzowanych żądań.
 - **Autoryzacja**: Dostęp do zasobu jest chroniony przez polityki Row-Level Security (RLS) w bazie danych PostgreSQL, które zapewniają, że użytkownicy mogą odpytywać tylko własne treningi. Jest to podstawowy i najważniejszy mechanizm autoryzacji.
 - **Walidacja danych wejściowych**: Parametr `id` jest rygorystycznie walidowany jako UUID, aby zapobiec błędom zapytań i potencjalnym atakom (np. SQL Injection, chociaż Supabase SDK w dużym stopniu przed tym chroni).
 
 ## 7. Rozważania dotyczące wydajności
+
 - **Zapytanie do bazy danych**: Aby zapewnić wysoką wydajność, zapytanie powinno pobierać zarówno dane treningu, jak i wszystkie jego punkty trasy w jednym zapytaniu do bazy danych, wykorzystując możliwości zagnieżdżania zapytań w Supabase. Pozwoli to uniknąć problemu N+1 zapytań.
 - **Indeksowanie**: Klucz obcy `workout_id` w tabeli `track_points` musi być zaindeksowany, aby zapewnić szybkie łączenie danych. Zgodnie z `db-plan.md`, jest to już zapewnione.
 
 ## 8. Etapy wdrożenia
+
 1.  **Aktualizacja typów**: W pliku `src/types.ts` dodaj definicję interfejsu `GetWorkoutDetailsCommand`.
 2.  **Utworzenie pliku endpointa**: Stwórz nowy plik `src/pages/api/workouts/[id].ts`.
 3.  **Implementacja serwisu**: W pliku `src/lib/services/workout.service.ts` dodaj nową funkcję asynchroniczną `getWorkoutDetails(command: GetWorkoutDetailsCommand): Promise<WorkoutDetailsDto | null>`.

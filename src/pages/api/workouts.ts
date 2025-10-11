@@ -31,7 +31,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
     const queryParams = Object.fromEntries(url.searchParams.entries());
     const validationResult = GetWorkoutsQuerySchema.safeParse(queryParams);
     if (!validationResult.success) {
-      return new Response(JSON.stringify({ message: "Invalid query parameters", errors: validationResult.error.flatten() }), { status: 400 });
+      return new Response(
+        JSON.stringify({ message: "Invalid query parameters", errors: validationResult.error.flatten() }),
+        { status: 400 }
+      );
     }
     const command: GetWorkoutsCommand = { ...validationResult.data, userId: user.id };
     const workoutService = new WorkoutService(supabase);
@@ -56,7 +59,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (!validationResult.success || !gpxFile) {
       return new Response(JSON.stringify({ message: "Invalid input" }), { status: 400 });
     }
-    const command: CreateWorkoutCommand = { name: validationResult.data.name, gpxFileContent: await gpxFile.text(), user_id: user.id };
+    const command: CreateWorkoutCommand = {
+      name: validationResult.data.name,
+      gpxFileContent: await gpxFile.text(),
+      user_id: user.id,
+    };
     const workoutService = new WorkoutService(supabase);
     const newWorkout = await workoutService.createWorkout(command);
     return new Response(JSON.stringify(newWorkout), { status: 201 });

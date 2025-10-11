@@ -1,9 +1,11 @@
 # API Endpoint Implementation Plan: Delete a Workout
 
 ## 1. Przegląd punktu końcowego
+
 Ten punkt końcowy umożliwia uwierzytelnionym użytkownikom trwałe usunięcie jednego ze swoich treningów. Usunięcie treningu powoduje również kaskadowe usunięcie wszystkich powiązanych z nim punktów trasy (`track_points`) dzięki relacji z kluczem obcym `ON DELETE CASCADE` zdefiniowanej w schemacie bazy danych.
 
 ## 2. Szczegóły żądania
+
 - **Metoda HTTP**: `DELETE`
 - **Struktura URL**: `/api/workouts/{id}`
 - **Parametry**:
@@ -13,18 +15,20 @@ Ten punkt końcowy umożliwia uwierzytelnionym użytkownikom trwałe usunięcie 
 - **Request Body**: Brak.
 
 ## 3. Wykorzystywane typy
+
 W celu zachowania spójności architektury, zdefiniujemy model polecenia, który będzie przekazywany z warstwy API do warstwy serwisowej.
 
 - **Command Model**:
   ```typescript
   // To be defined within the service method call
   interface DeleteWorkoutCommand {
-    id: string;      // Workout ID (UUID)
-    userId: string;  // User ID from session (UUID)
+    id: string; // Workout ID (UUID)
+    userId: string; // User ID from session (UUID)
   }
   ```
 
 ## 4. Szczegóły odpowiedzi
+
 - **Odpowiedź sukcesu**:
   - **Kod**: `204 No Content`
   - **Treść**: Pusta.
@@ -35,6 +39,7 @@ W celu zachowania spójności architektury, zdefiniujemy model polecenia, który
   - `500 Internal Server Error`: W przypadku nieoczekiwanych błędów serwera.
 
 ## 5. Przepływ danych
+
 1. Żądanie `DELETE` trafia do dynamicznego endpointu Astro: `src/pages/api/workouts/[id].ts`.
 2. Middleware Astro (`src/middleware/index.ts`) weryfikuje, czy użytkownik jest zalogowany. Jeśli nie, przerywa przetwarzanie i zwraca `401 Unauthorized`. Jeśli tak, dołącza `locals.supabase` i `locals.user` do kontekstu.
 3. Endpoint `[id].ts` odczytuje parametr `id` z `Astro.params`.
@@ -47,22 +52,26 @@ W celu zachowania spójności architektury, zdefiniujemy model polecenia, który
 10. Endpoint na podstawie wyniku z serwisu zwraca odpowiedni kod statusu: `204 No Content` w przypadku sukcesu lub odpowiedni kod błędu.
 
 ## 6. Względy bezpieczeństwa
+
 - **Uwierzytelnianie**: Każde żądanie musi być uwierzytelnione. Middleware Astro jest odpowiedzialne za weryfikację tokenu sesji i odrzucenie nieautoryzowanych żądań.
 - **Autoryzacja**: Gwarancja, że użytkownik może usunąć tylko własne treningi, jest egzekwowana na poziomie bazy danych przez politykę RLS Supabase. Zapobiega to atakom typu IDOR (Insecure Direct Object Reference).
 - **Walidacja danych wejściowych**: Parametr `id` jest walidowany, aby upewnić się, że jest to prawidłowy UUID, co zapobiega błędom zapytań i potencjalnym atakom.
 
 ## 7. Obsługa błędów
+
 - **`id` nie jest UUID**: Endpoint zwraca `400 Bad Request` z komunikatem błędu.
 - **Użytkownik niezalogowany**: Middleware zwraca `401 Unauthorized`.
 - **Trening nie istnieje lub nie należy do użytkownika**: Serwis `delete` z Supabase nie znajdzie pasującego rekordu. Na podstawie wyniku operacji, endpoint zwróci `404 Not Found`.
 - **Błąd bazy danych**: Wszelkie błędy zgłoszone przez Supabase podczas operacji `DELETE` (np. problem z połączeniem) będą przechwytywane w bloku `try...catch`, logowane na serwerze, a do klienta zostanie zwrócony ogólny błąd `500 Internal Server Error`.
 
 ## 8. Rozważania dotyczące wydajności
+
 - Operacja `DELETE` na pojedynczym rekordzie z indeksem na kluczu głównym jest bardzo wydajna.
 - Kaskadowe usuwanie w tabeli `track_points` jest również wydajne, ponieważ jest oparte na indeksowanym kluczu obcym `workout_id`.
 - Przy dużej liczbie punktów trasy na jeden trening operacja może zająć chwilę, ale jest to operacja jednorazowa i nie powinna wpływać na ogólną wydajność aplikacji.
 
 ## 9. Etapy wdrożenia
+
 1. **Aktualizacja serwisu `workout.service.ts`**:
    - Dodaj nową metodę `deleteWorkout(command: { id: string; userId: string; supabase: SupabaseClient }): Promise<{ error: any; notFound: boolean }>`.
    - Wewnątrz metody wykonaj zapytanie `supabase.from('workouts').delete().match({ id: command.id })`.

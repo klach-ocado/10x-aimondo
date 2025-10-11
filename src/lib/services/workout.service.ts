@@ -76,11 +76,7 @@ export class WorkoutService {
     };
   }
 
-  async updateWorkout(
-    id: string,
-    userId: string,
-    command: UpdateWorkoutCommand,
-  ): Promise<WorkoutDto | null> {
+  async updateWorkout(id: string, userId: string, command: UpdateWorkoutCommand): Promise<WorkoutDto | null> {
     const { data, error } = await this.supabase
       .from("workouts")
       .update({ ...command, updated_at: new Date().toISOString() })

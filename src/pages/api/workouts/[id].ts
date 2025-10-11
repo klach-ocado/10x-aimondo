@@ -140,10 +140,13 @@ export async function PUT(context: APIContext): Promise<Response> {
 
   const bodyValidationResult = WorkoutUpdateSchema.safeParse(requestBody);
   if (!bodyValidationResult.success) {
-    return new Response(JSON.stringify({ error: "Invalid request body", details: bodyValidationResult.error.flatten() }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Invalid request body", details: bodyValidationResult.error.flatten() }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 
   try {

@@ -7,11 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { WorkoutFilters } from "../hooks/useWorkoutsDashboard";
 
 interface FiltersPanelProps {
@@ -83,10 +79,7 @@ export function FiltersPanel({ filters, onFiltersChange, onClearAll, disabled }:
           <Button
             id="date"
             variant={"outline"}
-            className={cn(
-              "w-[300px] justify-start text-left font-normal",
-              !date && "text-muted-foreground"
-            )}
+            className={cn("w-[300px] justify-start text-left font-normal", !date && "text-muted-foreground")}
             disabled={disabled}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -115,12 +108,7 @@ export function FiltersPanel({ filters, onFiltersChange, onClearAll, disabled }:
         </PopoverContent>
       </Popover>
       {date?.from && (
-        <Button
-          variant="ghost"
-          onClick={handleClearDates}
-          disabled={disabled}
-          className="-ml-8 h-9 w-9 p-0"
-        >
+        <Button variant="ghost" onClick={handleClearDates} disabled={disabled} className="-ml-8 h-9 w-9 p-0">
           <X className="h-4 w-4 text-muted-foreground" />
           <span className="sr-only">Clear date filter</span>
         </Button>

@@ -3,7 +3,14 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import type { WorkoutListItemDto } from "@/types";
 
@@ -45,7 +52,7 @@ export function DeleteConfirmationDialog({ workout, isOpen, onOpenChange, onConf
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={handleConfirm} disabled={isDeleting}>
-            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} 
+            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

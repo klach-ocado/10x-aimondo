@@ -16,65 +16,65 @@ Nawigacja między tymi widokami odbywa się za pomocą globalnego paska nawigacy
 
 ### Widok 1: Dashboard (Lista treningów)
 
--   **Nazwa widoku**: Dashboard
--   **Ścieżka widoku**: `/dashboard` (główna strona aplikacji)
--   **Główny cel**: Umożliwienie użytkownikowi przeglądania, filtrowania, sortowania i zarządzania wszystkimi swoimi treningami.
--   **Kluczowe informacje do wyświetlenia**:
-    -   Tabela z listą treningów (kolumny: Nazwa, Data, Typ, Dystans, Czas trwania).
-    -   Kontrolki do filtrowania (zakres dat, nazwa, typ).
-    -   Paginacja dla tabeli.
-    -   Komunikat powitalny w przypadku braku treningów.
--   **Kluczowe komponenty widoku**:
-    -   `Header`: Globalny pasek nawigacyjny.
-    -   `FiltersPanel`: Panel z polami filtrów.
-    -   `WorkoutsDataTable`: Interaktywna tabela danych z React, obsługująca sortowanie, paginację i akcje na wierszach.
-    -   `DataTableSkeleton`: Szkielet interfejsu wyświetlany podczas ładowania danych.
-    -   `Welcome`: Komponent dla pustego stanu.
-    -   `AddWorkoutDialog`: Okno modalne z formularzem dodawania treningu.
-    -   `EditWorkoutDialog`: Okno modalne z formularzem edycji treningu.
-    -   `DeleteConfirmationDialog`: Okno dialogowe `AlertDialog` do potwierdzania usunięcia.
--   **UX, dostępność i względy bezpieczeństwa**:
-    -   **UX**: Automatyczna aktualizacja listy po zmianie filtrów (z `debounce`). Kliknięcie całego wiersza przenosi do widoku treningu. Wskaźniki sortowania w nagłówkach kolumn. Czytelne formatowanie dystansu (km) i czasu (HH:MM:SS).
-    -   **Dostępność**: Wykorzystanie komponentów `shadcn/ui` zapewni zgodność z WAI-ARIA (np. dla okien modalnych, przycisków, pól formularzy). Tabela będzie odpowiednio oznaczona dla czytników ekranu.
-    -   **Bezpieczeństwo**: Uwierzytelnianie i autoryzacja są pominięte w MVP. Wszystkie operacje (CRUD) będą wykonywane w kontekście jednego użytkownika.
+- **Nazwa widoku**: Dashboard
+- **Ścieżka widoku**: `/dashboard` (główna strona aplikacji)
+- **Główny cel**: Umożliwienie użytkownikowi przeglądania, filtrowania, sortowania i zarządzania wszystkimi swoimi treningami.
+- **Kluczowe informacje do wyświetlenia**:
+  - Tabela z listą treningów (kolumny: Nazwa, Data, Typ, Dystans, Czas trwania).
+  - Kontrolki do filtrowania (zakres dat, nazwa, typ).
+  - Paginacja dla tabeli.
+  - Komunikat powitalny w przypadku braku treningów.
+- **Kluczowe komponenty widoku**:
+  - `Header`: Globalny pasek nawigacyjny.
+  - `FiltersPanel`: Panel z polami filtrów.
+  - `WorkoutsDataTable`: Interaktywna tabela danych z React, obsługująca sortowanie, paginację i akcje na wierszach.
+  - `DataTableSkeleton`: Szkielet interfejsu wyświetlany podczas ładowania danych.
+  - `Welcome`: Komponent dla pustego stanu.
+  - `AddWorkoutDialog`: Okno modalne z formularzem dodawania treningu.
+  - `EditWorkoutDialog`: Okno modalne z formularzem edycji treningu.
+  - `DeleteConfirmationDialog`: Okno dialogowe `AlertDialog` do potwierdzania usunięcia.
+- **UX, dostępność i względy bezpieczeństwa**:
+  - **UX**: Automatyczna aktualizacja listy po zmianie filtrów (z `debounce`). Kliknięcie całego wiersza przenosi do widoku treningu. Wskaźniki sortowania w nagłówkach kolumn. Czytelne formatowanie dystansu (km) i czasu (HH:MM:SS).
+  - **Dostępność**: Wykorzystanie komponentów `shadcn/ui` zapewni zgodność z WAI-ARIA (np. dla okien modalnych, przycisków, pól formularzy). Tabela będzie odpowiednio oznaczona dla czytników ekranu.
+  - **Bezpieczeństwo**: Uwierzytelnianie i autoryzacja są pominięte w MVP. Wszystkie operacje (CRUD) będą wykonywane w kontekście jednego użytkownika.
 
 ### Widok 2: Widok pojedynczego treningu
 
--   **Nazwa widoku**: Widok pojedynczego treningu
--   **Ścieżka widoku**: `/workouts/[id]`
--   **Główny cel**: Szczegółowa wizualizacja trasy pojedynczego treningu na mapie oraz jego kluczowych statystyk.
--   **Kluczowe informacje do wyświetlenia**:
-    -   Mapa wycentrowana na trasie treningu.
-    -   Narysowana linia trasy.
-    -   Nakładka ze statystykami (dystans, czas trwania).
--   **Kluczowe komponenty widoku**:
-    -   `Header`: Globalny pasek nawigacyjny.
-    -   `Map`: Komponent mapy (Maplibre GL JS) wyświetlający trasę.
-    -   `StatsOverlay`: Nakładka z danymi statystycznymi.
-    -   `BackButton`: Przycisk umożliwiający powrót do listy treningów (`/dashboard`).
--   **UX, dostępność i względy bezpieczeństwa**:
-    -   **UX**: Mapa jest automatycznie przybliżana, aby cała trasa była widoczna. Stan mapy (centrum, zoom) jest zapisywany w `localStorage` i odtwarzany przy ponownym wejściu. Wskaźnik ładowania podczas wczytywania danych trasy.
-    -   **Dostępność**: Przycisk powrotu będzie odpowiednio oznaczony. Mapa będzie posiadać tekst alternatywny.
-    -   **Bezpieczeństwo**: Dostęp do widoku jest publiczny w ramach MVP; w przyszłości będzie chroniony autoryzacją, aby tylko właściciel treningu mógł go zobaczyć.
+- **Nazwa widoku**: Widok pojedynczego treningu
+- **Ścieżka widoku**: `/workouts/[id]`
+- **Główny cel**: Szczegółowa wizualizacja trasy pojedynczego treningu na mapie oraz jego kluczowych statystyk.
+- **Kluczowe informacje do wyświetlenia**:
+  - Mapa wycentrowana na trasie treningu.
+  - Narysowana linia trasy.
+  - Nakładka ze statystykami (dystans, czas trwania).
+- **Kluczowe komponenty widoku**:
+  - `Header`: Globalny pasek nawigacyjny.
+  - `Map`: Komponent mapy (Maplibre GL JS) wyświetlający trasę.
+  - `StatsOverlay`: Nakładka z danymi statystycznymi.
+  - `BackButton`: Przycisk umożliwiający powrót do listy treningów (`/dashboard`).
+- **UX, dostępność i względy bezpieczeństwa**:
+  - **UX**: Mapa jest automatycznie przybliżana, aby cała trasa była widoczna. Stan mapy (centrum, zoom) jest zapisywany w `localStorage` i odtwarzany przy ponownym wejściu. Wskaźnik ładowania podczas wczytywania danych trasy.
+  - **Dostępność**: Przycisk powrotu będzie odpowiednio oznaczony. Mapa będzie posiadać tekst alternatywny.
+  - **Bezpieczeństwo**: Dostęp do widoku jest publiczny w ramach MVP; w przyszłości będzie chroniony autoryzacją, aby tylko właściciel treningu mógł go zobaczyć.
 
 ### Widok 3: Widok Heatmapy
 
--   **Nazwa widoku**: Widok Heatmapy
--   **Ścieżka widoku**: `/heatmap`
--   **Główny cel**: Agregacja i wizualizacja wszystkich tras użytkownika w formie heatmapy w celu identyfikacji najczęściej uczęszczanych obszarów.
--   **Kluczowe informacje do wyświetlenia**:
-    -   Mapa z nałożoną warstwą heatmapy.
-    -   Panel z filtrami (taki sam jak na dashboardzie).
--   **Kluczowe komponenty widoku**:
-    -   `Header`: Globalny pasek nawigacyjny.
-    -   `Map`: Komponent mapy (Maplibre GL JS) wyświetlający warstwę heatmapy.
-    -   `HeatmapFilterPanel`: Zwijany panel z filtrami.
-    -   `RefreshButton`: Przycisk do manualnego odświeżenia danych dla bieżącego widoku mapy.
-    -   `BackButton`: Przycisk umożliwiający powrót do listy treningów (`/dashboard`).
--   **UX, dostępność i względy bezpieczeństwa**:
-    -   **UX**: Użytkownik może trafić tu z dashboardu (z zachowaniem filtrów) lub z menu (z czystymi filtrami). Dane nie odświeżają się automatycznie przy przesuwaniu mapy, co zapobiega nadmiernym zapytaniom do API. Przycisk odświeżania daje użytkownikowi pełną kontrolę.
-    -   **Dostępność**: Panel filtrów będzie zwijany i dostępny z klawiatury. Przyciski będą odpowiednio oznaczone.
-    -   **Bezpieczeństwo**: Dane do heatmapy są pobierane z API, które zapewnia, że pochodzą one wyłącznie od zalogowanego użytkownika.
+- **Nazwa widoku**: Widok Heatmapy
+- **Ścieżka widoku**: `/heatmap`
+- **Główny cel**: Agregacja i wizualizacja wszystkich tras użytkownika w formie heatmapy w celu identyfikacji najczęściej uczęszczanych obszarów.
+- **Kluczowe informacje do wyświetlenia**:
+  - Mapa z nałożoną warstwą heatmapy.
+  - Panel z filtrami (taki sam jak na dashboardzie).
+- **Kluczowe komponenty widoku**:
+  - `Header`: Globalny pasek nawigacyjny.
+  - `Map`: Komponent mapy (Maplibre GL JS) wyświetlający warstwę heatmapy.
+  - `HeatmapFilterPanel`: Zwijany panel z filtrami.
+  - `RefreshButton`: Przycisk do manualnego odświeżenia danych dla bieżącego widoku mapy.
+  - `BackButton`: Przycisk umożliwiający powrót do listy treningów (`/dashboard`).
+- **UX, dostępność i względy bezpieczeństwa**:
+  - **UX**: Użytkownik może trafić tu z dashboardu (z zachowaniem filtrów) lub z menu (z czystymi filtrami). Dane nie odświeżają się automatycznie przy przesuwaniu mapy, co zapobiega nadmiernym zapytaniom do API. Przycisk odświeżania daje użytkownikowi pełną kontrolę.
+  - **Dostępność**: Panel filtrów będzie zwijany i dostępny z klawiatury. Przyciski będą odpowiednio oznaczone.
+  - **Bezpieczeństwo**: Dane do heatmapy są pobierane z API, które zapewnia, że pochodzą one wyłącznie od zalogowanego użytkownika.
 
 ## 3. Mapa podróży użytkownika
 
@@ -98,22 +98,22 @@ Nawigacja między tymi widokami odbywa się za pomocą globalnego paska nawigacy
 
 Nawigacja w aplikacji jest prosta i scentralizowana, oparta na globalnym pasku nawigacyjnym (`Header`), który jest obecny we wszystkich głównych widokach.
 
--   **Główny pasek nawigacyjny**:
-    -   **Linki**: Zawiera bezpośrednie linki do kluczowych widoków:
-        -   `Dashboard` (prowadzi do `/dashboard`)
-        -   `Heatmapa` (prowadzi do `/heatmap`)
-    -   **Globalne akcje**: Umieszczony jest tu przycisk "Dodaj trening", który jest dostępny z każdego miejsca w aplikacji i otwiera modal dodawania.
+- **Główny pasek nawigacyjny**:
+  - **Linki**: Zawiera bezpośrednie linki do kluczowych widoków:
+    - `Dashboard` (prowadzi do `/dashboard`)
+    - `Heatmapa` (prowadzi do `/heatmap`)
+  - **Globalne akcje**: Umieszczony jest tu przycisk "Dodaj trening", który jest dostępny z każdego miejsca w aplikacji i otwiera modal dodawania.
 
--   **Nawigacja kontekstowa**:
-    -   **Z tabeli do szczegółów**: Kliknięcie wiersza w tabeli na `/dashboard` jest podstawowym sposobem nawigacji do widoku pojedynczego treningu (`/workouts/[id]`).
-    -   **Przyciski powrotu**: Widoki szczegółowe (`/workouts/[id]` i `/heatmap`) zawierają przycisk "Wróć do listy", który prowadzi użytkownika z powrotem do `/dashboard`, zamykając cykl nawigacji.
+- **Nawigacja kontekstowa**:
+  - **Z tabeli do szczegółów**: Kliknięcie wiersza w tabeli na `/dashboard` jest podstawowym sposobem nawigacji do widoku pojedynczego treningu (`/workouts/[id]`).
+  - **Przyciski powrotu**: Widoki szczegółowe (`/workouts/[id]` i `/heatmap`) zawierają przycisk "Wróć do listy", który prowadzi użytkownika z powrotem do `/dashboard`, zamykając cykl nawigacji.
 
 ## 5. Kluczowe komponenty
 
--   **`Header`**: Globalny, współdzielony komponent nawigacyjny zawierający linki do głównych widoków i przycisk akcji "Dodaj trening".
--   **`Map` (React)**: Wysoce reużywalny komponent oparty na Maplibre GL JS, zdolny do wyświetlania zarówno pojedynczej trasy (jako linia), jak i zagregowanych danych (jako heatmapa). Odpowiada za zapisywanie stanu widoku w `localStorage`.
--   **`WorkoutsDataTable` (React)**: Sercem dashboardu jest interaktywna tabela, która zarządza wyświetlaniem, sortowaniem i paginacją danych treningowych oraz zawiera menu kontekstowe dla akcji (edycja, usunięcie) na poszczególnych wierszach.
--   **`FiltersPanel` (React)**: Komponent zawierający kontrolki do filtrowania (zakres dat, nazwa, typ), zarządzający stanem filtrów i inicjujący ponowne pobieranie danych.
--   **`AddWorkoutDialog` (React)**: Dedykowany komponent okna modalnego z formularzem do przesyłania nowego pliku GPX i nadawania mu nazwy.
--   **`EditWorkoutDialog` (React)**: Dedykowany komponent okna modalnego z formularzem do edycji metadanych istniejącego treningu (nazwa, data, typ).
--   **`DeleteConfirmationDialog` (React)**: Komponent typu `AlertDialog` (z `shadcn/ui`), zapewniający, że użytkownik świadomie potwierdza nieodwracalną operację usunięcia treningu.
+- **`Header`**: Globalny, współdzielony komponent nawigacyjny zawierający linki do głównych widoków i przycisk akcji "Dodaj trening".
+- **`Map` (React)**: Wysoce reużywalny komponent oparty na Maplibre GL JS, zdolny do wyświetlania zarówno pojedynczej trasy (jako linia), jak i zagregowanych danych (jako heatmapa). Odpowiada za zapisywanie stanu widoku w `localStorage`.
+- **`WorkoutsDataTable` (React)**: Sercem dashboardu jest interaktywna tabela, która zarządza wyświetlaniem, sortowaniem i paginacją danych treningowych oraz zawiera menu kontekstowe dla akcji (edycja, usunięcie) na poszczególnych wierszach.
+- **`FiltersPanel` (React)**: Komponent zawierający kontrolki do filtrowania (zakres dat, nazwa, typ), zarządzający stanem filtrów i inicjujący ponowne pobieranie danych.
+- **`AddWorkoutDialog` (React)**: Dedykowany komponent okna modalnego z formularzem do przesyłania nowego pliku GPX i nadawania mu nazwy.
+- **`EditWorkoutDialog` (React)**: Dedykowany komponent okna modalnego z formularzem do edycji metadanych istniejącego treningu (nazwa, data, typ).
+- **`DeleteConfirmationDialog` (React)**: Komponent typu `AlertDialog` (z `shadcn/ui`), zapewniający, że użytkownik świadomie potwierdza nieodwracalną operację usunięcia treningu.

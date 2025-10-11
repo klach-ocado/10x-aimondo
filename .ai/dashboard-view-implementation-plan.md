@@ -1,13 +1,17 @@
 # Plan implementacji widoku Dashboard
 
 ## 1. Przegląd
+
 Widok Dashboard jest głównym interfejsem aplikacji, dostępnym po zalogowaniu. Jego celem jest umożliwienie użytkownikowi przeglądania, filtrowania, sortowania i zarządzania wszystkimi swoimi treningami. Widok składa się z panelu filtrów, interaktywnej tabeli z listą treningów oraz okien modalnych do dodawania, edycji i usuwania aktywności.
 
 ## 2. Routing widoku
+
 Widok będzie dostępny pod główną ścieżką aplikacji po zalogowaniu:
+
 - **Ścieżka**: `/dashboard`
 
 ## 3. Struktura komponentów
+
 Hierarchia komponentów zostanie zorganizowana w celu oddzielenia odpowiedzialności i zapewnienia reużywalności. Główny komponent React (`DashboardView`) będzie zarządzał stanem i logiką, koordynując pracę komponentów podrzędnych.
 
 ```
@@ -27,6 +31,7 @@ Hierarchia komponentów zostanie zorganizowana w celu oddzielenia odpowiedzialno
 ## 4. Szczegóły komponentów
 
 ### `DashboardView` (React)
+
 - **Opis**: Główny komponent-kontener, który zarządza całym stanem widoku dashboardu za pomocą hooka `useWorkoutsDashboard`. Odpowiada za renderowanie komponentów podrzędnych oraz kontrolowanie widoczności okien modalnych.
 - **Główne elementy**: `FiltersPanel`, `WorkoutsDataTable`, `Welcome` (warunkowo), `AddWorkoutDialog`, `EditWorkoutDialog`, `DeleteConfirmationDialog`.
 - **Obsługiwane interakcje**: Zarządza stanem otwarcia okien modalnych (np. które okno jest otwarte i z jakimi danymi).
@@ -34,6 +39,7 @@ Hierarchia komponentów zostanie zorganizowana w celu oddzielenia odpowiedzialno
 - **Propsy**: Brak.
 
 ### `FiltersPanel` (React)
+
 - **Opis**: Panel zawierający kontrolki do filtrowania listy treningów. Zmiany w polach są zbierane i emitowane (z debouncingiem) do komponentu nadrzędnego.
 - **Główne elementy**: `Input` (shadcn/ui) dla nazwy i typu, `DatePicker` (shadcn/ui) z opcją wyboru zakresu dat, `Button` (shadcn/ui) do nawigacji do widoku heatmapy.
 - **Obsługiwane interakcje**: Wprowadzanie tekstu w polach, wybór dat.
@@ -45,6 +51,7 @@ Hierarchia komponentów zostanie zorganizowana w celu oddzielenia odpowiedzialno
   - `disabled: boolean`
 
 ### `WorkoutsDataTable` (React)
+
 - **Opis**: Interaktywna tabela danych (oparta na `DataTable` z shadcn/ui) wyświetlająca listę treningów. Obsługuje sortowanie, paginację oraz akcje na wierszach (edycja, usunięcie).
 - **Główne elementy**: `Table`, `TableHeader`, `TableRow`, `TableCell`, `DropdownMenu` (dla akcji), `DataTablePagination`. W stanie ładowania wyświetla komponent `DataTableSkeleton`.
 - **Obsługiwane interakcje**: Kliknięcie nagłówka kolumny (sortowanie), zmiana strony (paginacja), wybór "Edytuj" lub "Usuń" z menu kontekstowego wiersza, kliknięcie wiersza (nawigacja).
@@ -60,6 +67,7 @@ Hierarchia komponentów zostanie zorganizowana w celu oddzielenia odpowiedzialno
   - `onDelete: (workout: WorkoutListItemDto) => void`
 
 ### `AddWorkoutDialog` (React)
+
 - **Opis**: Okno modalne z formularzem do dodawania nowego treningu poprzez wgranie pliku GPX.
 - **Główne elementy**: `Dialog`, `DialogContent`, `form`, `Input` (dla nazwy), `Input type="file"` (dla pliku GPX), `Button type="submit"`.
 - **Obsługiwane interakcje**: Wypełnianie formularza, wybór pliku, zatwierdzenie.
@@ -74,6 +82,7 @@ Hierarchia komponentów zostanie zorganizowana w celu oddzielenia odpowiedzialno
   - `onSuccess: () => void`
 
 ### `EditWorkoutDialog` (React)
+
 - **Opis**: Okno modalne z formularzem do edycji metadanych istniejącego treningu.
 - **Główne elementy**: `Dialog`, `DialogContent`, `form`, `Input` (dla nazwy i typu), `DatePicker` (dla daty), `Button type="submit"`.
 - **Obsługiwane interakcje**: Modyfikacja danych w formularzu, zatwierdzenie.
@@ -90,6 +99,7 @@ Hierarchia komponentów zostanie zorganizowana w celu oddzielenia odpowiedzialno
   - `onSuccess: () => void`
 
 ### `DeleteConfirmationDialog` (React)
+
 - **Opis**: Okno dialogowe typu `AlertDialog` z prośbą o potwierdzenie usunięcia treningu.
 - **Główne elementy**: `AlertDialog`, `AlertDialogContent`, `AlertDialogTitle`, `AlertDialogDescription`, `AlertDialogAction` (Potwierdź), `AlertDialogCancel`.
 - **Obsługiwane interakcje**: Potwierdzenie lub anulowanie operacji.
@@ -102,6 +112,7 @@ Hierarchia komponentów zostanie zorganizowana w celu oddzielenia odpowiedzialno
   - `onConfirm: () => void`
 
 ## 5. Typy
+
 Oprócz typów DTO z `src/types.ts`, widok będzie korzystał z następujących typów ViewModel do zarządzania stanem formularzy i filtrów.
 
 ```typescript
@@ -116,7 +127,7 @@ interface WorkoutFilters {
 // Typ dla stanu sortowania tabeli
 interface WorkoutSort {
   sortBy: string;
-  order: 'asc' | 'desc';
+  order: "asc" | "desc";
 }
 
 // Typ dla stanu formularza dodawania treningu
@@ -134,9 +145,11 @@ interface EditWorkoutForm {
 ```
 
 ## 6. Zarządzanie stanem
+
 Logika biznesowa i stan widoku zostaną scentralizowane w niestandardowym hooku `useWorkoutsDashboard`. Takie podejście upraszcza komponent `DashboardView` i hermetyzuje logikę pobierania danych, filtrowania, paginacji oraz operacji CRUD.
 
 **`useWorkoutsDashboard.ts`**:
+
 - **Stan**: Zarządza stanami `workouts`, `pagination`, `filters`, `sort`, `page`, `isLoading`, `error`.
 - **Funkcje**: Udostępnia metody do modyfikacji stanu i interakcji z API:
   - `setFilters`: Aktualizuje filtry i (z debouncingiem) odświeża dane.
@@ -149,6 +162,7 @@ Logika biznesowa i stan widoku zostaną scentralizowane w niestandardowym hooku 
 - **Logika**: Używa `useEffect` do automatycznego pobierania danych, gdy zależności (`filters`, `sort`, `page`) się zmieniają.
 
 ## 7. Integracja API
+
 Integracja z backendem będzie realizowana poprzez wywołania `fetch` do endpointów API zdefiniowanych w `api-plan.md`.
 
 - **`GET /api/workouts`**:
@@ -165,6 +179,7 @@ Integracja z backendem będzie realizowana poprzez wywołania `fetch` do endpoin
   - **Odpowiedź**: `204 No Content`. Po sukcesie lista jest odświeżana.
 
 ## 8. Interakcje użytkownika
+
 - **Filtrowanie**: Użytkownik wpisuje tekst lub wybiera daty w `FiltersPanel`. Po 500ms bezczynności, wywoływane jest zapytanie do API z nowymi filtrami.
 - **Sortowanie**: Użytkownik klika na nagłówek kolumny w `WorkoutsDataTable`, co zmienia kierunek sortowania i odświeża dane.
 - **Paginacja**: Użytkownik klika przyciski paginacji, co zmienia numer strony i odświeża dane.
@@ -174,6 +189,7 @@ Integracja z backendem będzie realizowana poprzez wywołania `fetch` do endpoin
 - **Nawigacja do szczegółów**: Kliknięcie dowolnego miejsca w wierszu tabeli (poza menu akcji) przenosi użytkownika na stronę `/workouts/[id]`.
 
 ## 9. Warunki i walidacja
+
 - **Formularz dodawania**:
   - `name`: Sprawdzanie długości (3-300) po stronie klienta (np. z użyciem `zod` i `react-hook-form`).
   - `gpxFile`: Sprawdzanie obecności pliku, rozszerzenia `.gpx` i rozmiaru (< 5MB) po stronie klienta.
@@ -184,12 +200,14 @@ Integracja z backendem będzie realizowana poprzez wywołania `fetch` do endpoin
 - **Interfejs**: Przyciski "Zapisz" w formularzach są nieaktywne (`disabled`), dopóki formularz nie jest poprawny. Podczas wysyłania danych przyciski również są nieaktywne, a obok nich wyświetlany jest wskaźnik ładowania.
 
 ## 10. Obsługa błędów
+
 - **Błędy sieciowe/API**: W przypadku nieudanego pobrania listy treningów, w miejscu tabeli wyświetlany jest komunikat o błędzie.
 - **Błędy walidacji (400)**: Błędy zwrócone przez API podczas dodawania/edycji są przechwytywane i wyświetlane pod odpowiednimi polami w formularzu.
 - **Błędy serwera (500) / inne**: W oknach modalnych oraz przy operacji usuwania, w przypadku błędu wyświetlany jest ogólny komunikat o niepowodzeniu operacji (np. w formie komponentu `Toast`).
 - **Błędy autoryzacji (401)**: Globalny mechanizm obsługi `fetch` powinien przechwytywać błędy 401 i przekierowywać użytkownika do strony logowania.
 
 ## 11. Kroki implementacji
+
 1.  Utworzenie pliku strony `/src/pages/dashboard.astro` i osadzenie w nim pustego komponentu React `DashboardView.tsx` z `client:load`.
 2.  Implementacja szkieletu komponentu `DashboardView`, w tym podstawowej struktury z nagłówkiem i miejscem na przyszłe komponenty.
 3.  Stworzenie hooka `useWorkoutsDashboard` z logiką pobierania danych (`GET /api/workouts`), zarządzaniem stanem `isLoading` i `error`.

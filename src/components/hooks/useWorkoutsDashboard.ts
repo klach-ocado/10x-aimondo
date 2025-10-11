@@ -24,13 +24,13 @@ export function useWorkoutsDashboard() {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<WorkoutFilters>({});
   const [sort, setSort] = useState<WorkoutSort>({ sortBy: "date", order: "desc" });
-  
+
   const [debouncedFilters, setDebouncedFilters] = useState<WorkoutFilters>({});
 
   const clearAllFilters = () => {
     setFilters({});
     setPage(1);
-    setSort({ sortBy: 'date', order: 'desc' });
+    setSort({ sortBy: "date", order: "desc" });
   };
 
   useEffect(() => {
@@ -77,59 +77,59 @@ export function useWorkoutsDashboard() {
   const updateWorkout = async (id: string, data: UpdateWorkoutCommand) => {
     try {
       const response = await fetch(`/api/workouts/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Failed to update workout.' }));
-        return { success: false, error: errorData.message || 'An unknown error occurred.' };
+        const errorData = await response.json().catch(() => ({ message: "Failed to update workout." }));
+        return { success: false, error: errorData.message || "An unknown error occurred." };
       }
 
       await fetchWorkouts();
       return { success: true };
     } catch (e) {
-      return { success: false, error: e instanceof Error ? e.message : 'An unknown error occurred.' };
+      return { success: false, error: e instanceof Error ? e.message : "An unknown error occurred." };
     }
   };
 
   const deleteWorkout = async (id: string) => {
     try {
       const response = await fetch(`/api/workouts/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.status !== 204) {
-        const errorData = await response.json().catch(() => ({ message: 'Failed to delete workout.' }));
-        return { success: false, error: errorData.message || 'An unknown error occurred.' };
+        const errorData = await response.json().catch(() => ({ message: "Failed to delete workout." }));
+        return { success: false, error: errorData.message || "An unknown error occurred." };
       }
 
       await fetchWorkouts();
       return { success: true };
     } catch (e) {
-      return { success: false, error: e instanceof Error ? e.message : 'An unknown error occurred.' };
+      return { success: false, error: e instanceof Error ? e.message : "An unknown error occurred." };
     }
   };
 
   const addWorkout = async (data: FormData) => {
     try {
       const response = await fetch(`/api/workouts`, {
-        method: 'POST',
+        method: "POST",
         body: data,
       });
 
       if (response.status !== 201) {
-        const errorData = await response.json().catch(() => ({ message: 'Failed to add workout.' }));
-        return { success: false, error: errorData.message || 'An unknown error occurred.' };
+        const errorData = await response.json().catch(() => ({ message: "Failed to add workout." }));
+        return { success: false, error: errorData.message || "An unknown error occurred." };
       }
 
       await fetchWorkouts();
       return { success: true };
     } catch (e) {
-      return { success: false, error: e instanceof Error ? e.message : 'An unknown error occurred.' };
+      return { success: false, error: e instanceof Error ? e.message : "An unknown error occurred." };
     }
   };
 

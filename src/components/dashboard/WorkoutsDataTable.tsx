@@ -5,14 +5,15 @@ import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 import { DataTablePagination } from "./DataTablePagination";
 import type { Pagination, WorkoutListItemDto } from "@/types";
 import type { WorkoutSort } from "../hooks/useWorkoutsDashboard";
-import {Button} from "@/components/ui/button.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import {
   DropdownMenu,
-  DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx";
 
 interface WorkoutsDataTableProps {
   data: WorkoutListItemDto[];
@@ -33,9 +34,7 @@ export function WorkoutsDataTable({
   onEdit,
   onDelete,
 }: WorkoutsDataTableProps) {
-  const [sorting, setSorting] = React.useState<SortingState>([
-    { id: sort.sortBy, desc: sort.order === "desc" },
-  ]);
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: sort.sortBy, desc: sort.order === "desc" }]);
   const [rowSelection, setRowSelection] = React.useState({});
 
   const columns: ColumnDef<WorkoutListItemDto>[] = [
@@ -45,11 +44,14 @@ export function WorkoutsDataTable({
         return (
           <Button
             variant="ghost"
-            onClick={() => onSortChange({ sortBy: 'name', order: sort.sortBy === 'name' && sort.order === 'asc' ? 'desc' : 'asc' })}          >
+            onClick={() =>
+              onSortChange({ sortBy: "name", order: sort.sortBy === "name" && sort.order === "asc" ? "desc" : "asc" })
+            }
+          >
             Name
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        )
+        );
       },
     },
     {
@@ -62,11 +64,14 @@ export function WorkoutsDataTable({
         return (
           <Button
             variant="ghost"
-            onClick={() => onSortChange({ sortBy: 'date', order: sort.sortBy === 'date' && sort.order === 'asc' ? 'desc' : 'asc' })}          >
+            onClick={() =>
+              onSortChange({ sortBy: "date", order: sort.sortBy === "date" && sort.order === "asc" ? "desc" : "asc" })
+            }
+          >
             Date
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        )
+        );
       },
       cell: ({ row }) => new Date(row.getValue("date")).toLocaleDateString(),
     },
@@ -95,7 +100,9 @@ export function WorkoutsDataTable({
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => onEdit(workout)}>Edit</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(workout)} className="text-red-600">Delete</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onDelete(workout)} className="text-red-600">
+                Delete
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -125,41 +132,39 @@ export function WorkoutsDataTable({
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
               </TableRow>
             ))}
           </TableHeader>
-                    <TableBody>
-                      {table.getRowModel().rows?.length ? (
-                        table.getRowModel().rows.map((row) => (
-                          <TableRow
-                            key={row.id}
-                            data-state={row.getIsSelected() && "selected"}
-                            className="cursor-pointer"
-                            onClick={() => {
-                              window.location.href = `/workouts/${row.original.id}`;
-                            }}
-                          >
-                            {row.getVisibleCells().map((cell) => (
-                              <TableCell
-                                key={cell.id}
-                                onClick={(e) => {
-                                  if (cell.column.id === "actions") {
-                                    e.stopPropagation();
-                                  }
-                                }}
-                              >
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                              </TableCell>
-                            ))}
-                          </TableRow>
-                        ))
-                      ) : (
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    window.location.href = `/workouts/${row.original.id}`;
+                  }}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      onClick={(e) => {
+                        if (cell.column.id === "actions") {
+                          e.stopPropagation();
+                        }
+                      }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.

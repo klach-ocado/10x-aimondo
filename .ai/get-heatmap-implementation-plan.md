@@ -1,9 +1,11 @@
 # API Endpoint Implementation Plan: Get Heatmap Data
 
 ## 1. Przegląd punktu końcowego
+
 Celem tego punktu końcowego jest dostarczenie danych do generowania mapy cieplnej (heatmap) na podstawie aktywności użytkownika. Endpoint `GET /api/heatmap` pobiera losową próbkę do 10 000 punktów geograficznych (`track_points`) z obszaru widocznego na mapie, uwzględniając aktywne filtry. Zapewnia to wysoką wydajność przy jednoczesnym zachowaniu reprezentatywności wizualizacji.
 
 ## 2. Szczegóły żądania
+
 - **Metoda HTTP**: `GET`
 - **Struktura URL**: `/api/heatmap`
 - **Parametry Zapytania (Query Parameters)**:
@@ -40,6 +42,7 @@ Celem tego punktu końcowego jest dostarczenie danych do generowania mapy ciepln
   ```
 
 ## 4. Szczegóły odpowiedzi
+
 - **Odpowiedź sukcesu (200 OK)**:
   ```json
   {
@@ -55,6 +58,7 @@ Celem tego punktu końcowego jest dostarczenie danych do generowania mapy ciepln
   - `500 Internal Server Error`: Wewnętrzny błąd serwera (np. błąd bazy danych).
 
 ## 5. Przepływ danych
+
 1.  Żądanie `GET` trafia do endpointu `/api/heatmap`.
 2.  Middleware Astro weryfikuje sesję użytkownika. Jeśli użytkownik nie jest zalogowany, zwraca `401 Unauthorized`.
 3.  Handler endpointu w `src/pages/api/heatmap.ts` używa schemy `zod` do walidacji i parsowania parametrów zapytania.
@@ -73,22 +77,26 @@ Celem tego punktu końcowego jest dostarczenie danych do generowania mapy ciepln
 10. Handler zwraca odpowiedź `200 OK` z danymi w formacie `HeatmapDto`.
 
 ## 6. Względy bezpieczeństwa
+
 - **Uwierzytelnianie**: Dostęp do endpointu jest chroniony przez middleware Astro, który sprawdza, czy użytkownik jest zalogowany.
 - **Autoryzacja**: Polityki Row-Level Security (RLS) w Supabase na tabeli `workouts` zapewniają, że zapytanie zwróci tylko punkty należące do treningów aktualnie zalogowanego użytkownika. Jest to kluczowe dla izolacji danych.
 - **Walidacja danych**: Użycie `zod` do walidacji wszystkich danych wejściowych z zapytania chroni przed nieoczekiwanymi formatami danych.
 - **SQL Injection**: Zastosowanie `rpc()` z Supabase SDK z parametryzacją zapytania zapobiega atakom typu SQL Injection.
 
 ## 7. Obsługa błędów
+
 - **400 Bad Request**: Zwracany, gdy walidacja `zod` nie powiedzie się (np. brak `bbox`, nieprawidłowy format `bbox` lub dat). Odpowiedź będzie zawierać szczegóły błędu walidacji.
 - **401 Unauthorized**: Zwracany przez middleware, jeśli brak aktywnej sesji użytkownika.
 - **500 Internal Server Error**: Zwracany w bloku `try...catch`, gdy wystąpi błąd podczas komunikacji z bazą danych lub inny nieprzewidziany błąd serwera. Błąd zostanie zalogowany po stronie serwera.
 
 ## 8. Rozważania dotyczące wydajności
+
 - **Próbkowanie danych**: Ograniczenie liczby punktów do 10 000 za pomocą `TABLESAMPLE SYSTEM` jest kluczowe dla utrzymania niskiego czasu odpowiedzi i zmniejszenia obciążenia klienta.
 - **Indeksy bazy danych**: Wydajność zapytania zależy od istnienia przestrzennego indeksu GiST na kolumnie `track_points.location`.
 - **Przeniesienie logiki do bazy danych**: Zaimplementowanie logiki w funkcji PostgreSQL i wywołanie jej przez `rpc()` minimalizuje liczbę zapytań i transfer danych między aplikacją a bazą danych.
 
 ## 9. Etapy wdrożenia
+
 1.  **Baza danych**:
     - Stworzyć nową funkcję w PostgreSQL o nazwie `get_heatmap_points`.
     - Funkcja ta będzie przyjmować parametry: `user_id`, `min_lng`, `min_lat`, `max_lng`, `max_lat` oraz opcjonalne filtry.
@@ -104,13 +112,13 @@ Celem tego punktu końcowego jest dostarczenie danych do generowania mapy ciepln
     - Zdefiniować `export const prerender = false;`.
     - Stworzyć schemę walidacji `zod` dla parametrów zapytania, w tym transformację `bbox` na osobne wartości liczbowe.
     - Zaimplementować handler `GET`, który:
-        a. Pobiera `supabase` i `session` z `context.locals`.
-        b. Sprawdza, czy sesja istnieje.
-        c. Waliduje parametry zapytania.
-        d. Tworzy `GetHeatmapDataCommand`.
-        e. Wywołuje `workoutService.getHeatmapData()`.
-        f. Obsługuje błędy i zwraca odpowiednie kody statusu.
-        g. Zwraca dane w przypadku sukcesu.
+      a. Pobiera `supabase` i `session` z `context.locals`.
+      b. Sprawdza, czy sesja istnieje.
+      c. Waliduje parametry zapytania.
+      d. Tworzy `GetHeatmapDataCommand`.
+      e. Wywołuje `workoutService.getHeatmapData()`.
+      f. Obsługuje błędy i zwraca odpowiednie kody statusu.
+      g. Zwraca dane w przypadku sukcesu.
 5.  **Testowanie**:
     - Dodać testy jednostkowe dla serwisu (jeśli dotyczy).
     - Przeprowadzić testy manualne lub automatyczne (end-to-end) w celu weryfikacji poprawności działania endpointu, obsługi błędów i wydajności.

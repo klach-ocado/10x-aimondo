@@ -6,12 +6,8 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle
-} from "@/components/ui/dialog";
-import {
-  Form, FormControl, FormField, FormItem, FormLabel, FormMessage
-} from "@/components/ui/form";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -22,10 +18,7 @@ const formSchema = z.object({
     .custom<FileList>()
     .refine((files) => files?.length === 1, "GPX file is required.")
     .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
-    .refine(
-      (files) => files?.[0]?.name.toLowerCase().endsWith(".gpx"),
-      ".gpx file format is required."
-    ),
+    .refine((files) => files?.[0]?.name.toLowerCase().endsWith(".gpx"), ".gpx file format is required."),
 });
 
 interface AddWorkoutDialogProps {
@@ -63,9 +56,7 @@ export function AddWorkoutDialog({ isOpen, onOpenChange, onSuccess }: AddWorkout
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add New Workout</DialogTitle>
-          <DialogDescription>
-            Upload a GPX file to add a new workout to your list.
-          </DialogDescription>
+          <DialogDescription>Upload a GPX file to add a new workout to your list.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -96,7 +87,7 @@ export function AddWorkoutDialog({ isOpen, onOpenChange, onSuccess }: AddWorkout
               )}
             />
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} 
+              {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Add Workout
             </Button>
           </form>
