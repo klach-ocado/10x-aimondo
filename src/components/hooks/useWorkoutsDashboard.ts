@@ -1,0 +1,88 @@
+import { useState, useEffect, useCallback } from "react";
+import type { PaginatedWorkoutsDto, WorkoutListItemDto, Pagination } from "@/types";
+
+export interface WorkoutFilters {
+  name?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  type?: string;
+}
+
+export interface WorkoutSort {
+  sortBy: string;
+  order: "asc" | "desc";
+}
+
+const DEBOUNCE_DELAY = 500;
+
+export function useWorkoutsDashboard() {
+  const [workouts, setWorkouts] = useState<WorkoutListItemDto[]>([]);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState<WorkoutFilters>({});
+  const [sort, setSort] = useState<WorkoutSort>({ sortBy: "date", order: "desc" });
+  
+  const [debouncedFilters, setDebouncedFilters] = useState<WorkoutFilters>({});
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedFilters(filters);
+    }, DEBOUNCE_DELAY);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [filters]);
+
+  const fetchWorkouts = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams();
+      params.append("page", String(page));
+      params.append("limit", "10");
+      params.append("sortBy", sort.sortBy);
+      params.append("order", sort.order);
+
+      if (debouncedFilters.name) params.append("name", debouncedFilters.name);
+      if (debouncedFilters.type) params.append("type", debouncedFilters.type);
+      if (debouncedFilters.dateFrom) params.append("dateFrom", debouncedFilters.dateFrom);
+      if (debouncedFilters.dateTo) params.append("dateTo", debouncedFilters.dateTo);
+
+      const response = await fetch(`/api/workouts?${params.toString()}`);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: "Failed to fetch workouts" }));
+        throw new Error(errorData.message || "Failed to fetch workouts");
+      }
+
+      const result: PaginatedWorkoutsDto = await response.json();
+      setWorkouts(result.data);
+      setPagination(result.pagination);
+    } catch (e) {
+      setError(e instanceof Error ? e : new Error("An unknown error occurred"));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page, sort, debouncedFilters]);
+
+  useEffect(() => {
+    fetchWorkouts();
+  }, [fetchWorkouts]);
+
+  return {
+    workouts,
+    pagination,
+    isLoading,
+    error,
+    filters,
+    sort,
+    page,
+    setFilters,
+    setSort,
+    setPage,
+    refresh: fetchWorkouts,
+  };
+}
