@@ -131,7 +131,7 @@ export async function PUT(context: APIContext): Promise<Response> {
   let requestBody;
   try {
     requestBody = await request.json();
-  } catch (e) {
+  } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },

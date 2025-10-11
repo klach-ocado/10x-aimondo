@@ -155,7 +155,7 @@ export const WorkoutUpdateSchema = z.object({
     if (typeof arg == "string") {
       try {
         return new Date(arg).toISOString();
-      } catch (error) {
+      } catch {
         return arg; // Return original arg if parsing fails
       }
     }

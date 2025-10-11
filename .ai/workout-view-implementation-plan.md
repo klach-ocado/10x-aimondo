@@ -1,15 +1,18 @@
 # Plan implementacji widoku: Widok pojedynczego treningu
 
 ## 1. Przegląd
+
 Widok pojedynczego treningu ma na celu szczegółową prezentację jednej aktywności użytkownika. Centralnym elementem jest interaktywna mapa, na której wizualizowana jest trasa treningu. Uzupełnieniem są kluczowe statystyki, takie jak dystans i czas trwania. Widok ten stanowi końcowy element w ścieżce użytkownika, który po przejrzeniu listy swoich treningów, chce zagłębić się w szczegóły jednego z nich.
 
 ## 2. Routing widoku
+
 Widok będzie dostępny pod dynamiczną ścieżką, która zawiera identyfikator konkretnego treningu.
 
 - **Ścieżka**: `/workouts/[id]`
 - **Plik implementujący**: `src/pages/workouts/[id].astro`
 
 ## 3. Struktura komponentów
+
 Hierarchia komponentów zapewni separację odpowiedzialności, gdzie strona Astro odpowiada za routing i układ, a komponenty React za interaktywność i renderowanie danych.
 
 ```
@@ -27,6 +30,7 @@ Hierarchia komponentów zapewni separację odpowiedzialności, gdzie strona Astr
 ## 4. Szczegóły komponentów
 
 ### `src/pages/workouts/[id].astro`
+
 - **Opis komponentu**: Strona Astro, która obsługuje dynamiczny routing. Jej zadaniem jest pobranie `id` treningu z adresu URL i przekazanie go jako prop do głównego komponentu React.
 - **Główne elementy**:
   - Komponent `<Layout>` jako główna struktura strony.
@@ -36,6 +40,7 @@ Hierarchia komponentów zapewni separację odpowiedzialności, gdzie strona Astr
   - `workoutId: string` - ID treningu pobrane z `Astro.params.id`.
 
 ### `WorkoutView.tsx`
+
 - **Opis komponentu**: Główny komponent React, który orkiestruje pobieranie danych, zarządzanie stanem (ładowanie, błąd, dane) i renderowanie komponentów podrzędnych (`Map`, `StatsOverlay`).
 - **Główne elementy**:
   - Logika do wyświetlania stanu ładowania (np. komponent `Skeleton` lub `Spinner`).
@@ -47,6 +52,7 @@ Hierarchia komponentów zapewni separację odpowiedzialności, gdzie strona Astr
   - `workoutId: string`
 
 ### `Map.tsx`
+
 - **Opis komponentu**: Reużywalny komponent do wyświetlania mapy za pomocą Maplibre GL JS. W tym widoku jego zadaniem jest narysowanie trasy treningu jako linii.
 - **Dostawca map**: Mapy będą dostarczane przez openfreemap.org ze stylem "bright".
 - **Główne elementy**:
@@ -62,6 +68,7 @@ Hierarchia komponentów zapewni separację odpowiedzialności, gdzie strona Astr
   - `initialViewState: { center: [number, number]; zoom: number } | null`
 
 ### `StatsOverlay.tsx`
+
 - **Opis komponentu**: Prosty komponent do wyświetlania sformatowanych statystyk treningu.
 - **Główne elementy**:
   - Elementy `div` lub `p` do wyświetlania etykiet i wartości.
@@ -73,6 +80,7 @@ Hierarchia komponentów zapewni separację odpowiedzialności, gdzie strona Astr
   - `duration: number`
 
 ### `BackButton.astro`
+
 - **Opis komponentu**: Prosty przycisk lub link, który nawiguje użytkownika z powrotem do strony głównej.
 - **Główne elementy**:
   - Link `<a>` z atrybutem `href="/dashboard"`.
@@ -82,7 +90,9 @@ Hierarchia komponentów zapewni separację odpowiedzialności, gdzie strona Astr
 ## 5. Typy
 
 ### `TrackPointDTO`
+
 Reprezentuje pojedynczy punkt na trasie treningu.
+
 ```typescript
 interface TrackPointDTO {
   lat: number;
@@ -93,7 +103,9 @@ interface TrackPointDTO {
 ```
 
 ### `WorkoutWithTrackDTO`
+
 Główny obiekt transferu danych (DTO) dla widoku pojedynczego treningu, zawierający wszystkie niezbędne informacje.
+
 ```typescript
 interface WorkoutWithTrackDTO {
   id: string;
@@ -107,9 +119,11 @@ interface WorkoutWithTrackDTO {
 ```
 
 ## 6. Zarządzanie stanem
+
 Zarządzanie stanem zostanie wyizolowane w dedykowanym customowym hooku, aby utrzymać komponent `WorkoutView` w czystości.
 
 ### `useWorkoutView(workoutId: string)`
+
 - **Cel**: Enkapsulacja logiki pobierania danych, obsługi stanu ładowania i błędów dla widoku pojedynczego treningu.
 - **Zwracane wartości**:
   ```typescript
@@ -131,6 +145,7 @@ Zarządzanie stanem zostanie wyizolowane w dedykowanym customowym hooku, aby utr
     - W bloku `catch` obsługuje błędy sieciowe, aktualizując stan `error`.
 
 ## 7. Integracja API
+
 Integracja opiera się na wywołaniu jednego punktu końcowego API.
 
 - **Endpoint**: `GET /api/workouts/[id]`
@@ -145,6 +160,7 @@ Integracja opiera się na wywołaniu jednego punktu końcowego API.
   ```
 
 ## 8. Interakcje użytkownika
+
 - **Wejście na stronę**:
   - Użytkownik wchodzi na `/workouts/[id]`.
   - Komponent `WorkoutView` jest renderowany, `useWorkoutView` jest inicjalizowany.
@@ -158,16 +174,19 @@ Integracja opiera się na wywołaniu jednego punktu końcowego API.
   - Po zakończeniu ruchu (`moveend`/`zoomend`), nowa pozycja i zoom są zapisywane w `localStorage`.
 
 ## 9. Warunki i walidacja
+
 - **Warunek**: Poprawny identyfikator UUID treningu musi być obecny w ścieżce URL.
 - **Walidacja**: Walidacja po stronie klienta nie jest konieczna. Interfejs musi być przygotowany na obsługę odpowiedzi błędu `404 Not Found` z API, co oznacza, że podany `id` nie istnieje lub użytkownik nie ma do niego dostępu. W takim przypadku komponent `WorkoutView` powinien wyświetlić odpowiedni komunikat o błędzie.
 
 ## 10. Obsługa błędów
+
 - **Trening nie znaleziony (404)**: Hook `useWorkoutView` ustawi stan `error`. Komponent `WorkoutView` wyświetli komunikat, np. "Nie znaleziono treningu o podanym identyfikatorze." oraz przycisk powrotu.
 - **Błąd serwera (500)**: Hook `useWorkoutView` ustawi stan `error`. Komponent `WorkoutView` wyświetli ogólny komunikat, np. "Wystąpił błąd serwera. Spróbuj ponownie później."
 - **Błąd sieci**: Blok `catch` w logice `fetch` ustawi stan `error`. Komponent `WorkoutView` wyświetli komunikat o problemie z połączeniem.
 - **Brak punktów trasy**: Jeśli API zwróci trening z pustą tablicą `track_points`, mapa powinna wyświetlić komunikat "Brak danych o trasie", a statystyki mogą być normalnie wyświetlone.
 
 ## 11. Kroki implementacji
+
 1.  **Stworzenie strony Astro**: Utworzyć plik `src/pages/workouts/[id].astro`. Wewnątrz pobrać `id` z `Astro.params` i przekazać go do komponentu React.
 2.  **Stworzenie komponentu `WorkoutView.tsx`**: Utworzyć plik `src/components/WorkoutView.tsx`. Dodać podstawową strukturę i przyjąć `workoutId` jako prop.
 3.  **Implementacja hooka `useWorkoutView`**: W osobnym pliku (np. `src/components/hooks/useWorkoutView.ts`) zaimplementować logikę pobierania danych, zarządzania stanem ładowania i błędów.

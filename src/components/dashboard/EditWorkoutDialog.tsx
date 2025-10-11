@@ -68,7 +68,7 @@ export function EditWorkoutDialog({ workout, isOpen, onOpenChange, onSuccess }: 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit Workout</DialogTitle>
-          <DialogDescription>Make changes to your workout here. Click save when you're done.</DialogDescription>
+          <DialogDescription>Make changes to your workout here. Click save when you&apos;re done.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

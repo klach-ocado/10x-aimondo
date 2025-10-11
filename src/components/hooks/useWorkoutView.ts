@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import type { WorkoutDetailsDto } from '@/types';
+import { useState, useEffect } from "react";
+import type { WorkoutDetailsDto } from "@/types";
 
 export const useWorkoutView = (workoutId: string) => {
   const [workout, setWorkout] = useState<WorkoutDetailsDto | null>(null);
@@ -19,7 +19,7 @@ export const useWorkoutView = (workoutId: string) => {
         const data: WorkoutDetailsDto = await response.json();
         setWorkout(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
       } finally {
         setIsLoading(false);
       }

@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { useHeatmap } from './hooks/useHeatmap';
-import { HeatmapFilterPanel } from './heatmap/HeatmapFilterPanel';
-import Map from './Map';
-import RefreshButton from './heatmap/RefreshButton';
-import BackButton from './heatmap/BackButton';
-import { Toaster, toast } from 'sonner';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal } from 'lucide-react';
+import React, { useEffect } from "react";
+import { useHeatmap } from "./hooks/useHeatmap";
+import { HeatmapFilterPanel } from "./heatmap/HeatmapFilterPanel";
+import Map from "./Map";
+import RefreshButton from "./heatmap/RefreshButton";
+import BackButton from "./heatmap/BackButton";
+import { Toaster, toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
 
 const HeatmapView = () => {
   const {
@@ -31,7 +31,7 @@ const HeatmapView = () => {
   }, [error, clearError]);
 
   const handleBack = () => {
-    window.location.href = '/dashboard';
+    window.location.href = "/dashboard";
   };
 
   return (
@@ -46,23 +46,17 @@ const HeatmapView = () => {
       </header>
 
       <div className="p-4">
-        <HeatmapFilterPanel
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          isDisabled={isLoading}
-        />
+        <HeatmapFilterPanel filters={filters} onFiltersChange={handleFiltersChange} isDisabled={isLoading} />
       </div>
 
       {error && !heatmapData && (
-          <div className="p-4">
-              <Alert variant="destructive">
-                  <Terminal className="h-4 w-4" />
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>
-                      {error.message}
-                  </AlertDescription>
-              </Alert>
-          </div>
+        <div className="p-4">
+          <Alert variant="destructive">
+            <Terminal className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
+        </div>
       )}
 
       <div className="flex-grow p-4">

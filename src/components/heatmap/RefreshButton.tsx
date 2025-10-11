@@ -10,7 +10,7 @@ interface RefreshButtonProps {
 const RefreshButton: React.FC<RefreshButtonProps> = ({ onClick, isDisabled }) => {
   return (
     <Button onClick={onClick} disabled={isDisabled}>
-      <RefreshCw className={`mr-2 h-4 w-4 ${isDisabled ? 'animate-spin' : ''}`} />
+      <RefreshCw className={`mr-2 h-4 w-4 ${isDisabled ? "animate-spin" : ""}`} />
       Refresh Data
     </Button>
   );

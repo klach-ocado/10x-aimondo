@@ -35,12 +35,12 @@ export function WorkoutsDataTable({
   onDelete,
 }: WorkoutsDataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([{ id: sort.sortBy, desc: sort.order === "desc" }]);
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [rowSelection] = React.useState({});
 
   const columns: ColumnDef<WorkoutListItemDto>[] = [
     {
       accessorKey: "name",
-      header: ({ column }) => {
+      header: () => {
         return (
           <Button
             variant="ghost"
@@ -60,7 +60,7 @@ export function WorkoutsDataTable({
     },
     {
       accessorKey: "date",
-      header: ({ column }) => {
+      header: () => {
         return (
           <Button
             variant="ghost"

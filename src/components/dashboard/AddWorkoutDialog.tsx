@@ -76,7 +76,7 @@ export function AddWorkoutDialog({ isOpen, onOpenChange, onSuccess }: AddWorkout
             <FormField
               control={form.control}
               name="gpxFile"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>GPX File</FormLabel>
                   <FormControl>

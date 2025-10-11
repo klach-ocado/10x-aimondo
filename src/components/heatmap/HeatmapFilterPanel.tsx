@@ -8,11 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export interface HeatmapFiltersViewModel {
   name?: string;
@@ -29,15 +25,9 @@ interface HeatmapFilterPanelProps {
   isDisabled: boolean;
 }
 
-export function HeatmapFilterPanel({
-  filters,
-  onFiltersChange,
-  isDisabled,
-}: HeatmapFilterPanelProps) {
+export function HeatmapFilterPanel({ filters, onFiltersChange, isDisabled }: HeatmapFilterPanelProps) {
   const [isOpen, setIsOpen] = React.useState(true);
-  const [date, setDate] = React.useState<DateRange | undefined>(
-    filters.dateRange
-  );
+  const [date, setDate] = React.useState<DateRange | undefined>(filters.dateRange);
 
   React.useEffect(() => {
     setDate(filters.dateRange);
@@ -72,11 +62,7 @@ export function HeatmapFilterPanel({
   }, [filters]);
 
   return (
-    <Collapsible
-      open={isOpen}
-      onOpenChange={setIsOpen}
-      className="w-full space-y-2"
-    >
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full space-y-2">
       <div className="flex items-center justify-between space-x-4 px-4">
         <h4 className="text-sm font-semibold">Filters</h4>
         <CollapsibleTrigger asChild>
@@ -109,18 +95,14 @@ export function HeatmapFilterPanel({
               <Button
                 id="date"
                 variant={"outline"}
-                className={cn(
-                  "w-[300px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}
+                className={cn("w-[300px] justify-start text-left font-normal", !date && "text-muted-foreground")}
                 disabled={isDisabled}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {date?.from ? (
                   date.to ? (
                     <>
-                      {format(date.from, "LLL dd, y")} -{" "}
-                      {format(date.to, "LLL dd, y")}
+                      {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
                     </>
                   ) : (
                     format(date.from, "LLL dd, y")
@@ -142,12 +124,7 @@ export function HeatmapFilterPanel({
             </PopoverContent>
           </Popover>
           {date?.from && (
-            <Button
-              variant="ghost"
-              onClick={handleClearDates}
-              disabled={isDisabled}
-              className="-ml-8 h-9 w-9 p-0"
-            >
+            <Button variant="ghost" onClick={handleClearDates} disabled={isDisabled} className="-ml-8 h-9 w-9 p-0">
               <X className="h-4 w-4 text-muted-foreground" />
               <span className="sr-only">Clear date filter</span>
             </Button>
