@@ -128,6 +128,7 @@ export function useWorkoutsDashboard() {
   };
 
   useEffect(() => {
+    fetchWorkouts();
   }, [fetchWorkouts]);
 
   return {
