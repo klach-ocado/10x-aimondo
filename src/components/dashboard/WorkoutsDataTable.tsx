@@ -1,15 +1,18 @@
 import * as React from "react";
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  SortingState,
-} from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 import { DataTablePagination } from "./DataTablePagination";
 import type { Pagination, WorkoutListItemDto } from "@/types";
 import type { WorkoutSort } from "../hooks/useWorkoutsDashboard";
+import {Button} from "@/components/ui/button.tsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu.tsx";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 
 interface WorkoutsDataTableProps {
   data: WorkoutListItemDto[];
@@ -30,7 +33,7 @@ export function WorkoutsDataTable({
   onEdit,
   onDelete,
 }: WorkoutsDataTableProps) {
-  const [sorting, setSorting] = React.useState<any>([
+  const [sorting, setSorting] = React.useState<SortingState>([
     { id: sort.sortBy, desc: sort.order === "desc" },
   ]);
   const [rowSelection, setRowSelection] = React.useState({});
@@ -70,12 +73,12 @@ export function WorkoutsDataTable({
     {
       accessorKey: "distance",
       header: "Distance (km)",
-      cell: ({ row }) => `${(row.getValue("distance") / 1000).toFixed(2)} km`,
+      cell: ({ row }) => `${(row.getValue<number>("distance") / 1000).toFixed(2)} km`,
     },
     {
       accessorKey: "duration",
       header: "Duration (min)",
-      cell: ({ row }) => `${Math.round(row.getValue("duration") / 60)} min`,
+      cell: ({ row }) => `${Math.round(row.getValue<number>("duration") / 60)} min`,
     },
     {
       id: "actions",

@@ -3,6 +3,7 @@ import { useWorkoutsDashboard } from "./hooks/useWorkoutsDashboard";
 import { WorkoutsDataTable } from "./dashboard/WorkoutsDataTable";
 import { DataTableSkeleton } from "./dashboard/DataTableSkeleton";
 import { FiltersPanel } from "./dashboard/FiltersPanel";
+import type { WorkoutListItemDto } from "@/types";
 
 export default function DashboardView() {
   const { 
@@ -17,8 +18,8 @@ export default function DashboardView() {
     setPage 
   } = useWorkoutsDashboard();
 
-  const handleEdit = (workout: any) => console.log("Edit:", workout);
-  const handleDelete = (workout: any) => console.log("Delete:", workout);
+  const handleEdit = (workout: WorkoutListItemDto) => console.log("Edit:", workout);
+  const handleDelete = (workout: WorkoutListItemDto) => console.log("Delete:", workout);
 
   return (
     <div className="space-y-8">
