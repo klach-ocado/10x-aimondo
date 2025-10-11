@@ -134,6 +134,21 @@ export class WorkoutService {
     return data;
   }
 
+  async deleteWorkout(id: string, userId: string): Promise<{ error: Error | null; notFound: boolean }> {
+    const { error, count } = await this.supabase.from("workouts").delete().match({ id: id, user_id: userId });
+
+    if (error) {
+      console.error("Error deleting workout:", error);
+      return { error: new Error("Failed to delete workout"), notFound: false };
+    }
+
+    if (count === 0) {
+      return { error: null, notFound: true };
+    }
+
+    return { error: null, notFound: false };
+  }
+
   async createWorkout(command: CreateWorkoutCommand): Promise<WorkoutDto> {
     const customParseMethod = (txt: string): Document | null => {
       return new DOMParser().parseFromString(txt, "text/xml");
