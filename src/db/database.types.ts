@@ -609,6 +609,10 @@ export interface Database {
         Args: { "": number };
         Returns: string;
       };
+      get_workout_details: {
+        Args: { p_user_id: string; p_workout_id: string };
+        Returns: Json;
+      };
       gettransactionid: {
         Args: Record<PropertyKey, never>;
         Returns: unknown;

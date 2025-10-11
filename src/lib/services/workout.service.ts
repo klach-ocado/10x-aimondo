@@ -21,54 +21,17 @@ export class WorkoutService {
   async getWorkoutDetails(command: GetWorkoutDetailsCommand): Promise<WorkoutDetailsDto | null> {
     const { workoutId, userId } = command;
 
-    const { data, error } = await this.supabase
-      .from("workouts")
-      .select(
-        `
-        id,
-        name,
-        date,
-        type,
-        distance,
-        duration,
-        track_points (
-          lat:location.ST_Y(),
-          lng:location.ST_X(),
-          ele:elevation,
-          time:timestamp
-        )
-      `,
-      )
-      .eq("id", workoutId)
-      .eq("user_id", userId)
-      .single();
+    const { data, error } = await this.supabase.rpc("get_workout_details", {
+      p_workout_id: workoutId,
+      p_user_id: userId,
+    });
 
     if (error) {
-      // TODO: Improve error handling, check for specific errors like P2025 (not found)
-      console.error("Error fetching workout details:", error);
+      console.error("Error fetching workout details via RPC:", error);
       return null;
     }
 
-    if (!data) {
-      return null;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const mappedTrackPoints = data.track_points.map((point) => ({
-      ...point,
-      // ST_Y and ST_X are aliased to lat and lng in the query
-    }));
-
-    return {
-      id: data.id,
-      name: data.name,
-      date: data.date,
-      type: data.type,
-      distance: data.distance,
-      duration: data.duration,
-      track_points: mappedTrackPoints,
-    };
+    return data as WorkoutDetailsDto | null;
   }
 
   async getWorkouts(command: GetWorkoutsCommand): Promise<PaginatedWorkoutsDto> {
