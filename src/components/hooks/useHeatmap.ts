@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import type { FeatureCollection, Point } from 'geojson';
 import type { HeatmapFiltersViewModel } from '../heatmap/HeatmapFilterPanel';
 import type { MapViewState } from '../Map';
-import { format } from 'date-fns';
 
 const LOCAL_STORAGE_KEY = 'heatmapViewState';
 
@@ -57,8 +56,8 @@ export const useHeatmap = () => {
       params.append('bbox', mapBbox);
       if (filters.name) params.append('name', filters.name);
       if (filters.type) params.append('type', filters.type);
-      if (filters.dateRange?.from) params.append('dateFrom', format(filters.dateRange.from, 'yyyy-MM-dd'));
-      if (filters.dateRange?.to) params.append('dateTo', format(filters.dateRange.to, 'yyyy-MM-dd'));
+      if (filters.dateRange?.from) params.append('dateFrom', filters.dateRange.from.toISOString());
+      if (filters.dateRange?.to) params.append('dateTo', filters.dateRange.to.toISOString());
 
       const response = await fetch(`/api/heatmap?${params.toString()}`);
 
