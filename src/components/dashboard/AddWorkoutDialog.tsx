@@ -15,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_FILE_TYPES = ["application/gpx+xml", "application/xml", "text/xml"];
 
 const formSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters.").max(300, "Name must be at most 300 characters."),
@@ -24,7 +23,7 @@ const formSchema = z.object({
     .refine((files) => files?.length === 1, "GPX file is required.")
     .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
     .refine(
-      (files) => ACCEPTED_FILE_TYPES.includes(files?.[0]?.type),
+      (files) => files?.[0]?.name.toLowerCase().endsWith(".gpx"),
       ".gpx file format is required."
     ),
 });
