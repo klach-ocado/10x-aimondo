@@ -7,25 +7,29 @@ import { FiltersPanel } from "./dashboard/FiltersPanel";
 import type { WorkoutListItemDto } from "@/types";
 import { EditWorkoutDialog } from "./dashboard/EditWorkoutDialog";
 import { DeleteConfirmationDialog } from "./dashboard/DeleteConfirmationDialog";
+import { AddWorkoutDialog } from "./dashboard/AddWorkoutDialog";
+import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 
 export default function DashboardView() {
-  const { 
-    workouts, 
-    pagination, 
-    isLoading, 
-    error, 
-    filters, 
-    setFilters, 
-    sort, 
-    setSort, 
-    setPage, 
+  const {
+    workouts,
+    pagination,
+    isLoading,
+    error,
+    filters,
+    setFilters,
+    sort,
+    setSort,
+    setPage,
     updateWorkout,
-    deleteWorkout
+    deleteWorkout,
+    addWorkout
   } = useWorkoutsDashboard();
 
   const [editingWorkout, setEditingWorkout] = useState<WorkoutListItemDto | null>(null);
   const [deletingWorkout, setDeletingWorkout] = useState<WorkoutListItemDto | null>(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const handleEdit = (workout: WorkoutListItemDto) => setEditingWorkout(workout);
   const handleDelete = (workout: WorkoutListItemDto) => setDeletingWorkout(workout);
@@ -35,7 +39,7 @@ export default function DashboardView() {
       <Toaster richColors />
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        {/* Placeholder for Add Workout Button */}
+        <Button onClick={() => setIsAddDialogOpen(true)}>Add Workout</Button>
       </div>
 
       <FiltersPanel filters={filters} onFiltersChange={setFilters} disabled={isLoading} />
@@ -68,6 +72,12 @@ export default function DashboardView() {
         onOpenChange={(isOpen) => !isOpen && setDeletingWorkout(null)}
         workout={deletingWorkout}
         onConfirm={deleteWorkout}
+      />
+
+      <AddWorkoutDialog
+        isOpen={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSuccess={addWorkout}
       />
     </div>
   );

@@ -108,8 +108,26 @@ export function useWorkoutsDashboard() {
     }
   };
 
+  const addWorkout = async (data: FormData) => {
+    try {
+      const response = await fetch(`/api/workouts`, {
+        method: 'POST',
+        body: data,
+      });
+
+      if (response.status !== 201) {
+        const errorData = await response.json().catch(() => ({ message: 'Failed to add workout.' }));
+        return { success: false, error: errorData.message || 'An unknown error occurred.' };
+      }
+
+      await fetchWorkouts();
+      return { success: true };
+    } catch (e) {
+      return { success: false, error: e instanceof Error ? e.message : 'An unknown error occurred.' };
+    }
+  };
+
   useEffect(() => {
-    fetchWorkouts();
   }, [fetchWorkouts]);
 
   return {
@@ -126,5 +144,6 @@ export function useWorkoutsDashboard() {
     refresh: fetchWorkouts,
     updateWorkout,
     deleteWorkout,
+    addWorkout,
   };
 }
