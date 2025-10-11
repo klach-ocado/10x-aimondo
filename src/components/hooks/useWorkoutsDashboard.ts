@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { PaginatedWorkoutsDto, WorkoutListItemDto, Pagination } from "@/types";
+import type { PaginatedWorkoutsDto, WorkoutListItemDto, Pagination, UpdateWorkoutCommand } from "@/types";
 
 export interface WorkoutFilters {
   name?: string;
@@ -68,6 +68,28 @@ export function useWorkoutsDashboard() {
     }
   }, [page, sort, debouncedFilters]);
 
+  const updateWorkout = async (id: string, data: UpdateWorkoutCommand) => {
+    try {
+      const response = await fetch(`/api/workouts/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Failed to update workout.' }));
+        return { success: false, error: errorData.message || 'An unknown error occurred.' };
+      }
+
+      await fetchWorkouts();
+      return { success: true };
+    } catch (e) {
+      return { success: false, error: e instanceof Error ? e.message : 'An unknown error occurred.' };
+    }
+  };
+
   useEffect(() => {
     fetchWorkouts();
   }, [fetchWorkouts]);
@@ -84,5 +106,6 @@ export function useWorkoutsDashboard() {
     setSort,
     setPage,
     refresh: fetchWorkouts,
+    updateWorkout,
   };
 }

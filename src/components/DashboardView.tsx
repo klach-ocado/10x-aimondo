@@ -1,9 +1,12 @@
 import * as React from "react";
+import { useState } from "react";
 import { useWorkoutsDashboard } from "./hooks/useWorkoutsDashboard";
 import { WorkoutsDataTable } from "./dashboard/WorkoutsDataTable";
 import { DataTableSkeleton } from "./dashboard/DataTableSkeleton";
 import { FiltersPanel } from "./dashboard/FiltersPanel";
 import type { WorkoutListItemDto } from "@/types";
+import { EditWorkoutDialog } from "./dashboard/EditWorkoutDialog";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function DashboardView() {
   const { 
@@ -15,14 +18,18 @@ export default function DashboardView() {
     setFilters, 
     sort, 
     setSort, 
-    setPage 
+    setPage, 
+    updateWorkout
   } = useWorkoutsDashboard();
 
-  const handleEdit = (workout: WorkoutListItemDto) => console.log("Edit:", workout);
+  const [editingWorkout, setEditingWorkout] = useState<WorkoutListItemDto | null>(null);
+
+  const handleEdit = (workout: WorkoutListItemDto) => setEditingWorkout(workout);
   const handleDelete = (workout: WorkoutListItemDto) => console.log("Delete:", workout);
 
   return (
     <div className="space-y-8">
+      <Toaster richColors />
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         {/* Placeholder for Add Workout Button */}
@@ -45,6 +52,13 @@ export default function DashboardView() {
           onDelete={handleDelete}
         />
       )}
+
+      <EditWorkoutDialog
+        isOpen={!!editingWorkout}
+        onOpenChange={(isOpen) => !isOpen && setEditingWorkout(null)}
+        workout={editingWorkout}
+        onSuccess={updateWorkout}
+      />
     </div>
   );
 }
