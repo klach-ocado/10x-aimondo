@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import maplibregl, { LngLatBounds } from 'maplibre-gl';
+import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { LngLatLike } from 'maplibre-gl';
 import { cn } from '@/lib/utils';
@@ -13,7 +13,7 @@ export interface MapViewState {
 interface BaseMapProps {
   initialViewState: MapViewState | null;
   className?: string;
-  onMoveEnd?: (viewState: MapViewState, bounds: LngLatBounds) => void;
+  onMoveEnd?: (viewState: MapViewState, bounds: maplibregl.LngLatBounds) => void;
   isLoading?: boolean;
 }
 

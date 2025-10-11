@@ -18,7 +18,15 @@ const { title = "10x Astro Starter" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <header class="bg-gray-800 text-white p-4">
+      <nav class="container mx-auto flex space-x-4">
+        <a href="/dashboard" class="hover:text-gray-300">Dashboard</a>
+        <a href="/heatmap" class="hover:text-gray-300">Heatmap</a>
+      </nav>
+    </header>
+    <main class="h-[calc(100vh-64px)]">
+        <slot />
+    </main>
   </body>
 </html>
 
