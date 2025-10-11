@@ -45,7 +45,7 @@ const WorkoutView: React.FC<WorkoutViewProps> = ({ workoutId }) => {
       <h1 className="text-3xl font-bold tracking-tight">{workout.name}</h1>
       <StatsOverlay distance={workout.distance} duration={workout.duration} />
       {workout.track_points && workout.track_points.length > 0 ? (
-        <Map trackPoints={workout.track_points} initialViewState={null} />
+        <Map trackPoints={workout.track_points} initialViewState={null} className="h-[calc(100vh-22rem)]" />
       ) : (
         <div className="flex items-center justify-center h-96 w-full rounded-md border border-dashed">
             <p className="text-muted-foreground">No track data available for this workout.</p>

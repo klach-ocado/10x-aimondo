@@ -2,16 +2,18 @@ import React, { useRef, useEffect, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { LngLatLike } from 'maplibre-gl';
+import { cn } from '@/lib/utils';
 
 interface MapProps {
   trackPoints: { lat: number; lng: number }[];
   initialViewState: { center: [number, number]; zoom: number } | null;
+  className?: string;
 }
 
 const MAP_STYLE = 'https://tiles.openfreemap.org/styles/bright';
 const LOCAL_STORAGE_KEY = 'mapViewState';
 
-const Map: React.FC<MapProps> = ({ trackPoints, initialViewState }) => {
+const Map: React.FC<MapProps> = ({ trackPoints, initialViewState, className }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -27,6 +29,8 @@ const Map: React.FC<MapProps> = ({ trackPoints, initialViewState }) => {
       center: savedState?.center || [0, 0],
       zoom: savedState?.zoom || 2,
     });
+
+    map.current.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
     map.current.on('load', () => {
       setIsMapLoaded(true);
@@ -105,7 +109,7 @@ const Map: React.FC<MapProps> = ({ trackPoints, initialViewState }) => {
 
   }, [isMapLoaded, trackPoints]);
 
-  return <div ref={mapContainer} className="h-96 w-full rounded-md" />;
+  return <div ref={mapContainer} className={cn("h-96 w-full rounded-md", className)} />;
 };
 
 export default Map;
