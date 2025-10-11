@@ -141,20 +141,21 @@ const Map: React.FC<MapProps> = ({
     const mapInstance = map.current;
 
     if (displayMode === 'track') {
-      mapInstance.setLayoutProperty(HEATMAP_LAYER_ID, 'visibility', 'none');
-      mapInstance.setLayoutProperty(ROUTE_LAYER_ID, 'visibility', 'visible');
+      if (mapInstance.getLayer(HEATMAP_LAYER_ID)) {
+        mapInstance.setLayoutProperty(HEATMAP_LAYER_ID, 'visibility', 'none');
+      }
+      if (mapInstance.getLayer(ROUTE_LAYER_ID)) {
+        mapInstance.setLayoutProperty(ROUTE_LAYER_ID, 'visibility', 'visible');
+      }
 
       if (trackPoints && trackPoints.length > 0) {
         const coordinates = trackPoints.map(p => [p.lng, p.lat]);
-        const geojson: FeatureCollection<LineString> = {
-          type: 'FeatureCollection',
-          features: [{
+        const feature: Feature<LineString> = {
             type: 'Feature',
             properties: {},
             geometry: { type: 'LineString', coordinates },
-          }]
         };
-        (mapInstance.getSource(ROUTE_SOURCE_ID) as maplibregl.GeoJSONSource).setData(geojson.features[0]);
+        (mapInstance.getSource(ROUTE_SOURCE_ID) as maplibregl.GeoJSONSource).setData(feature);
 
         const bounds = coordinates.reduce(
           (b, coord) => b.extend(coord as LngLatLike),
@@ -163,8 +164,12 @@ const Map: React.FC<MapProps> = ({
         mapInstance.fitBounds(bounds, { padding: 50, maxZoom: 15 });
       }
     } else if (displayMode === 'heatmap') {
-      mapInstance.setLayoutProperty(ROUTE_LAYER_ID, 'visibility', 'none');
-      mapInstance.setLayoutProperty(HEATMAP_LAYER_ID, 'visibility', 'visible');
+      if (mapInstance.getLayer(ROUTE_LAYER_ID)) {
+        mapInstance.setLayoutProperty(ROUTE_LAYER_ID, 'visibility', 'none');
+      }
+      if (mapInstance.getLayer(HEATMAP_LAYER_ID)) {
+        mapInstance.setLayoutProperty(HEATMAP_LAYER_ID, 'visibility', 'visible');
+      }
 
       const source = mapInstance.getSource(HEATMAP_SOURCE_ID) as maplibregl.GeoJSONSource;
       if (source) {

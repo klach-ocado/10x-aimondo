@@ -73,7 +73,7 @@ export const useHeatmap = () => {
         type: 'FeatureCollection',
         features: data.points.map(p => ({
           type: 'Feature',
-          properties: {},
+          properties: { mag: 1 },
           geometry: { type: 'Point', coordinates: [p[1], p[0]] }, // lng, lat
         })),
       };
