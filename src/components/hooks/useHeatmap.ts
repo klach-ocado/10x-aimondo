@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import maplibregl from 'maplibre-gl';
+import type { LngLatBounds } from 'maplibre-gl';
 import type { FeatureCollection, Point } from 'geojson';
 import type { HeatmapFiltersViewModel } from '../heatmap/HeatmapFilterPanel';
 import type { MapViewState } from '../Map';
@@ -14,17 +14,17 @@ export interface HeatmapDataDto {
 export const useHeatmap = () => {
   const [filters, setFilters] = useState<HeatmapFiltersViewModel>({});
   const [mapViewState, setMapViewState] = useState<MapViewState | null>(null);
-  const [mapBounds, setMapBounds] = useState<maplibregl.LngLatBounds | null>(null);
+  const [mapBounds, setMapBounds] = useState<LngLatBounds | null>(null);
   const [heatmapData, setHeatmapData] = useState<FeatureCollection<Point> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
     const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedState) {
       setMapViewState(JSON.parse(savedState));
     }
-    // Initial data fetch will be triggered by map move event
     setIsLoading(false);
   }, []);
 
@@ -32,7 +32,7 @@ export const useHeatmap = () => {
     setFilters(newFilters);
   }, []);
 
-  const handleMapMove = useCallback((newViewState: MapViewState, bounds: maplibregl.LngLatBounds) => {
+  const handleMapMove = useCallback((newViewState: MapViewState, bounds: LngLatBounds) => {
     setMapViewState(newViewState);
     setMapBounds(bounds);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newViewState));
@@ -44,7 +44,8 @@ export const useHeatmap = () => {
 
   const refreshData = useCallback(async () => {
     if (!mapBounds) {
-      setError(new Error("Map bounds are not set. Move the map to set them."));
+      // This can happen on the very first load before the map has initialized
+      // We will wait for the map to move and set the bounds
       return;
     }
 
@@ -84,6 +85,15 @@ export const useHeatmap = () => {
       setIsLoading(false);
     }
   }, [filters, mapBounds]);
+
+  useEffect(() => {
+    // Fetch data on initial load once map bounds are available
+    if (mapBounds && isInitialLoad) {
+      refreshData();
+      setIsInitialLoad(false);
+    }
+  }, [mapBounds, isInitialLoad, refreshData]);
+
 
   return {
     filters,
