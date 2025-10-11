@@ -134,19 +134,32 @@ export function WorkoutsDataTable({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))
-                }
-                </TableRow>
-              ))
-            ) : (
+                    <TableBody>
+                      {table.getRowModel().rows?.length ? (
+                        table.getRowModel().rows.map((row) => (
+                          <TableRow
+                            key={row.id}
+                            data-state={row.getIsSelected() && "selected"}
+                            className="cursor-pointer"
+                            onClick={() => {
+                              window.location.href = `/workouts/${row.original.id}`;
+                            }}
+                          >
+                            {row.getVisibleCells().map((cell) => (
+                              <TableCell
+                                key={cell.id}
+                                onClick={(e) => {
+                                  if (cell.column.id === "actions") {
+                                    e.stopPropagation();
+                                  }
+                                }}
+                              >
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))
+                      ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
