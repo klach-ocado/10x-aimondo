@@ -3,6 +3,8 @@ import { useWorkoutView } from './hooks/useWorkoutView';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
+import StatsOverlay from './StatsOverlay';
+import Map from './Map';
 
 interface WorkoutViewProps {
   workoutId: string;
@@ -15,11 +17,11 @@ const WorkoutView: React.FC<WorkoutViewProps> = ({ workoutId }) => {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-1/2" />
-        <Skeleton className="h-64 w-full" />
-        <div className="grid grid-cols-2 gap-4">
-          <Skeleton className="h-16 w-full" />
-          <Skeleton className="h-16 w-full" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
         </div>
+        <Skeleton className="h-96 w-full" />
       </div>
     );
   }
@@ -39,9 +41,16 @@ const WorkoutView: React.FC<WorkoutViewProps> = ({ workoutId }) => {
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">{workout.name}</h1>
-      <pre className="bg-gray-100 p-4 rounded-md">{JSON.stringify(workout, null, 2)}</pre>
+    <div className="space-y-4">
+      <h1 className="text-3xl font-bold tracking-tight">{workout.name}</h1>
+      <StatsOverlay distance={workout.distance} duration={workout.duration} />
+      {workout.track_points && workout.track_points.length > 0 ? (
+        <Map trackPoints={workout.track_points} initialViewState={null} />
+      ) : (
+        <div className="flex items-center justify-center h-96 w-full rounded-md border border-dashed">
+            <p className="text-muted-foreground">No track data available for this workout.</p>
+        </div>
+      )}
     </div>
   );
 };
