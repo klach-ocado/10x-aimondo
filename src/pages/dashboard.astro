@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import DashboardView from "@/components/DashboardView.tsx";
+---
+
+<Layout title="AImondo - Dashboard">
+  <main class="container mx-auto py-8">
+    <DashboardView client:load />
+  </main>
+</Layout>
