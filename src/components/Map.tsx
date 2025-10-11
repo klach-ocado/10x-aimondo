@@ -13,7 +13,7 @@ export interface MapViewState {
 interface BaseMapProps {
   initialViewState: MapViewState | null;
   className?: string;
-  onMoveEnd?: (viewState: MapViewState, bounds: maplibregl.LngLatBounds) => void;
+  onMoveEnd?: (viewState: MapViewState, bounds: [[number, number], [number, number]]) => void;
   isLoading?: boolean;
 }
 
@@ -65,8 +65,8 @@ const Map: React.FC<MapProps> = ({
           center: map.current.getCenter().toArray() as [number, number],
           zoom: map.current.getZoom(),
         };
-        const bounds = map.current.getBounds();
-        onMoveEnd(viewState, bounds);
+        const rawBounds = map.current.getBounds();
+        onMoveEnd(viewState, rawBounds.toArray() as [[number, number], [number, number]]);
       }
     };
 
