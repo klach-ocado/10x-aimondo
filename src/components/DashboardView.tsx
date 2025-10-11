@@ -21,12 +21,12 @@ export default function DashboardView() {
     setFilters,
     sort,
     setSort,
-    setPage,
-    updateWorkout,
-    deleteWorkout,
-    addWorkout
-  } = useWorkoutsDashboard();
-
+        setPage, 
+        updateWorkout,
+        deleteWorkout,
+        addWorkout,
+        clearAllFilters
+      } = useWorkoutsDashboard();
   const [editingWorkout, setEditingWorkout] = useState<WorkoutListItemDto | null>(null);
   const [deletingWorkout, setDeletingWorkout] = useState<WorkoutListItemDto | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -42,7 +42,7 @@ export default function DashboardView() {
         <Button onClick={() => setIsAddDialogOpen(true)}>Add Workout</Button>
       </div>
 
-      <FiltersPanel filters={filters} onFiltersChange={setFilters} disabled={isLoading} />
+      <FiltersPanel filters={filters} onFiltersChange={setFilters} disabled={isLoading} onClearAll={clearAllFilters} />
 
       {error && <p className="text-red-500">Error: {error.message}</p>}
 

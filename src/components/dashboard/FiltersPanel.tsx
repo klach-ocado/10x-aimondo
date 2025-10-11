@@ -17,14 +17,26 @@ import type { WorkoutFilters } from "../hooks/useWorkoutsDashboard";
 interface FiltersPanelProps {
   filters: WorkoutFilters;
   onFiltersChange: (filters: WorkoutFilters) => void;
+  onClearAll: () => void;
   disabled: boolean;
 }
 
-export function FiltersPanel({ filters, onFiltersChange, disabled }: FiltersPanelProps) {
+export function FiltersPanel({ filters, onFiltersChange, onClearAll, disabled }: FiltersPanelProps) {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: filters.dateFrom ? new Date(filters.dateFrom) : undefined,
     to: filters.dateTo ? new Date(filters.dateTo) : undefined,
   });
+
+  const areFiltersActive = React.useMemo(() => {
+    return filters.name || filters.type || filters.dateFrom || filters.dateTo;
+  }, [filters]);
+
+  React.useEffect(() => {
+    setDate({
+      from: filters.dateFrom ? new Date(filters.dateFrom) : undefined,
+      to: filters.dateTo ? new Date(filters.dateTo) : undefined,
+    });
+  }, [filters.dateFrom, filters.dateTo]);
 
   const handleDateChange = (newDate: DateRange | undefined) => {
     setDate(newDate);
@@ -111,6 +123,11 @@ export function FiltersPanel({ filters, onFiltersChange, disabled }: FiltersPane
         >
           <X className="h-4 w-4 text-muted-foreground" />
           <span className="sr-only">Clear date filter</span>
+        </Button>
+      )}
+      {areFiltersActive && (
+        <Button variant="secondary" onClick={onClearAll} disabled={disabled}>
+          Clear All
         </Button>
       )}
     </div>

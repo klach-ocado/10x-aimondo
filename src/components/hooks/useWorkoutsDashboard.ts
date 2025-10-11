@@ -27,6 +27,12 @@ export function useWorkoutsDashboard() {
   
   const [debouncedFilters, setDebouncedFilters] = useState<WorkoutFilters>({});
 
+  const clearAllFilters = () => {
+    setFilters({});
+    setPage(1);
+    setSort({ sortBy: 'date', order: 'desc' });
+  };
+
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedFilters(filters);
@@ -146,5 +152,6 @@ export function useWorkoutsDashboard() {
     updateWorkout,
     deleteWorkout,
     addWorkout,
+    clearAllFilters,
   };
 }
