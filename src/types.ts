@@ -122,3 +122,15 @@ export interface GetWorkoutDetailsCommand {
   workoutId: string;
   userId: string;
 }
+
+/**
+ * Zod schema for validating the update of a workout.
+ * 'name' must be between 3 and 300 characters.
+ * 'date' must be a valid ISO 8601 datetime string.
+ * 'type' must be between 3 and 50 characters.
+ */
+export const WorkoutUpdateSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters long.").max(300, "Name must be no more than 300 characters long."),
+  date: z.string().datetime("Invalid ISO 8601 date format."),
+  type: z.string().min(3, "Type must be at least 3 characters long.").max(50, "Type must be no more than 50 characters long."),
+});

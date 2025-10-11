@@ -3,6 +3,7 @@ import type {
   GetWorkoutDetailsCommand,
   GetWorkoutsCommand,
   PaginatedWorkoutsDto,
+  UpdateWorkoutCommand,
   WorkoutDetailsDto,
   WorkoutDto,
 } from "../../types";
@@ -110,6 +111,27 @@ export class WorkoutService {
       },
       data: data || [],
     };
+  }
+
+  async updateWorkout(
+    id: string,
+    userId: string,
+    command: UpdateWorkoutCommand,
+  ): Promise<WorkoutDto | null> {
+    const { data, error } = await this.supabase
+      .from("workouts")
+      .update({ ...command, updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("user_id", userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error updating workout:", error);
+      return null;
+    }
+
+    return data;
   }
 
   async createWorkout(command: CreateWorkoutCommand): Promise<WorkoutDto> {
