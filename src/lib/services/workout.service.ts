@@ -1,4 +1,11 @@
-import type { CreateWorkoutCommand, GetWorkoutsCommand, PaginatedWorkoutsDto, WorkoutDto } from "../../types";
+import type {
+  CreateWorkoutCommand,
+  GetWorkoutDetailsCommand,
+  GetWorkoutsCommand,
+  PaginatedWorkoutsDto,
+  WorkoutDetailsDto,
+  WorkoutDto,
+} from "../../types";
 import type { SupabaseClient } from "../../db/supabase.client";
 import { parseGPXWithCustomParser } from "@we-gold/gpxjs";
 import { DOMParser } from "xmldom-qsa";
@@ -8,6 +15,59 @@ export class WorkoutService {
 
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
+  }
+
+  async getWorkoutDetails(command: GetWorkoutDetailsCommand): Promise<WorkoutDetailsDto | null> {
+    const { workoutId, userId } = command;
+
+    const { data, error } = await this.supabase
+      .from("workouts")
+      .select(
+        `
+        id,
+        name,
+        date,
+        type,
+        distance,
+        duration,
+        track_points (
+          lat:location.ST_Y(),
+          lng:location.ST_X(),
+          ele:elevation,
+          time:timestamp
+        )
+      `,
+      )
+      .eq("id", workoutId)
+      .eq("user_id", userId)
+      .single();
+
+    if (error) {
+      // TODO: Improve error handling, check for specific errors like P2025 (not found)
+      console.error("Error fetching workout details:", error);
+      return null;
+    }
+
+    if (!data) {
+      return null;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const mappedTrackPoints = data.track_points.map((point) => ({
+      ...point,
+      // ST_Y and ST_X are aliased to lat and lng in the query
+    }));
+
+    return {
+      id: data.id,
+      name: data.name,
+      date: data.date,
+      type: data.type,
+      distance: data.distance,
+      duration: data.duration,
+      track_points: mappedTrackPoints,
+    };
   }
 
   async getWorkouts(command: GetWorkoutsCommand): Promise<PaginatedWorkoutsDto> {

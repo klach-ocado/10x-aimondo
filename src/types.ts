@@ -112,3 +112,13 @@ export interface HeatmapDto {
 export const WorkoutCreateSchema = z.object({
   name: z.string().min(3).max(300),
 });
+
+/**
+ * Command model for fetching the details of a single workout.
+ * This object is passed to the service layer, containing the workout's ID
+ * and the ID of the user requesting the data to ensure ownership.
+ */
+export interface GetWorkoutDetailsCommand {
+  workoutId: string;
+  userId: string;
+}
