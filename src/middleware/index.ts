@@ -1,6 +1,6 @@
-import { defineMiddleware } from 'astro:middleware';
+import { defineMiddleware } from "astro:middleware";
 
-import { supabaseClient } from '../db/supabase.client.ts';
+import { supabaseClient } from "../db/supabase.client.ts";
 
 const DEFAULT_LOCAL_USER_ID = "9a6b978e-fa10-46c3-8160-04087c270a03";
 

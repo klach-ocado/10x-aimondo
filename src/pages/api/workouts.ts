@@ -1,8 +1,7 @@
-
-import type { APIRoute } from 'astro';
-import { z } from 'zod';
-import type { GetWorkoutsCommand } from '../../types';
-import { WorkoutService } from '../../lib/services/workout.service';
+import type { APIRoute } from "astro";
+import { z } from "zod";
+import type { GetWorkoutsCommand } from "../../types";
+import { WorkoutService } from "../../lib/services/workout.service";
 
 export const prerender = false;
 
@@ -13,17 +12,17 @@ const GetWorkoutsQuerySchema = z.object({
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),
   type: z.string().optional(),
-  sortBy: z.string().optional().default('date'),
-  order: z.enum(['asc', 'desc']).optional().default('desc'),
+  sortBy: z.string().optional().default("date"),
+  order: z.enum(["asc", "desc"]).optional().default("desc"),
 });
 
 export const GET: APIRoute = async ({ request, locals }) => {
   const { user, supabase } = locals;
 
   if (!user) {
-    return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+    return new Response(JSON.stringify({ message: "Unauthorized" }), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
@@ -35,13 +34,13 @@ export const GET: APIRoute = async ({ request, locals }) => {
   if (!validationResult.success) {
     return new Response(
       JSON.stringify({
-        message: 'Invalid query parameters',
+        message: "Invalid query parameters",
         errors: validationResult.error.flatten(),
       }),
       {
         status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      },
+        headers: { "Content-Type": "application/json" },
+      }
     );
   }
 
@@ -56,14 +55,14 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
     return new Response(JSON.stringify(paginatedWorkouts), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     // TODO: Implement better logging
     console.error(error);
-    return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
+    return new Response(JSON.stringify({ message: "Internal Server Error" }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 };

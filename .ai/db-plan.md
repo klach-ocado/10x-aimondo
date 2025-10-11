@@ -6,30 +6,30 @@
 
 Przechowuje metadane dotyczące treningów wgranych przez użytkowników.
 
-| Nazwa kolumny   | Typ danych        | Ograniczenia                               | Opis                                             |
-| :-------------- | :---------------- | :----------------------------------------- | :----------------------------------------------- |
-| `id`            | `UUID`            | `PRIMARY KEY`, `default gen_random_uuid()` | Unikalny identyfikator treningu.                 |
-| `user_id`       | `UUID`            | `NOT NULL`, `FOREIGN KEY (auth.users.id)`  | Identyfikator użytkownika z tabeli `auth.users`. |
-| `name`          | `VARCHAR(300)`    | `NOT NULL`                                 | Nazwa treningu nadana przez użytkownika.         |
-| `date`          | `TIMESTAMPTZ`     | `NOT NULL`                                 | Data i czas treningu.                            |
-| `type`          | `VARCHAR(50)`     | `NOT NULL`                                 | Typ aktywności (np. "run", "bike").              |
-| `distance`      | `INTEGER`         | `NOT NULL`                                 | Całkowity dystans treningu w metrach.            |
-| `duration`      | `INTEGER`         |                                            | Całkowity czas trwania treningu w sekundach.     |
-| `created_at`    | `TIMESTAMPTZ`     | `NOT NULL`, `default now()`                | Znacznik czasu utworzenia rekordu.               |
-| `updated_at`    | `TIMESTAMPTZ`     | `NOT NULL`, `default now()`                | Znacznik czasu ostatniej aktualizacji rekordu.   |
+| Nazwa kolumny | Typ danych     | Ograniczenia                               | Opis                                             |
+| :------------ | :------------- | :----------------------------------------- | :----------------------------------------------- |
+| `id`          | `UUID`         | `PRIMARY KEY`, `default gen_random_uuid()` | Unikalny identyfikator treningu.                 |
+| `user_id`     | `UUID`         | `NOT NULL`, `FOREIGN KEY (auth.users.id)`  | Identyfikator użytkownika z tabeli `auth.users`. |
+| `name`        | `VARCHAR(300)` | `NOT NULL`                                 | Nazwa treningu nadana przez użytkownika.         |
+| `date`        | `TIMESTAMPTZ`  | `NOT NULL`                                 | Data i czas treningu.                            |
+| `type`        | `VARCHAR(50)`  | `NOT NULL`                                 | Typ aktywności (np. "run", "bike").              |
+| `distance`    | `INTEGER`      | `NOT NULL`                                 | Całkowity dystans treningu w metrach.            |
+| `duration`    | `INTEGER`      |                                            | Całkowity czas trwania treningu w sekundach.     |
+| `created_at`  | `TIMESTAMPTZ`  | `NOT NULL`, `default now()`                | Znacznik czasu utworzenia rekordu.               |
+| `updated_at`  | `TIMESTAMPTZ`  | `NOT NULL`, `default now()`                | Znacznik czasu ostatniej aktualizacji rekordu.   |
 
 ### Tabela: `public.track_points`
 
 Przechowuje punkty geograficzne (współrzędne) dla każdego treningu.
 
-| Nazwa kolumny      | Typ danych             | Ograniczenia                                                     | Opis                                                              |
-| :----------------- | :--------------------- | :--------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `id`               | `BIGSERIAL`            | `PRIMARY KEY`                                                    | Unikalny identyfikator punktu na trasie.                          |
-| `workout_id`       | `UUID`                 | `NOT NULL`, `FOREIGN KEY (public.workouts.id) ON DELETE CASCADE` | Identyfikator treningu, do którego należy punkt.                  |
-| `location`         | `GEOMETRY(Point, 4326)`| `NOT NULL`                                                       | Współrzędne geograficzne punktu (długość, szerokość).             |
-| `elevation`        | `REAL`                 |                                                                  | Wysokość n.p.m. w metrach.                                        |
-| `timestamp`        | `TIMESTAMPTZ`          |                                                                  | Znacznik czasu zarejestrowania punktu.                            |
-| `sequence_number`  | `INTEGER`              | `NOT NULL`                                                       | Numer sekwencyjny punktu w ramach danego treningu.                |
+| Nazwa kolumny     | Typ danych              | Ograniczenia                                                     | Opis                                                  |
+| :---------------- | :---------------------- | :--------------------------------------------------------------- | :---------------------------------------------------- |
+| `id`              | `BIGSERIAL`             | `PRIMARY KEY`                                                    | Unikalny identyfikator punktu na trasie.              |
+| `workout_id`      | `UUID`                  | `NOT NULL`, `FOREIGN KEY (public.workouts.id) ON DELETE CASCADE` | Identyfikator treningu, do którego należy punkt.      |
+| `location`        | `GEOMETRY(Point, 4326)` | `NOT NULL`                                                       | Współrzędne geograficzne punktu (długość, szerokość). |
+| `elevation`       | `REAL`                  |                                                                  | Wysokość n.p.m. w metrach.                            |
+| `timestamp`       | `TIMESTAMPTZ`           |                                                                  | Znacznik czasu zarejestrowania punktu.                |
+| `sequence_number` | `INTEGER`               | `NOT NULL`                                                       | Numer sekwencyjny punktu w ramach danego treningu.    |
 
 ---
 
@@ -71,11 +71,13 @@ Przechowuje punkty geograficzne (współrzędne) dla każdego treningu.
 Zasady bezpieczeństwa na poziomie wiersza (RLS) zostaną włączone, aby zapewnić, że użytkownicy mogą zarządzać (tworzyć, odczytywać, aktualizować, usuwać) wyłącznie własnymi treningami.
 
 - **Włączenie RLS:**
+
   ```sql
   ALTER TABLE public.workouts ENABLE ROW LEVEL SECURITY;
   ```
 
 - **Polityka `SELECT`:** Użytkownicy mogą odczytywać tylko swoje treningi.
+
   ```sql
   CREATE POLICY "Allow users to read their own workouts"
   ON public.workouts FOR SELECT
@@ -83,6 +85,7 @@ Zasady bezpieczeństwa na poziomie wiersza (RLS) zostaną włączone, aby zapewn
   ```
 
 - **Polityka `INSERT`:** Użytkownicy mogą dodawać treningi tylko we własnym imieniu.
+
   ```sql
   CREATE POLICY "Allow users to insert their own workouts"
   ON public.workouts FOR INSERT
@@ -90,6 +93,7 @@ Zasady bezpieczeństwa na poziomie wiersza (RLS) zostaną włączone, aby zapewn
   ```
 
 - **Polityka `UPDATE`:** Użytkownicy mogą aktualizować tylko swoje treningi.
+
   ```sql
   CREATE POLICY "Allow users to update their own workouts"
   ON public.workouts FOR UPDATE

@@ -1,9 +1,11 @@
 # API Endpoint Implementation Plan: Get Workouts
 
 ## 1. Przegląd punktu końcowego
+
 Ten punkt końcowy (`GET /api/workouts`) jest odpowiedzialny za pobieranie listy treningów dla uwierzytelnionego użytkownika. Zapewnia funkcjonalności paginacji, filtrowania (po nazwie, dacie, typie) oraz sortowania, umożliwiając klientowi elastyczne przeszukiwanie danych.
 
 ## 2. Szczegóły żądania
+
 - **Metoda HTTP**: `GET`
 - **Struktura URL**: `/api/workouts`
 - **Parametry**:
@@ -19,6 +21,7 @@ Ten punkt końcowy (`GET /api/workouts`) jest odpowiedzialny za pobieranie listy
 - **Request Body**: Brak (parametry przekazywane są w URL).
 
 ## 3. Wykorzystywane typy
+
 - **DTO (z `src/types.ts`)**:
   - `PaginatedWorkoutsDto`: Główny typ odpowiedzi.
   - `WorkoutListItemDto`: Reprezentacja pojedynczego treningu na liście.
@@ -35,11 +38,12 @@ Ten punkt końcowy (`GET /api/workouts`) jest odpowiedzialny za pobieranie listy
       dateTo?: string;
       type?: string;
       sortBy: string;
-      order: 'asc' | 'desc';
+      order: "asc" | "desc";
     };
     ```
 
 ## 4. Szczegóły odpowiedzi
+
 - **Odpowiedź sukcesu (200 OK)**:
   ```json
   {
@@ -67,6 +71,7 @@ Ten punkt końcowy (`GET /api/workouts`) jest odpowiedzialny za pobieranie listy
   - `500 Internal Server Error`: Wewnętrzny błąd serwera.
 
 ## 5. Przepływ danych
+
 1.  Żądanie `GET` trafia do endpointu Astro `src/pages/api/workouts/index.ts`.
 2.  Middleware Astro (`src/middleware/index.ts`) weryfikuje sesję użytkownika i dołącza klienta Supabase oraz dane użytkownika do `context.locals`.
 3.  Handler `GET` w pliku endpointu sprawdza, czy `context.locals.user` istnieje. Jeśli nie, zwraca `401 Unauthorized`.
@@ -82,21 +87,25 @@ Ten punkt końcowy (`GET /api/workouts`) jest odpowiedzialny za pobieranie listy
 10. Endpoint zwraca otrzymany DTO do klienta z kodem statusu `200 OK`.
 
 ## 6. Względy bezpieczeństwa
+
 - **Uwierzytelnianie**: Dostęp do endpointu jest ograniczony do zalogowanych użytkowników. Middleware Astro będzie odpowiedzialne za weryfikację tokenu sesji.
 - **Autoryzacja**: Mechanizm Row-Level Security (RLS) w bazie danych PostgreSQL (skonfigurowany w Supabase) zapewni, że zapytanie zwróci wyłącznie treningi należące do uwierzytelnionego użytkownika (`auth.uid() = user_id`).
 - **Walidacja wejścia**: Użycie `zod` do walidacji wszystkich parametrów wejściowych chroni przed nieoczekiwanymi danymi i potencjalnymi atakami.
 
 ## 7. Obsługa błędów
+
 - **Błędy walidacji (400)**: Zod schema w handlerze API przechwyci wszelkie niezgodności typów, formatów czy wartości i zwróci odpowiedź z czytelnym komunikatem.
 - **Brak autoryzacji (401)**: Handler sprawdzi istnienie sesji użytkownika na początku i zwróci błąd, jeśli jej brak.
 - **Błędy serwera (500)**: Wszelkie nieoczekiwane wyjątki w warstwie serwisu (np. błąd połączenia z bazą danych) będą przechwytywane w bloku `try...catch` w handlerze API i logowane, a do klienta zostanie zwrócona generyczna odpowiedź o błędzie serwera.
 
 ## 8. Rozważania dotyczące wydajności
+
 - **Indeksowanie bazy danych**: Wydajność zapytań będzie zapewniona przez odpowiednie indeksy w tabeli `workouts`, zgodnie z `.ai/db-plan.md`. Kluczowe będą indeksy na `(user_id, date DESC)` oraz na kolumnie `type`.
 - **Paginacja**: Obowiązkowa paginacja zapobiega przesyłaniu dużych ilości danych i przeciążaniu zarówno serwera, jak i klienta.
 - **Liczba zapytań**: Wykonanie dwóch zapytań (jedno po dane, drugie po `count`) jest optymalnym podejściem przy użyciu Supabase, aby uzyskać zarówno paginowane wyniki, jak i całkowitą liczbę elementów.
 
 ## 9. Etapy wdrożenia
+
 1.  **Utworzenie pliku endpointu**: Stwórz plik `src/pages/api/workouts/index.ts`.
 2.  **Zdefiniowanie walidacji**: W pliku `index.ts` zdefiniuj schemat `zod` do walidacji parametrów `page`, `limit`, `name`, `dateFrom`, `dateTo`, `type`, `sortBy` i `order`.
 3.  **Implementacja handlera `GET`**: W `index.ts` zaimplementuj handler `GET`, który:

@@ -1,9 +1,11 @@
 # API Endpoint Implementation Plan: Create Workout
 
 ## 1. Przegląd punktu końcowego
+
 Ten punkt końcowy `POST /api/workouts` umożliwia uwierzytelnionym użytkownikom przesyłanie plików GPX w celu utworzenia nowych treningów. Endpoint przetwarza plik, oblicza kluczowe statystyki, takie jak dystans i czas trwania, a następnie zapisuje dane w bazie danych w ramach jednej transakcji. Po pomyślnym utworzeniu zwraca szczegóły nowego treningu.
 
 ## 2. Szczegóły żądania
+
 - **Metoda HTTP**: `POST`
 - **Struktura URL**: `/api/workouts`
 - **Typ zawartości**: `multipart/form-data`
@@ -14,12 +16,14 @@ Ten punkt końcowy `POST /api/workouts` umożliwia uwierzytelnionym użytkowniko
   - **Opcjonalne**: Brak.
 
 ## 3. Wykorzystywane typy
+
 - **`CreateWorkoutCommand`**: (`src/types.ts`) Używany do przekazania danych (nazwa, ID użytkownika, zawartość pliku GPX) z warstwy API do serwisu.
 - **`WorkoutDto`**: (`src/types.ts`) Używany jako obiekt transferu danych (DTO) dla odpowiedzi, zawierający dane nowo utworzonego treningu.
 - **`TrackPoint`**: (`src/types.ts`) Reprezentuje strukturę punktu trasy zapisywanego w bazie danych.
 - **`WorkoutCreateSchema` (nowy)**: Schemat `zod` do walidacji pól `name` i `gpxFile` z żądania `multipart/form-data`.
 
 ## 4. Szczegóły odpowiedzi
+
 - **Odpowiedź sukcesu**:
   - **Kod**: `201 Created`
   - **Struktura Body**: Obiekt JSON typu `WorkoutDto` (bez `track_points`).
@@ -43,6 +47,7 @@ Ten punkt końcowy `POST /api/workouts` umożliwia uwierzytelnionym użytkowniko
   - `500 Internal Server Error`: Wewnętrzny błąd serwera.
 
 ## 5. Przepływ danych
+
 1.  Żądanie `POST` trafia do endpointu Astro `src/pages/api/workouts.ts`.
 2.  Middleware Astro (`src/middleware/index.ts`) weryfikuje sesję użytkownika i dołącza klienta Supabase oraz dane użytkownika do `context.locals`.
 3.  Endpoint sprawdza, czy `context.locals.user` istnieje. Jeśli nie, zwraca `401 Unauthorized`.
@@ -64,6 +69,7 @@ Ten punkt końcowy `POST /api/workouts` umożliwia uwierzytelnionym użytkowniko
 12. Endpoint zwraca odpowiedź `201 Created` z obiektem `WorkoutDto` w ciele.
 
 ## 6. Względy bezpieczeństwa
+
 - **Uwierzytelnianie**: Dostęp do endpointu jest ograniczony do zalogowanych użytkowników poprzez weryfikację sesji Supabase w middleware Astro.
 - **Autoryzacja**: Polityki Row-Level Security (RLS) w bazie danych PostgreSQL zapewniają, że operacje zapisu do tabeli `workouts` mogą być wykonywane tylko w imieniu zalogowanego użytkownika (`WITH CHECK (auth.uid() = user_id)`).
 - **Walidacja wejścia**:
@@ -72,11 +78,13 @@ Ten punkt końcowy `POST /api/workouts` umożliwia uwierzytelnionym użytkowniko
 - **Bezpieczeństwo parsera XML**: Wybrana biblioteka do parsowania GPX (`gpxparser`) musi być skonfigurowana lub domyślnie odporna na ataki typu XXE (XML External Entity).
 
 ## 7. Rozważania dotyczące wydajności
+
 - **Przesyłanie plików**: Limit 5MB na plik GPX jest rozsądnym kompromisem między funkcjonalnością a obciążeniem serwera.
 - **Przetwarzanie danych**: Parsowanie GPX i obliczanie statystyk odbywa się na serwerze. Dla plików do 5MB operacje te powinny być wystarczająco szybkie.
 - **Operacje bazodanowe**: Użycie transakcji i masowego wstawiania (`bulk insert`) dla punktów trasy jest kluczowe dla zapewnienia integralności danych i minimalizacji liczby zapytań do bazy danych, co znacząco poprawia wydajność.
 
 ## 8. Etapy wdrożenia
+
 1.  **Konfiguracja zależności**: Zainstaluj bibliotekę do parsowania GPX, np. `gpxparser-js`.
     ```bash
     npm install gpxparser-js
