@@ -55,6 +55,7 @@ Komponenty będą zorganizowane w następującej hierarchii:
 
 ### `Map.tsx`
 - **Opis komponentu**: Istniejący komponent mapy oparty na Maplibre GL JS. Wymaga rozszerzenia o możliwość renderowania warstwy typu `heatmap` obok istniejącej warstwy `line`.
+- **Dostawca map**: Mapy będą dostarczane przez openfreemap.org ze stylem "bright".
 - **Główne elementy**: Kontener `div` dla mapy Maplibre.
 - **Obsługiwane interakcje**:
   - Przesuwanie i zoomowanie mapy (`onMoveEnd`).

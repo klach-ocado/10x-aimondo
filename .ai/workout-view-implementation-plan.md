@@ -48,6 +48,7 @@ Hierarchia komponentów zapewni separację odpowiedzialności, gdzie strona Astr
 
 ### `Map.tsx`
 - **Opis komponentu**: Reużywalny komponent do wyświetlania mapy za pomocą Maplibre GL JS. W tym widoku jego zadaniem jest narysowanie trasy treningu jako linii.
+- **Dostawca map**: Mapy będą dostarczane przez openfreemap.org ze stylem "bright".
 - **Główne elementy**:
   - Kontener `div` dla mapy.
   - Logika inicjalizująca mapę.
