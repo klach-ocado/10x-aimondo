@@ -2,7 +2,7 @@
 
 ## 1. Opis usługi
 
-Serwis `WorkoutStatsService` będzie odpowiedzialny za hermetyzację logiki obliczania kluczowych statystyk treningu na podstawie surowych danych punktów trasy (trackpoints) uzyskanych z pliku GPX. Głównym zadaniem serwisu jest obliczenie całkowitego dystansu oraz czasu trwania aktywności. Serwis będzie działał jako moduł z czystymi funkcjami, bezstanowy i bez zależności od zewnętrznych serwisów czy stanu aplikacji.
+Serwis `WorkoutStatsService` będzie odpowiedzialny za hermetyzację logiki obliczania kluczowych statystyk treningu na podstawie surowych danych punktów trasy (trackpoints) uzyskanych z pliku GPX. Głównym zadaniem serwisu jest obliczenie całkowitego dystansu oraz, jeśli to możliwe, czasu trwania aktywności. Serwis będzie działał jako moduł z czystymi funkcjami, bezstanowy i bez zależności od zewnętrznych serwisów czy stanu aplikacji.
 
 ## 2. Opis konstruktora
 
@@ -19,7 +19,7 @@ Główna metoda publiczna serwisu.
 - **Zwraca:**
   - `WorkoutStats`: Obiekt zawierający obliczone statystyki:
     - `distance: number`: Całkowity dystans treningu w metrach.
-    - `duration: number`: Całkowity czas trwania treningu w sekundach.
+    - `duration: number | null`: Całkowity czas trwania treningu w sekundach lub `null`, jeśli nie można go obliczyć.
 
 **Przykład użycia:**
 
@@ -27,16 +27,25 @@ Główna metoda publiczna serwisu.
 import { calculateStats } from 'src/lib/services/workout-stats.service';
 import type { TrackPoint } from 'src/types';
 
-const trackPoints: TrackPoint[] = [
+const trackPointsWithTime: TrackPoint[] = [
   { lat: 52.2297, lon: 21.0122, time: new Date('2025-10-14T10:00:00Z') },
   { lat: 52.2298, lon: 21.0123, time: new Date('2025-10-14T10:00:10Z') },
   // ...więcej punktów
   { lat: 52.2300, lon: 21.0125, time: new Date('2025-10-14T11:00:00Z') }
 ];
 
-const stats = calculateStats(trackPoints);
-// stats.distance ≈ 1500 (w metrach)
-// stats.duration = 3600 (w sekundach)
+const stats1 = calculateStats(trackPointsWithTime);
+// stats1.distance ≈ 1500 (w metrach)
+// stats1.duration = 3600 (w sekundach)
+
+const trackPointsWithoutTime: TrackPoint[] = [
+  { lat: 52.2297, lon: 21.0122 },
+  { lat: 52.2298, lon: 21.0123 },
+];
+
+const stats2 = calculateStats(trackPointsWithoutTime);
+// stats2.distance > 0
+// stats2.duration = null
 ```
 
 ## 4. Prywatne metody i pola
@@ -57,9 +66,9 @@ Prywatna funkcja pomocnicza do obliczania odległości między dwoma punktami ge
 
 Serwis musi być odporny na niekompletne lub nieprawidłowe dane wejściowe.
 
-1.  **Pusta tablica punktów:** Jeśli na wejściu zostanie podana pusta tablica `points`, metoda `calculateStats` zwróci `{ distance: 0, duration: 0 }`.
-2.  **Tablica z jednym punktem:** Jeśli tablica `points` zawiera tylko jeden punkt, niemożliwe jest obliczenie dystansu ani czasu trwania. Serwis zwróci `{ distance: 0, duration: 0 }`.
-3.  **Brakujące znaczniki czasu:** Jeśli punkty w tablicy nie zawierają pola `time`, czas trwania (`duration`) zostanie obliczony jako 0. Obliczanie dystansu będzie nadal możliwe.
+1.  **Pusta tablica punktów:** Jeśli na wejściu zostanie podana pusta tablica `points`, metoda `calculateStats` zwróci `{ distance: 0, duration: null }`.
+2.  **Tablica z jednym punktem:** Jeśli tablica `points` zawiera tylko jeden punkt, niemożliwe jest obliczenie dystansu ani czasu trwania. Serwis zwróci `{ distance: 0, duration: null }`.
+3.  **Brakujące znaczniki czasu:** Jeśli punkty w tablicy nie zawierają pola `time` lub wszystkie wartości są jednakowe, czas trwania (`duration`) zostanie zwrócony jako `null`. Obliczanie dystansu będzie nadal możliwe.
 4.  **Nieprawidłowe lub brakujące współrzędne:** Punkty z nieprawidłowymi lub brakującymi wartościami `lat` lub `lon` zostaną odfiltrowane i pominięte w obliczeniach.
 5.  **Niesortowane punkty:** Metoda zakłada, że punkty są dostarczane w porządku chronologicznym. Przed wywołaniem `calculateStats`, należy upewnić się, że dane z parsera GPX są posortowane według czasu.
 
@@ -87,7 +96,7 @@ export interface TrackPoint extends Coordinate {
 
 export interface WorkoutStats {
   distance: number; // w metrach
-  duration: number; // w sekundach
+  duration: number | null; // w sekundach lub null
 }
 ```
 
@@ -130,12 +139,12 @@ function calculateHaversineDistance(point1: Coordinate, point2: Coordinate): num
 /**
  * Calculates the total distance and duration for a given array of track points.
  * @param points - An array of TrackPoint objects.
- * @returns An object containing the total distance (in meters) and duration (in seconds).
+ * @returns An object containing the total distance (in meters) and duration (in seconds or null).
  */
 export function calculateStats(points: TrackPoint[]): WorkoutStats {
   // Handle edge cases: no points or a single point
   if (!points || points.length < 2) {
-    return { distance: 0, duration: 0 };
+    return { distance: 0, duration: null };
   }
 
   const validPoints = points.filter(p => 
@@ -143,7 +152,7 @@ export function calculateStats(points: TrackPoint[]): WorkoutStats {
   );
 
   if (validPoints.length < 2) {
-    return { distance: 0, duration: 0 };
+    return { distance: 0, duration: null };
   }
 
   // Calculate total distance
@@ -154,7 +163,7 @@ export function calculateStats(points: TrackPoint[]): WorkoutStats {
 
   // Calculate total duration
   const pointsWithTime = validPoints.filter(p => p.time instanceof Date);
-  let totalDuration = 0;
+  let totalDuration: number | null = null;
   if (pointsWithTime.length > 1) {
     // Ensure points are sorted by time just in case
     pointsWithTime.sort((a, b) => a.time!.getTime() - b.time!.getTime());
@@ -196,7 +205,7 @@ const newWorkoutData: Omit<Workout, 'id' | 'createdAt' | 'updatedAt'> = {
   name,
   // ... inne pola
   distance: stats.distance, // zapisz dystans w metrach
-  duration: stats.duration, // zapisz czas trwania w sekundach
+  duration: stats.duration, // zapisz czas trwania w sekundach lub null
   // ...
 };
 
@@ -206,4 +215,4 @@ const newWorkoutData: Omit<Workout, 'id' | 'createdAt' | 'updatedAt'> = {
 
 ### Krok 5: Weryfikacja
 
-Po zaimplementowaniu powyższych kroków, przetestuj proces importu pliku GPX. Sprawdź, czy w bazie danych dla nowego treningu poprawnie zapisywane są wartości `distance` i `duration`. Przetestuj również przypadki brzegowe, takie jak plik GPX z jednym punktem lub bez informacji o czasie, aby upewnić się, że serwis zwraca `0` w odpowiednich polach.
+Po zaimplementowaniu powyższych kroków, przetestuj proces importu pliku GPX. Sprawdź, czy w bazie danych dla nowego treningu poprawnie zapisywane są wartości `distance` i `duration`. Przetestuj również przypadki brzegowe, takie jak plik GPX z jednym punktem lub bez informacji o czasie, aby upewnić się, że serwis zwraca `null` dla `duration`, gdy jest to wymagane.
