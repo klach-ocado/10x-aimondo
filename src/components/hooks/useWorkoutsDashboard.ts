@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import type { PaginatedWorkoutsDto, WorkoutListItemDto, Pagination, UpdateWorkoutCommand } from "@/types";
-import { dashboardFiltersStore } from "@/lib/store";
 
 export interface WorkoutFilters {
   name?: string;
@@ -15,6 +14,7 @@ export interface WorkoutSort {
 }
 
 const DEBOUNCE_DELAY = 500;
+const LOCAL_STORAGE_KEY = "dashboardFilters";
 
 export function useWorkoutsDashboard() {
   const [workouts, setWorkouts] = useState<WorkoutListItemDto[]>([]);
@@ -23,24 +23,32 @@ export function useWorkoutsDashboard() {
   const [error, setError] = useState<Error | null>(null);
 
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<WorkoutFilters>(dashboardFiltersStore.get());
+  const [filters, setFilters] = useState<WorkoutFilters>(() => {
+    if (typeof window === "undefined") {
+      return {};
+    }
+    try {
+      const savedFilters = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+      return savedFilters ? JSON.parse(savedFilters) : {};
+    } catch (error) {
+      console.error("Error reading from localStorage", error);
+      return {};
+    }
+  });
   const [sort, setSort] = useState<WorkoutSort>({ sortBy: "date", order: "desc" });
 
   const [debouncedFilters, setDebouncedFilters] = useState<WorkoutFilters>(filters);
 
   useEffect(() => {
-    const unsubscribe = dashboardFiltersStore.subscribe(() => {
-      setFilters(dashboardFiltersStore.get());
-    });
-    return unsubscribe;
-  }, []);
-
-  const handleFiltersChange = (newFilters: Partial<WorkoutFilters>) => {
-    dashboardFiltersStore.set(newFilters);
-  };
+    try {
+      window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(filters));
+    } catch (error) {
+      console.error("Error writing to localStorage", error);
+    }
+  }, [filters]);
 
   const clearAllFilters = () => {
-    dashboardFiltersStore.clear();
+    setFilters({});
     setPage(1);
     setSort({ sortBy: "date", order: "desc" });
   };
@@ -157,7 +165,7 @@ export function useWorkoutsDashboard() {
     filters,
     sort,
     page,
-    setFilters: handleFiltersChange,
+    setFilters,
     setSort,
     setPage,
     refresh: fetchWorkouts,
