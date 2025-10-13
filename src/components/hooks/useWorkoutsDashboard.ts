@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { PaginatedWorkoutsDto, WorkoutListItemDto, Pagination, UpdateWorkoutCommand } from "@/types";
+import { dashboardFiltersStore } from "@/lib/store";
 
 export interface WorkoutFilters {
   name?: string;
@@ -22,13 +23,24 @@ export function useWorkoutsDashboard() {
   const [error, setError] = useState<Error | null>(null);
 
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<WorkoutFilters>({});
+  const [filters, setFilters] = useState<WorkoutFilters>(dashboardFiltersStore.get());
   const [sort, setSort] = useState<WorkoutSort>({ sortBy: "date", order: "desc" });
 
-  const [debouncedFilters, setDebouncedFilters] = useState<WorkoutFilters>({});
+  const [debouncedFilters, setDebouncedFilters] = useState<WorkoutFilters>(filters);
+
+  useEffect(() => {
+    const unsubscribe = dashboardFiltersStore.subscribe(() => {
+      setFilters(dashboardFiltersStore.get());
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleFiltersChange = (newFilters: Partial<WorkoutFilters>) => {
+    dashboardFiltersStore.set(newFilters);
+  };
 
   const clearAllFilters = () => {
-    setFilters({});
+    dashboardFiltersStore.clear();
     setPage(1);
     setSort({ sortBy: "date", order: "desc" });
   };
@@ -145,7 +157,7 @@ export function useWorkoutsDashboard() {
     filters,
     sort,
     page,
-    setFilters,
+    setFilters: handleFiltersChange,
     setSort,
     setPage,
     refresh: fetchWorkouts,

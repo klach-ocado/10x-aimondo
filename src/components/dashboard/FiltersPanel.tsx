@@ -118,6 +118,19 @@ export function FiltersPanel({ filters, onFiltersChange, onClearAll, disabled }:
           Clear All
         </Button>
       )}
+      <Button
+        onClick={() => {
+          const params = new URLSearchParams();
+          if (filters.name) params.set("name", filters.name);
+          if (filters.type) params.set("type", filters.type);
+          if (filters.dateFrom) params.set("dateFrom", filters.dateFrom);
+          if (filters.dateTo) params.set("dateTo", filters.dateTo);
+          window.location.href = `/heatmap?${params.toString()}`;
+        }}
+        disabled={disabled}
+      >
+        Show on Heatmap
+      </Button>
     </div>
   );
 }
