@@ -3,7 +3,7 @@ import { useHeatmap } from "./hooks/useHeatmap";
 import { HeatmapFilterPanel } from "./heatmap/HeatmapFilterPanel";
 import Map from "./Map";
 import RefreshButton from "./heatmap/RefreshButton";
-import BackButton from "./heatmap/BackButton";
+import BackButton from './common/BackButton';
 import { Toaster, toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
