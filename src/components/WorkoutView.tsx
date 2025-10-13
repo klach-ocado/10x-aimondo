@@ -1,11 +1,11 @@
-import React from 'react';
-import { useWorkoutView } from './hooks/useWorkoutView';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal } from 'lucide-react';
-import StatsOverlay from './StatsOverlay';
-import Map from './Map';
-import BackButton from './common/BackButton';
+import React from "react";
+import { useWorkoutView } from "./hooks/useWorkoutView";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
+import StatsOverlay from "./StatsOverlay";
+import Map from "./Map";
+import BackButton from "./common/BackButton";
 
 interface WorkoutViewProps {
   workoutId: string;
@@ -15,7 +15,7 @@ const WorkoutView: React.FC<WorkoutViewProps> = ({ workoutId }) => {
   const { workout, isLoading, error } = useWorkoutView(workoutId);
 
   const handleBack = () => {
-    window.location.href = '/dashboard';
+    window.location.href = "/dashboard";
   };
 
   if (isLoading) {
@@ -58,17 +58,13 @@ const WorkoutView: React.FC<WorkoutViewProps> = ({ workoutId }) => {
         <h2 className="text-3xl font-bold tracking-tight">{workout.name}</h2>
         <StatsOverlay distance={workout.distance} duration={workout.duration} />
         <div className="flex-grow">
-            {workout.track_points && workout.track_points.length > 0 ? (
-              <Map
-                displayMode="track"
-                trackPoints={workout.track_points}
-                className="h-full w-full"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-96 w-full rounded-md border border-dashed">
-                  <p className="text-muted-foreground">No track data available for this workout.</p>
-              </div>
-            )}
+          {workout.track_points && workout.track_points.length > 0 ? (
+            <Map displayMode="track" trackPoints={workout.track_points} className="h-full w-full" />
+          ) : (
+            <div className="flex items-center justify-center h-96 w-full rounded-md border border-dashed">
+              <p className="text-muted-foreground">No track data available for this workout.</p>
+            </div>
+          )}
         </div>
       </main>
     </div>

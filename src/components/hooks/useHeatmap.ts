@@ -83,8 +83,10 @@ export const useHeatmap = () => {
       Object.keys(initialFilters).forEach((key) => {
         const value = initialFilters[key as keyof HeatmapFiltersViewModel];
         if (value === undefined || value === null) {
+          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
           delete initialFilters[key as keyof HeatmapFiltersViewModel];
-        } else if (typeof value === 'object' && value.from === undefined && value.to === undefined) {
+        } else if (typeof value === "object" && value.from === undefined && value.to === undefined) {
+          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
           delete initialFilters[key as keyof HeatmapFiltersViewModel];
         }
       });
