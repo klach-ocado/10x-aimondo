@@ -48,6 +48,7 @@ export class WorkoutService {
       p_date_from: command.dateFrom,
       p_date_to: command.dateTo,
       p_type: command.type,
+      p_limit: 10000, // Hardcoded limit as requested
     });
 
     if (error) {

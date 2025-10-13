@@ -613,6 +613,7 @@ export interface Database {
           min_lng: number;
           p_date_from?: string;
           p_date_to?: string;
+          p_limit?: number;
           p_name?: string;
           p_type?: string;
           p_user_id: string;

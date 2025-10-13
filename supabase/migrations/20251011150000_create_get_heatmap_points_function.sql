@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION get_heatmap_points(
     p_name TEXT DEFAULT NULL,
     p_date_from TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     p_date_to TIMESTAMP WITH TIME ZONE DEFAULT NULL,
-    p_type TEXT DEFAULT NULL
+    p_type TEXT DEFAULT NULL,
+    p_limit INT DEFAULT 10000
 )
 RETURNS TABLE(lat DOUBLE PRECISION, lng DOUBLE PRECISION) AS $$
 BEGIN
@@ -27,6 +28,6 @@ BEGIN
         (p_date_to IS NULL OR w.date <= p_date_to) AND
         (p_type IS NULL OR w.type = p_type)
     ORDER BY random()
-    LIMIT 10000;
+    LIMIT p_limit;
 END;
 $$ LANGUAGE plpgsql;

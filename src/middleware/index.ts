@@ -2,7 +2,7 @@ import { defineMiddleware } from "astro:middleware";
 
 import { supabaseClient } from "../db/supabase.client.ts";
 
-const DEFAULT_LOCAL_USER_ID = "9a6b978e-fa10-46c3-8160-04087c270a03";
+const DEFAULT_LOCAL_USER_ID = "46979a74-07df-4133-b0a5-e458ea728ca9";
 
 export const onRequest = defineMiddleware((context, next) => {
   context.locals.supabase = supabaseClient;
