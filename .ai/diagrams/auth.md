@@ -47,72 +47,66 @@ sequenceDiagram
     %% --- User Login Flow ---
     Note over Browser, Supabase Auth: Przepływ logowania użytkownika
 
-    Browser->>Astro API: POST /api/auth/login (email, password)
-    activate Astro API
-
-    Middleware->>Astro API: Przechwycenie żądania, inicjalizacja klienta Supabase
+    Browser->>Middleware: POST /api/auth/login
     activate Middleware
-
-    Astro API->>Supabase Auth: signInWithPassword(email, password)
+    Middleware->>Astro API: Przekazanie żądania
+    activate Astro API
+    Astro API->>Supabase Auth: signInWithPassword()
     activate Supabase Auth
 
     alt Dane poprawne
-        Supabase Auth-->>Astro API: Zwraca sesję (access & refresh token)
-        deactivate Supabase Auth
-
+        Supabase Auth-->>Astro API: Sesja (access & refresh token)
         Astro API-->>Middleware: Odpowiedź 200 OK
-        Middleware-->>Browser: Odpowiedź 200 OK + Set-Cookie (sesja)
-        deactivate Middleware
-        deactivate Astro API
-
+        Note over Middleware: Dołączenie Set-Cookie do odpowiedzi
+        Middleware-->>Browser: Odpowiedź 200 OK + Set-Cookie
         Browser->>Browser: Przekierowanie do /dashboard
     else Dane niepoprawne
         Supabase Auth-->>Astro API: Błąd autentykacji
-        deactivate Supabase Auth
-        Astro API-->>Browser: Odpowiedź 401 Unauthorized
-        deactivate Astro API
+        Astro API-->>Middleware: Odpowiedź 401 Unauthorized
+        Middleware-->>Browser: Odpowiedź 401 Unauthorized
     end
+    
+    deactivate Supabase Auth
+    deactivate Astro API
+    deactivate Middleware
 
     %% --- Accessing Protected Route ---
     Note over Browser, Supabase Auth: Dostęp do chronionej trasy
 
     Browser->>Middleware: GET /dashboard
     activate Middleware
-
-    Middleware->>Supabase Auth: Weryfikacja sesji z tokenu w ciasteczku
+    Middleware->>Supabase Auth: Weryfikacja sesji
     activate Supabase Auth
 
     alt Sesja ważna
         Supabase Auth-->>Middleware: Sesja jest prawidłowa
-        deactivate Supabase Auth
-        Middleware->>Browser: Zezwolenie na dostęp, renderowanie strony
-        deactivate Middleware
+        Note over Middleware: Renderowanie strony /dashboard
+        Middleware-->>Browser: Odpowiedź 200 OK (HTML)
     else Sesja nieważna lub brak
         Supabase Auth-->>Middleware: Brak aktywnej sesji
-        deactivate Supabase Auth
-        Middleware->>Browser: Przekierowanie na /login
-        deactivate Middleware
+        Middleware-->>Browser: Odpowiedź 302 Redirect na /login
     end
+
+    deactivate Supabase Auth
+    deactivate Middleware
 
     %% --- Token Refresh Flow ---
     Note over Browser, Supabase Auth: Automatyczne odświeżanie tokenu
 
-    Browser->>Middleware: GET /api/workouts (z wygasłym access tokenem)
+    Browser->>Middleware: GET /api/workouts
     activate Middleware
-
-    Middleware->>Supabase Auth: Weryfikacja sesji (access token wygasł)
+    Middleware->>Supabase Auth: Weryfikacja sesji (token odświeżony w tle)
     activate Supabase Auth
-
-    Supabase Auth->>Supabase Auth: Użycie refresh tokena do wygenerowania nowej sesji
-    Supabase Auth-->>Middleware: Zwraca nową sesję (nowy access token)
+    Supabase Auth-->>Middleware: Zwraca nową, ważną sesję
     deactivate Supabase Auth
 
     Middleware->>Astro API: Kontynuacja żądania z nową sesją
     activate Astro API
-    Astro API-->>Middleware: Zwraca dane (np. listę treningów)
+    Astro API-->>Middleware: Zwraca dane (np. lista treningów)
     deactivate Astro API
 
-    Middleware-->>Browser: Odpowiedź 200 OK + Set-Cookie (nowa sesja)
+    Note over Middleware: Dołączenie nowej sesji (Set-Cookie) do odpowiedzi
+    Middleware-->>Browser: Odpowiedź 200 OK + Set-Cookie
     deactivate Middleware
 
 ```

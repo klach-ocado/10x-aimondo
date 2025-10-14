@@ -57,15 +57,15 @@ stateDiagram-v2
     [*] --> Wejscie_Na_Strone
 
     state Wejscie_Na_Strone {
-        note right of Wejscie_Na_Strone
-            System sprawdza status sesji użytkownika
-            w middleware i dokonuje przekierowania.
-        end note
         [*] --> Sprawdzenie_Sesji
         state Sprawdzenie_Sesji <<choice>>
         Sprawdzenie_Sesji --> Zalogowany : Sesja aktywna
         Sprawdzenie_Sesji --> Niezalogowany : Sesja nieaktywna
     }
+    note right of Wejscie_Na_Strone
+        System sprawdza status sesji użytkownika
+        w middleware i dokonuje przekierowania.
+    end note
 
     state Niezalogowany {
         Strona_Logowania : Formularz logowania
