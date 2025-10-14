@@ -13,6 +13,7 @@ import type {
 import type { SupabaseClient } from "../../db/supabase.client";
 import { parseGPXWithCustomParser } from "@we-gold/gpxjs";
 import { DOMParser } from "xmldom-qsa";
+import { calculateStats } from "./workout-stats.service";
 
 export class WorkoutService {
   private supabase: SupabaseClient;
@@ -158,13 +159,21 @@ export class WorkoutService {
       throw new Error("GPX file does not contain any track points");
     }
 
+    const stats = calculateStats(
+      trackPoints.map((p) => ({
+        lat: p.latitude,
+        lon: p.longitude,
+        time: p.time ? new Date(p.time) : undefined,
+      }))
+    );
+
     const workoutToInsert = {
       user_id: command.user_id,
       name: command.name,
       date: (trackPoints[0].time ? new Date(trackPoints[0].time) : new Date()).toISOString(),
       type: "run", // Mock data
-      distance: 10000, // Mock data
-      duration: 3600, // Mock data
+      distance: stats.distance,
+      duration: stats.duration,
     };
 
     const { data: workout, error: workoutError } = await this.supabase
