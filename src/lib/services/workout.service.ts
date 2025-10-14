@@ -171,9 +171,9 @@ export class WorkoutService {
       user_id: command.user_id,
       name: command.name,
       date: (trackPoints[0].time ? new Date(trackPoints[0].time) : new Date()).toISOString(),
-      type: "run", // Mock data
-      distance: stats.distance,
-      duration: stats.duration,
+      type: parsedGpx.tracks[0].type || "other",
+      distance: Math.round(stats.distance),
+      duration: stats.duration ? Math.round(stats.duration) : null,
     };
 
     const { data: workout, error: workoutError } = await this.supabase
