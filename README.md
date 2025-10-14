@@ -76,8 +76,8 @@ To run this project locally, follow these steps.
     Your `.env` file should look like this:
 
     ```
-    PUBLIC_SUPABASE_URL="your-supabase-url"
-    PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
+    SUPABASE_URL="your-supabase-url"
+    SUPABASE_ANON_KEY="your-supabase-anon-key"
     ```
 
 4.  **Run the development server:**
