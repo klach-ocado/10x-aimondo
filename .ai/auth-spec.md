@@ -15,7 +15,7 @@ Niniejszy dokument opisuje architekturę i plan wdrożenia funkcjonalności uwie
 
 #### Strony (w `src/pages/`)
 
-- **`login.astro`**: Strona publiczna, dostępna dla niezalogowanych użytkowników. Będzie renderować komponent `LoginForm`. W przypadku, gdy zalogowany użytkownik spróbuje na nią wejść, zostanie przekierowany do `/dashboard`.
+- **`login.astro`**: Strona publiczna, dostępna dla niezalogowanych użytkowników. Będzie renderować komponent `LoginForm`. W przypadku, gdy zalogowany użytkownik spróbuje na nią wejść, zostanie przekierowany do `/dashboard`. Na stronie powinien znaleźć się również link do strony resetowania hasła (`/password-reset`).
 - **`register.astro`**: Strona publiczna do zakładania nowego konta. Będzie renderować komponent `RegisterForm`. Podobnie jak `/login`, będzie przekierowywać zalogowanych użytkowników.
 - **`password-reset.astro`**: Strona publiczna z formularzem do zainicjowania procesu resetowania hasła. Będzie renderować komponent `PasswordResetForm`.
 - **`update-password.astro`**: Strona publiczna, na którą użytkownik trafia po kliknięciu linku z e-maila resetującego hasło. Będzie renderować komponent `UpdatePasswordForm`.
@@ -71,8 +71,9 @@ Wszystkie endpointy będą asynchroniczne i będą korzystać z klienta Supabase
     4. W przypadku sukcesu, zwrot statusu 200. Ciasteczka sesyjne zostaną automatycznie obsłużone przez middleware.
 - **`register.ts` (`POST`)**:
     1. Walidacja (zod): `email`, `password`.
-    2. Wywołanie `supabase.auth.signUp()`. Supabase wyśle e-mail weryfikacyjny.
-    3. Zwrot statusu 201 w przypadku sukcesu lub 400/409 w przypadku błędu (np. słabe hasło, użytkownik istnieje).
+    2. Wywołanie `supabase.auth.signUp()`. Przy wyłączonej weryfikacji e-mail, metoda ta zwróci dane użytkownika i sesję.
+    3. Endpoint musi ręcznie ustawić ciasteczko sesji za pomocą `Astro.cookies.set()`, aby zalogować użytkownika.
+    4. Zwrot statusu 200 w przypadku sukcesu lub 400/409 w przypadku błędu (np. słabe hasło, użytkownik istnieje).
 - **`logout.ts` (`POST`)**:
     1. Wywołanie `supabase.auth.signOut()`.
     2. Zwrot statusu 200 i przekierowanie na stronę logowania.
@@ -82,10 +83,10 @@ Wszystkie endpointy będą asynchroniczne i będą korzystać z klienta Supabase
     3. Zawsze zwraca status 200, aby nie ujawniać, czy dany e-mail istnieje w bazie.
 - **`update-password.ts` (`POST`)**:
     1. Walidacja (zod): `password`.
-    2. Wywołanie `supabase.auth.updateUser()` z nowym hasłem. Sesja użytkownika (a co za tym idzie, uprawnienia do zmiany hasła) jest automatycznie pobierana z tokenu przez Supabase.
-    3. Zwrot statusu 200 w przypadku sukcesu lub 401/500 w przypadku błędu.
+    2. Wywołanie `supabase.auth.updateUser()` z nowym hasłem. Sesja użytkownika jest pobierana z tokenu odzyskiwania.
+    3. W przypadku sukcesu, zwrot statusu 200. Klient po otrzymaniu odpowiedzi powinien przekierować użytkownika na stronę `/login` z komunikatem o pomyślnej zmianie hasła.
 - **`callback.ts` (`GET`)**:
-    1. Endpoint obsługujący callbacki od Supabase (np. po potwierdzeniu e-maila).
+    1. Endpoint obsługujący callbacki od Supabase (np. w przyszłości dla logowania OAuth).
     2. Odczytuje `code` z parametrów URL.
     3. Wywołuje `supabase.auth.exchangeCodeForSession(code)`.
     4. Przekierowuje użytkownika do `/dashboard`.
@@ -105,8 +106,8 @@ Wszystkie endpointy będą asynchroniczne i będą korzystać z klienta Supabase
 
 ### 4.1. Konfiguracja Supabase Auth
 
-- **Szablony e-mail**: W panelu Supabase należy dostosować szablony "Confirm signup" i "Reset password", aby linki w nich zawarte kierowały do odpowiednich stron w aplikacji AImondo:
-    - Link potwierdzający: `https://<twoja-domena>/api/auth/callback?code=...`
+- **Wyłączenie weryfikacji e-mail**: Aby zapewnić automatyczne logowanie po rejestracji (zgodnie z US-001), w panelu Supabase (`Authentication -> Providers -> Email`) należy wyłączyć opcję "Confirm email".
+- **Szablony e-mail**: W panelu Supabase należy dostosować szablon "Reset password", aby link w nim zawarty kierował do odpowiedniej strony w aplikacji AImondo:
     - Link resetujący hasło: `https://<twoja-domena>/update-password` (Supabase automatycznie dołączy tokeny).
 - **Dostawcy OAuth**: Konfiguracja jest opcjonalna, ale w przyszłości można łatwo dodać logowanie przez Google, GitHub itp.
 
