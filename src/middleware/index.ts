@@ -1,11 +1,29 @@
 import { defineMiddleware } from "astro:middleware";
+import { createSupabaseServerClient } from "@/db/supabase.client";
 
-import { supabaseClient } from "../db/supabase.client.ts";
+const protectedRoutes = ["/dashboard", "/heatmap", "/workouts"];
+const authRoutes = ["/auth/login", "/auth/register"];
 
-const DEFAULT_LOCAL_USER_ID = "46979a74-07df-4133-b0a5-e458ea728ca9";
+export const onRequest = defineMiddleware(async (context, next) => {
+  const supabase = createSupabaseServerClient(context);
 
-export const onRequest = defineMiddleware((context, next) => {
-  context.locals.supabase = supabaseClient;
-  context.locals.user = { id: DEFAULT_LOCAL_USER_ID };
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (session?.user) {
+    context.locals.user = { id: session.user.id, email: session.user.email };
+  } else {
+    context.locals.user = null;
+  }
+
+  const currentRoute = context.url.pathname;
+
+  if (context.locals.user && authRoutes.some(path => currentRoute.startsWith(path))) {
+    return context.redirect("/dashboard");
+  }
+
+  if (!context.locals.user && protectedRoutes.some(path => currentRoute.startsWith(path))) {
+    return context.redirect("/auth/login");
+  }
+
   return next();
 });

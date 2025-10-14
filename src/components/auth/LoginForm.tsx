@@ -25,9 +25,22 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO: Implement actual login logic
-    console.log(values);
-    toast.info("Login functionality is not yet implemented.");
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    if (response.ok) {
+      window.location.href = "/dashboard";
+    } else {
+      const errorData = await response.json();
+      toast.error("Login Failed", {
+        description: errorData.error || "An unexpected error occurred. Please try again.",
+      });
+    }
   }
 
   return (
