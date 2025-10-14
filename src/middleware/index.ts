@@ -6,11 +6,12 @@ const authRoutes = ["/auth/login", "/auth/register"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const supabase = createSupabaseServerClient(context);
+  context.locals.supabase = supabase;
 
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (session?.user) {
-    context.locals.user = { id: session.user.id, email: session.user.email };
+  if (user) {
+    context.locals.user = { id: user.id, email: user.email };
   } else {
     context.locals.user = null;
   }
