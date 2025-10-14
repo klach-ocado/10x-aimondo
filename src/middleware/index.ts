@@ -21,9 +21,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return context.redirect("/dashboard", 302);
   }
 
-  // If the user is not logged in, and the route is not public, redirect to login.
   const isPublic = publicRoutes.some(path => path === '/' ? currentRoute === '/' : currentRoute.startsWith(path));
+  
+  // If the user is not logged in and the route is not public, block access.
   if (!user && !isPublic) {
+    // For API routes, return a 401 Unauthorized response.
+    if (currentRoute.startsWith("/api")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    // For pages, redirect to the login page.
     return context.redirect("/auth/login", 302);
   }
 
