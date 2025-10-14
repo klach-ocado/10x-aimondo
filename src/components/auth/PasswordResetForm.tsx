@@ -10,22 +10,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const formSchema = z.object({
-  email: z.string().email("Invalid email address."),
-});
+import { PasswordResetSchema } from "@/lib/auth/schemas";
 
 export function PasswordResetForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof PasswordResetSchema>>({
+    resolver: zodResolver(PasswordResetSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO: Implement actual password reset logic
-    console.log(values);
-    toast.info("Password reset functionality is not yet implemented.");
+  async function onSubmit(values: z.infer<typeof PasswordResetSchema>) {
+    await fetch("/api/auth/password-reset", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    toast.success("Password Reset Email Sent", {
+      description: "If an account with this email exists, a password reset link has been sent.",
+    });
+
+    // Redirect to login page after a short delay to allow user to read the toast
+    setTimeout(() => {
+      window.location.href = "/auth/login";
+    }, 3000);
   }
 
   return (
