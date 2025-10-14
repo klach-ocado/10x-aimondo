@@ -5,7 +5,8 @@ interface Props {
   title?: string;
 }
 
-const { title = "10x Astro Starter" } = Astro.props;
+const { title = "AImondo" } = Astro.props;
+const { user } = Astro.locals;
 ---
 
 <!doctype html>
@@ -19,10 +20,32 @@ const { title = "10x Astro Starter" } = Astro.props;
   </head>
   <body>
     <header class="bg-gray-800 text-white p-4">
-      <nav class="flex space-x-4">
-        <a href="/dashboard" class="hover:text-gray-300">Dashboard</a>
-        <a href="/heatmap" class="hover:text-gray-300">Heatmap</a>
-      </nav>
+      <div class="container mx-auto flex justify-between items-center">
+        <nav class="flex items-center space-x-4">
+          <a href="/" class="text-xl font-bold">AImondo</a>
+          {user && (
+            <>
+              <a href="/dashboard" class="hover:text-gray-300 text-sm">Dashboard</a>
+              <a href="/heatmap" class="hover:text-gray-300 text-sm">Heatmap</a>
+            </>
+          )}
+        </nav>
+        <div class="flex items-center space-x-4">
+          {user ? (
+            <>
+              <span class="text-sm">{user.email}</span>
+              <form method="POST" action="/api/auth/logout">
+                <button type="submit" class="hover:text-gray-300 text-sm">Logout</button>
+              </form>
+            </>
+          ) : (
+            <>
+              <a href="/auth/login" class="hover:text-gray-300 text-sm">Login</a>
+              <a href="/auth/register" class="hover:text-gray-300 text-sm">Register</a>
+            </>
+          )}
+        </div>
+      </div>
     </header>
     <main class="h-[calc(100vh-64px)]">
       <slot />
