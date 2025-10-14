@@ -121,7 +121,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 
 - ID: US-006
 - Tytuł: Przeglądanie pojedynczego treningu
-- Opis: Jako użytkownik, chcę kliknąć na wybrany trening z listy, aby zobaczyć jego trasę na mapie i sprawdzić jego szczegółowe statystyki.
+- Opis: Jako zalogowany użytkownik, chcę kliknąć na wybrany trening z listy, aby zobaczyć jego trasę na mapie i sprawdzić jego szczegółowe statystyki.
 - Kryteria akceptacji:
   - Kliknięcie wiersza w tabeli przenosi mnie do widoku mapy.
   - Na mapie widzę narysowaną trasę treningu.
@@ -130,7 +130,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 
 - ID: US-007
 - Tytuł: Edycja danych treningu
-- Opis: Jako użytkownik, chcę mieć możliwość poprawienia nazwy, daty lub typu treningu, jeśli popełniłem błąd podczas jego dodawania.
+- Opis: Jako zalogowany użytkownik, chcę mieć możliwość poprawienia nazwy, daty lub typu treningu, jeśli popełniłem błąd podczas jego dodawania.
 - Kryteria akceptacji:
   - Na liście treningów przy każdym wpisie znajduje się opcja "Edytuj".
   - Po jej kliknięciu otwiera się okno modalne z formularzem edycji.
@@ -141,7 +141,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 
 - ID: US-008
 - Tytuł: Usuwanie treningu
-- Opis: Jako użytkownik, chcę móc usunąć błędnie wgrany lub niechciany trening.
+- Opis: Jako zalogowany użytkownik, chcę móc usunąć błędnie wgrany lub niechciany trening.
 - Kryteria akceptacji:
   - Na liście treningów przy każdym wpisie znajduje się opcja "Usuń".
   - Po jej kliknięciu widzę okno modalne z prośbą o potwierdzenie operacji.
@@ -150,7 +150,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 
 - ID: US-009
 - Tytuł: Wizualizacja globalnej heatmapy
-- Opis: Jako użytkownik, chcę zobaczyć heatmapę wszystkich moich aktywności, aby zidentyfikować najczęściej uczęszczane ścieżki.
+- Opis: Jako zalogowany użytkownik, chcę zobaczyć heatmapę wszystkich moich aktywności, aby zidentyfikować najczęściej uczęszczane ścieżki.
 - Kryteria akceptacji:
   - Na stronie głównej znajduje się przycisk "Pokaż heatmapę".
   - Po jego kliknięciu widok przełącza się na mapę z heatmapą.
@@ -159,7 +159,7 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 
 - ID: US-010
 - Tytuł: Odświeżanie danych na heatmapie
-- Opis: Jako użytkownik, podczas eksploracji heatmapy chcę móc odświeżyć dane dla nowego obszaru mapy, aby zapewnić ich dokładność.
+- Opis: Jako zalogowany użytkownik, podczas eksploracji heatmapy chcę móc odświeżyć dane dla nowego obszaru mapy, aby zapewnić ich dokładność.
 - Kryteria akceptacji:
   - Gdy przesuwam lub przybliżam/oddalam mapę, dane heatmapy nie odświeżają się automatycznie.
   - Na mapie widoczny jest przycisk "Odśwież dane dla tego widoku".
@@ -172,6 +172,17 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 - Kryteria akceptacji:
   - Po zmianie centrum lub poziomu przybliżenia mapy, te dane są zapisywane w `localStorage` przeglądarki.
   - Gdy ponownie otwieram widok mapy (zarówno pojedynczego treningu, jak i heatmapy), jest ona inicjalizowana z zapisaną pozycją i zoomem.
+  - Dane zapisane w `localStorage` są dla wszystkich użytkowników przeglądarki, tj. nie są skojarzone z kontem w aplikacji.
+
+- ID: US-012
+- Tytuł: Reset hasła użytkownika
+- Opis: Jako zarejestrowany użytkownik, chcę móc zresetować hasło do mojego konta, aby uzyskać dostęp do moich treningów.
+- Kryteria akceptacji:
+    - Mogę przejść do formularza resetu hasła.
+    - Formularz wymaga podania e-maila.
+    - Aplikacja wysyła link do resetu hasła na podany adres email, jeśli takie konto istnieje.
+    - Aplikacja nie informuje, czy e-mail istnieje w systemie, aby chronić prywatność użytkowników.
+    - Po pomyślnym resecie hasła jestem przekierowany do widoku listy moich treningów.
 
 ## 6. Metryki sukcesu
 
