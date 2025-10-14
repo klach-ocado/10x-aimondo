@@ -27,8 +27,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   const { error } = await supabase.auth.updateUser({ password });
 
   if (error) {
+    const isTokenError = /token/i.test(error.message) || /expired/i.test(error.message);
     return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
+      status: isTokenError ? 401 : 400,
       headers: { "Content-Type": "application/json" },
     });
   }

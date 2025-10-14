@@ -36,6 +36,14 @@ export function UpdatePasswordForm() {
       setTimeout(() => {
         window.location.href = "/dashboard";
       }, 1000);
+    } else if (response.status === 401) {
+      toast.error("Invalid or Expired Link", {
+        description: "Your password reset link is invalid or has expired. Please request a new one.",
+      });
+      // Redirect to login page after a short delay
+      setTimeout(() => {
+        window.location.href = "/auth/login";
+      }, 3000);
     } else {
       const errorData = await response.json();
       toast.error("Failed to update password", {
