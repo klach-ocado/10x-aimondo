@@ -10,27 +10,38 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const formSchema = z.object({
-  password: z.string().min(8, "Password must be at least 8 characters."),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+import { UpdatePasswordSchema } from "@/lib/auth/schemas";
 
 export function UpdatePasswordForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof UpdatePasswordSchema>>({
+    resolver: zodResolver(UpdatePasswordSchema),
     defaultValues: {
       password: "",
       confirmPassword: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO: Implement actual password update logic
-    console.log(values);
-    toast.info("Password update functionality is not yet implemented.");
+  async function onSubmit(values: z.infer<typeof UpdatePasswordSchema>) {
+    const response = await fetch("/api/auth/update-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    if (response.ok) {
+      toast.success("Password updated successfully!");
+      // Redirect to dashboard after a short delay
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1000);
+    } else {
+      const errorData = await response.json();
+      toast.error("Failed to update password", {
+        description: errorData.error || "An unexpected error occurred. Please try again.",
+      });
+    }
   }
 
   return (
