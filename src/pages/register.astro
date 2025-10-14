@@ -1,0 +1,16 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { RegisterForm } from "@/components/auth/RegisterForm";
+---
+
+<Layout title="Register | AImondo">
+  <main class="container mx-auto flex-grow p-4">
+    <RegisterForm client:load />
+    <div class="mt-4 text-center text-sm">
+      Already have an account?
+      <a href="/login" class="underline">
+        Sign in
+      </a>
+    </div>
+  </main>
+</Layout>
