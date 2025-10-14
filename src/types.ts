@@ -1,6 +1,16 @@
 import { z } from "zod";
 import type { Tables } from "./db/database.types";
 
+export interface Coordinate {
+  lat: number;
+  lon: number;
+}
+
+export interface WorkoutStats {
+  distance: number; // in meters
+  duration: number | null; // in seconds or null
+}
+
 /**
  * Represents the core Workout entity from the database, aliased as WorkoutDto.
  * This is the main data transfer object for a single workout.
@@ -8,11 +18,12 @@ import type { Tables } from "./db/database.types";
 export type WorkoutDto = Tables<"workouts">;
 
 /**
- * Represents the core TrackPoint entity from the database.
- * The 'location' property is of type 'unknown' and needs to be handled separately
- * when mapping to a DTO.
+ * Represents a single point from a GPX track.
+ * This is an internal representation used for calculations before database insertion.
  */
-export type TrackPoint = Tables<"track_points">;
+export interface TrackPoint extends Coordinate {
+  time?: Date;
+}
 
 /**
  * DTO for a single track point as returned by the API.
