@@ -1,6 +1,7 @@
 import * as React from "react";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
+import { formatDuration } from "@/lib/utils";
 import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 import { DataTablePagination } from "./DataTablePagination";
 import type { Pagination, WorkoutListItemDto } from "@/types";
@@ -82,8 +83,8 @@ export function WorkoutsDataTable({
     },
     {
       accessorKey: "duration",
-      header: "Duration (min)",
-      cell: ({ row }) => `${Math.round(row.getValue<number>("duration") / 60)} min`,
+      header: "Duration (HH:MM:SS)",
+      cell: ({ row }) => formatDuration(row.getValue("duration")),
     },
     {
       id: "actions",
