@@ -23,9 +23,7 @@ export async function GET(context: APIContext): Promise<Response> {
   const { locals, url } = context;
   const { user, supabase } = locals;
 
-  if (!user) {
-    return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
-  }
+  
 
   const queryParams = Object.fromEntries(url.searchParams.entries());
   const validation = GetHeatmapDataQuerySchema.safeParse(queryParams);
@@ -40,7 +38,7 @@ export async function GET(context: APIContext): Promise<Response> {
   const [minLng, minLat, maxLng, maxLat] = bbox.split(",").map(parseFloat);
 
   const command: GetHeatmapDataCommand = {
-    userId: user.id,
+    userId: user!.id,
     minLng,
     minLat,
     maxLng,

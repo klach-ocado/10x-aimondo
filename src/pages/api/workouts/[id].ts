@@ -21,18 +21,11 @@ export async function GET(context: APIContext): Promise<Response> {
   const workoutId = validationResult.data;
   const user = locals.user;
 
-  if (!user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
   try {
     const workoutService = new WorkoutService(locals.supabase);
     const workoutDetails = await workoutService.getWorkoutDetails({
       workoutId,
-      userId: user.id,
+      userId: user!.id,
     });
 
     if (!workoutDetails) {
@@ -69,16 +62,9 @@ export async function DELETE(context: APIContext): Promise<Response> {
   const workoutId = validationResult.data;
   const user = locals.user;
 
-  if (!user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
   try {
     const workoutService = new WorkoutService(locals.supabase);
-    const { error, notFound } = await workoutService.deleteWorkout(workoutId, user.id);
+    const { error, notFound } = await workoutService.deleteWorkout(workoutId, user!.id);
 
     if (error) {
       console.error("Error deleting workout:", error);
@@ -121,13 +107,6 @@ export async function PUT(context: APIContext): Promise<Response> {
   const workoutId = idValidationResult.data;
   const user = locals.user;
 
-  if (!user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
   let requestBody;
   try {
     requestBody = await request.json();
@@ -151,7 +130,7 @@ export async function PUT(context: APIContext): Promise<Response> {
 
   try {
     const workoutService = new WorkoutService(locals.supabase);
-    const updatedWorkout = await workoutService.updateWorkout(workoutId, user.id, bodyValidationResult.data);
+    const updatedWorkout = await workoutService.updateWorkout(workoutId, user!.id, bodyValidationResult.data);
 
     if (!updatedWorkout) {
       return new Response(JSON.stringify({ error: "Workout not found or you do not have permission to update it" }), {

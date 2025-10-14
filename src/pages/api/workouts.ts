@@ -22,9 +22,6 @@ const WorkoutCreateSchema = z.object({
 
 export const GET: APIRoute = async ({ request, locals }) => {
   const { user, supabase } = locals;
-  if (!user) {
-    return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
-  }
 
   try {
     const url = new URL(request.url);
@@ -36,7 +33,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
         { status: 400 }
       );
     }
-    const command: GetWorkoutsCommand = { ...validationResult.data, userId: user.id };
+    const command: GetWorkoutsCommand = { ...validationResult.data, userId: user!.id };
     const workoutService = new WorkoutService(supabase);
     const paginatedWorkouts = await workoutService.getWorkouts(command);
     return new Response(JSON.stringify(paginatedWorkouts), { status: 200 });
@@ -48,10 +45,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const { user, supabase } = locals;
-  if (!user) {
-    return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
-  }
-
   try {
     const formData = await request.formData();
     const gpxFile = formData.get("gpxFile") as File;
@@ -62,7 +55,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const command: CreateWorkoutCommand = {
       name: validationResult.data.name,
       gpxFileContent: await gpxFile.text(),
-      user_id: user.id,
+      user_id: user!.id,
     };
     const workoutService = new WorkoutService(supabase);
     const newWorkout = await workoutService.createWorkout(command);
