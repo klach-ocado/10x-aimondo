@@ -1,9 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { EditWorkoutDialog } from "./EditWorkoutDialog";
 import type { WorkoutListItemDto } from "@/types";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 // Mock sonner toast
 vi.mock("sonner", () => ({
@@ -31,7 +32,9 @@ describe("EditWorkoutDialog", () => {
   });
 
   const renderComponent = (isOpen = true, workout: WorkoutListItemDto | null = mockWorkout) => {
-    render(<EditWorkoutDialog isOpen={isOpen} onOpenChange={mockOnOpenChange} onSuccess={mockOnSuccess} workout={workout} />);
+    render(
+      <EditWorkoutDialog isOpen={isOpen} onOpenChange={mockOnOpenChange} onSuccess={mockOnSuccess} workout={workout} />
+    );
   };
 
   it("should render with initial values from the workout prop", () => {
@@ -40,19 +43,22 @@ describe("EditWorkoutDialog", () => {
 
     // Assert
     expect(screen.getByLabelText(/name/i)).toHaveValue(mockWorkout.name);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(screen.getByLabelText(/type/i)).toHaveValue(mockWorkout.type!);
     // The date is formatted, so we check for the formatted value
     expect(screen.getByText(format(new Date(mockWorkout.date), "PPP"))).toBeInTheDocument();
   });
 
-  it("should not render if workout is null", () => {
+  it("should render with empty fields if workout is null", () => {
     // Arrange
     renderComponent(true, null);
 
     // Assert
-    // The dialog is controlled by isOpen, but the content might not render.
-    // We check for a key element.
-    expect(screen.queryByText("Edit Workout")).not.toBeInTheDocument();
+    // The dialog title should still be visible
+    expect(screen.getByText("Edit Workout")).toBeInTheDocument();
+    // The form fields should be empty as there is no workout data to populate them
+    expect(screen.getByLabelText(/name/i)).toHaveValue("");
+    expect(screen.getByLabelText(/type/i)).toHaveValue("");
   });
 
   it("should display validation error when name is cleared", async () => {
