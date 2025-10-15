@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useHeatmap } from "./useHeatmap";
 import type { HeatmapDataDto } from "./useHeatmap";
@@ -70,7 +70,7 @@ describe("useHeatmap Hook", () => {
 
     // Assert
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy).toHaveBeenCalledWith(`/api/heatmap?bbox=18,49,20,51`);
+    expect(fetchSpy).toHaveBeenCalledWith(`/api/heatmap?bbox=18%2C49%2C20%2C51`);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.heatmapData).toEqual(mockGeoJsonResponse);
     expect(result.current.error).toBeNull();
