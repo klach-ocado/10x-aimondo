@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor } from "@testing-library/react";
+import { render, waitFor, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Map from "./Map";
 import maplibregl from "maplibre-gl";
@@ -79,7 +79,9 @@ describe("Map", () => {
   it("should initialize the map on mount", async () => {
     const onLoad = vi.fn();
     render(<Map displayMode="track" trackPoints={[]} onLoad={onLoad} />);
-    loadCallback();
+    act(() => {
+      loadCallback();
+    });
 
     await waitFor(() => {
       expect(maplibregl.Map).toHaveBeenCalledOnce();
@@ -96,7 +98,9 @@ describe("Map", () => {
       { lat: 41, lng: -75 },
     ];
     render(<Map displayMode="track" trackPoints={trackPoints} />);
-    loadCallback();
+    act(() => {
+      loadCallback();
+    });
 
     await waitFor(() => {
       expect(mockMapInstance.setLayoutProperty).toHaveBeenCalledWith("route-layer", "visibility", "visible");
@@ -119,7 +123,9 @@ describe("Map", () => {
   it('should render in "heatmap" mode with provided data', async () => {
     const heatmapData = { type: "FeatureCollection", features: [] };
     render(<Map displayMode="heatmap" heatmapData={heatmapData} initialViewState={{ center: [0, 0], zoom: 1 }} />);
-    loadCallback();
+    act(() => {
+      loadCallback();
+    });
 
     await waitFor(() => {
       expect(mockMapInstance.setLayoutProperty).toHaveBeenCalledWith("heatmap-layer", "visibility", "visible");
@@ -147,8 +153,10 @@ describe("Map", () => {
         onMoveEnd={onMoveEnd}
       />
     );
-    loadCallback();
-    moveEndCallback();
+    act(() => {
+      loadCallback();
+      moveEndCallback();
+    });
 
     await waitFor(() => {
       expect(onMoveEnd).toHaveBeenCalledOnce();

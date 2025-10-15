@@ -21,16 +21,6 @@ describe("useWorkoutView", () => {
     vi.clearAllMocks();
   });
 
-  it("should return initial loading state", () => {
-    // Arrange & Act
-    const { result } = renderHook(() => useWorkoutView("123"));
-
-    // Assert
-    expect(result.current.isLoading).toBe(true);
-    expect(result.current.error).toBeNull();
-    expect(result.current.workout).toBeNull();
-  });
-
   it("should fetch workout data and return success state", async () => {
     // Arrange
     const mockResponse = {

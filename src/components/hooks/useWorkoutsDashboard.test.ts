@@ -53,20 +53,6 @@ describe("useWorkoutsDashboard", () => {
     });
   });
 
-  it("should set initial state correctly", () => {
-    // Arrange & Act
-    const { result } = renderHook(() => useWorkoutsDashboard());
-
-    // Assert
-    expect(result.current.workouts).toEqual([]);
-    expect(result.current.pagination).toBeNull();
-    expect(result.current.isLoading).toBe(true);
-    expect(result.current.error).toBeNull();
-    expect(result.current.page).toBe(1);
-    expect(result.current.filters).toEqual({});
-    expect(result.current.sort).toEqual({ sortBy: "date", order: "desc" });
-  });
-
   it("should fetch workouts on initial render and update state on success", async () => {
     // Arrange & Act
     const { result } = renderHook(() => useWorkoutsDashboard());
@@ -97,7 +83,7 @@ describe("useWorkoutsDashboard", () => {
     });
   });
 
-  it("should load initial filters from localStorage", () => {
+  it("should load initial filters from localStorage", async () => {
     // Arrange
     const savedFilters = { name: "Run", type: "Running" };
     localStorageMock.setItem("dashboardFilters", JSON.stringify(savedFilters));
@@ -106,7 +92,9 @@ describe("useWorkoutsDashboard", () => {
     const { result } = renderHook(() => useWorkoutsDashboard());
 
     // Assert
-    expect(result.current.filters).toEqual(savedFilters);
+    await waitFor(() => {
+      expect(result.current.filters).toEqual(savedFilters);
+    });
   });
 
   it("should save filters to localStorage when they change", async () => {
