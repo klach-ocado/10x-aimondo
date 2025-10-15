@@ -15,7 +15,7 @@ describe("calculateStats", () => {
   it("should return 0 distance and null duration for points with missing lat/lon", () => {
     const points: TrackPoint[] = [
       { lat: 50, lon: 10, time: new Date() },
-      // @ts-expect-error
+      // @ts-expect-error testing invalid data
       { lat: null, lon: null, time: new Date() },
     ];
     expect(calculateStats(points)).toEqual({ distance: 0, duration: null });
