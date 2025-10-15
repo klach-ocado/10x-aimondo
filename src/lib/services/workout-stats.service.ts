@@ -47,13 +47,16 @@ export function calculateStats(points: TrackPoint[]): WorkoutStats {
   }
 
   // Calculate total duration
-  const pointsWithTime = validPoints.filter((p) => p.time instanceof Date);
   let totalDuration: number | null = null;
+
+  // Create a new array of points that are guaranteed to have a Date object for the time.
+  const pointsWithTime = validPoints.map((p) => p.time).filter((t): t is Date => t instanceof Date);
+
   if (pointsWithTime.length > 1) {
     // Ensure points are sorted by time just in case
-    pointsWithTime.sort((a, b) => a.time!.getTime() - b.time!.getTime());
-    const startTime = pointsWithTime[0].time!.getTime();
-    const endTime = pointsWithTime[pointsWithTime.length - 1].time!.getTime();
+    pointsWithTime.sort((a, b) => a.getTime() - b.getTime());
+    const startTime = pointsWithTime[0].getTime();
+    const endTime = pointsWithTime[pointsWithTime.length - 1].getTime();
     totalDuration = (endTime - startTime) / 1000; // in seconds
   }
 

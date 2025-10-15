@@ -1,9 +1,9 @@
-import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +21,7 @@ export function UpdatePasswordForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof UpdatePasswordSchema>) {
+  const onSubmit = useCallback(async (values: z.infer<typeof UpdatePasswordSchema>) => {
     const response = await fetch("/api/auth/update-password", {
       method: "POST",
       headers: {
@@ -34,6 +34,7 @@ export function UpdatePasswordForm() {
       toast.success("Password updated successfully!");
       // Redirect to dashboard after a short delay
       setTimeout(() => {
+        // eslint-disable-next-line react-compiler/react-compiler
         window.location.href = "/dashboard";
       }, 1000);
     } else if (response.status === 401) {
@@ -50,7 +51,7 @@ export function UpdatePasswordForm() {
         description: errorData.error || "An unexpected error occurred. Please try again.",
       });
     }
-  }
+  }, []);
 
   return (
     <Card className="mx-auto max-w-sm">

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,7 +25,7 @@ export function LoginForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
@@ -34,6 +35,7 @@ export function LoginForm() {
     });
 
     if (response.ok) {
+      // eslint-disable-next-line react-compiler/react-compiler
       window.location.href = "/dashboard";
     } else {
       const errorData = await response.json();
@@ -41,7 +43,7 @@ export function LoginForm() {
         description: errorData.error || "An unexpected error occurred. Please try again.",
       });
     }
-  }
+  }, []);
 
   return (
     <Card className="mx-auto max-w-sm">

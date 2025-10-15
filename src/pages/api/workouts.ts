@@ -33,6 +33,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
         { status: 400 }
       );
     }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const command: GetWorkoutsCommand = { ...validationResult.data, userId: user!.id };
     const workoutService = new WorkoutService(supabase);
     const paginatedWorkouts = await workoutService.getWorkouts(command);
@@ -55,6 +56,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const command: CreateWorkoutCommand = {
       name: validationResult.data.name,
       gpxFileContent: await gpxFile.text(),
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       user_id: user!.id,
     };
     const workoutService = new WorkoutService(supabase);

@@ -36,6 +36,7 @@ export async function GET(context: APIContext): Promise<Response> {
   const [minLng, minLat, maxLng, maxLat] = bbox.split(",").map(parseFloat);
 
   const command: GetHeatmapDataCommand = {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     userId: user!.id,
     minLng,
     minLat,

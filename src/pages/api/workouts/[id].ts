@@ -25,6 +25,7 @@ export async function GET(context: APIContext): Promise<Response> {
     const workoutService = new WorkoutService(locals.supabase);
     const workoutDetails = await workoutService.getWorkoutDetails({
       workoutId,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       userId: user!.id,
     });
 
@@ -64,6 +65,7 @@ export async function DELETE(context: APIContext): Promise<Response> {
 
   try {
     const workoutService = new WorkoutService(locals.supabase);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const { error, notFound } = await workoutService.deleteWorkout(workoutId, user!.id);
 
     if (error) {
@@ -130,6 +132,7 @@ export async function PUT(context: APIContext): Promise<Response> {
 
   try {
     const workoutService = new WorkoutService(locals.supabase);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const updatedWorkout = await workoutService.updateWorkout(workoutId, user!.id, bodyValidationResult.data);
 
     if (!updatedWorkout) {

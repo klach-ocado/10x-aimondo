@@ -1,9 +1,9 @@
-import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +22,7 @@ export function RegisterForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof RegisterSchema>) {
+  const onSubmit = useCallback(async (values: z.infer<typeof RegisterSchema>) => {
     const response = await fetch("/api/auth/register", {
       method: "POST",
       headers: {
@@ -32,6 +32,7 @@ export function RegisterForm() {
     });
 
     if (response.ok) {
+      // eslint-disable-next-line react-compiler/react-compiler
       window.location.href = "/dashboard";
     } else {
       const errorData = await response.json();
@@ -39,7 +40,7 @@ export function RegisterForm() {
         description: errorData.error || "An unexpected error occurred. Please try again.",
       });
     }
-  }
+  }, []);
 
   return (
     <Card className="mx-auto max-w-sm">

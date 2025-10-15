@@ -23,6 +23,7 @@ export const POST: APIRoute = async ({ request, cookies, url }) => {
 
   if (error) {
     // Log the error for debugging but do not expose it to the client
+    // For example, you could use a proper logging service here
     console.error("Password Reset Error:", error.message);
   }
 
