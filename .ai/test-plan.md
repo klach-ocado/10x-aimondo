@@ -1,10 +1,10 @@
-# Plan Testów Aplikacji 10x-aimondo
+# Plan Testów Aplikacji AImondo
 
 ## 1. Wprowadzenie i Cele Testowania
 
 ### Wprowadzenie
 
-Niniejszy dokument opisuje kompleksowy plan testów dla aplikacji webowej `10x-aimondo`. Aplikacja umożliwia użytkownikom zarządzanie swoimi treningami w formacie GPX oraz ich wizualizację na mapie, w tym w formie mapy ciepła (heatmap). Plan ten został opracowany w oparciu o analizę stosu technologicznego, architektury oraz kluczowych funkcjonalności projektu.
+Niniejszy dokument opisuje kompleksowy plan testów dla aplikacji webowej `AImondo`. Aplikacja umożliwia użytkownikom zarządzanie swoimi treningami w formacie GPX oraz ich wizualizację na mapie, w tym w formie mapy ciepła (heatmap). Plan ten został opracowany w oparciu o analizę stosu technologicznego, architektury oraz kluczowych funkcjonalności projektu.
 
 ### Cele Testowania
 
@@ -14,7 +14,7 @@ Głównym celem testów jest zapewnienie wysokiej jakości, niezawodności, bezp
 - **Zapewnienie bezpieczeństwa:** Identyfikacja i eliminacja potencjalnych luk w zabezpieczeniach, zwłaszcza w obszarach autentykacji i autoryzacji dostępu do danych.
 - **Ocena wydajności:** Sprawdzenie, jak aplikacja radzi sobie pod obciążeniem, szczególnie w kontekście przetwarzania plików GPX i generowania mapy ciepła.
 - **Zapewnienie użyteczności (Usability):** Ocena, czy interfejs użytkownika jest intuicyjny i przyjazny.
-- **Weryfikacja kompatybilności:** Sprawdzenie poprawnego działania aplikacji na różnych przeglądarkach.
+- **Weryfikacja kompatybilności:** Sprawdzenie poprawnego działania aplikacji na przeglądarce Chrome.
 
 ## 2. Zakres Testów
 
@@ -35,7 +35,7 @@ Głównym celem testów jest zapewnienie wysokiej jakości, niezawodności, bezp
 
 ### Funkcjonalności wyłączone z testów:
 
-- Testy integracji z zewnętrznymi dostawcami usług (poza Supabase), jeśli takowe nie istnieją.
+- Testy integracji z zewnętrznymi dostawcami usług (poza Supabase), gdyż takowe nie istnieją.
 - Testy generowane automatycznie przez frameworki (np. wewnętrzne mechanizmy Astro).
 
 ## 3. Typy Testów
@@ -84,7 +84,7 @@ Głównym celem testów jest zapewnienie wysokiej jakości, niezawodności, bezp
 ## 5. Środowisko Testowe
 
 - **System Operacyjny:** Dowolny (Windows, macOS, Linux)
-- **Przeglądarki:** Chrome (najnowsza wersja), Firefox (najnowsza wersja), Safari (najnowsza wersja).
+- **Przeglądarki:** Chrome (najnowsza wersja)
 - **Baza Danych:** Dedykowana instancja deweloperska/testowa Supabase, odizolowana od danych produkcyjnych.
 - **Środowisko uruchomieniowe:** Lokalna maszyna deweloperska lub dedykowany serwer CI/CD.
 
