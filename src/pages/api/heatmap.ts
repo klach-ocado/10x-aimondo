@@ -23,8 +23,6 @@ export async function GET(context: APIContext): Promise<Response> {
   const { locals, url } = context;
   const { user, supabase } = locals;
 
-  
-
   const queryParams = Object.fromEntries(url.searchParams.entries());
   const validation = GetHeatmapDataQuerySchema.safeParse(queryParams);
 

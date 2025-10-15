@@ -24,14 +24,14 @@ Główna metoda publiczna serwisu.
 **Przykład użycia:**
 
 ```typescript
-import { calculateStats } from 'src/lib/services/workout-stats.service';
-import type { TrackPoint } from 'src/types';
+import { calculateStats } from "src/lib/services/workout-stats.service";
+import type { TrackPoint } from "src/types";
 
 const trackPointsWithTime: TrackPoint[] = [
-  { lat: 52.2297, lon: 21.0122, time: new Date('2025-10-14T10:00:00Z') },
-  { lat: 52.2298, lon: 21.0123, time: new Date('2025-10-14T10:00:10Z') },
+  { lat: 52.2297, lon: 21.0122, time: new Date("2025-10-14T10:00:00Z") },
+  { lat: 52.2298, lon: 21.0123, time: new Date("2025-10-14T10:00:10Z") },
   // ...więcej punktów
-  { lat: 52.2300, lon: 21.0125, time: new Date('2025-10-14T11:00:00Z') }
+  { lat: 52.23, lon: 21.0125, time: new Date("2025-10-14T11:00:00Z") },
 ];
 
 const stats1 = calculateStats(trackPointsWithTime);
@@ -111,7 +111,7 @@ W pliku `workout-stats.service.ts` zaimplementuj logikę obliczeniową.
 ```typescript
 // src/lib/services/workout-stats.service.ts
 
-import type { Coordinate, TrackPoint, WorkoutStats } from 'src/types';
+import type { Coordinate, TrackPoint, WorkoutStats } from "src/types";
 
 const EARTH_RADIUS_METERS = 6371000;
 
@@ -130,7 +130,7 @@ function calculateHaversineDistance(point1: Coordinate, point2: Coordinate): num
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  
+
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return EARTH_RADIUS_METERS * c;
@@ -147,9 +147,7 @@ export function calculateStats(points: TrackPoint[]): WorkoutStats {
     return { distance: 0, duration: null };
   }
 
-  const validPoints = points.filter(p => 
-    p.lat != null && p.lon != null
-  );
+  const validPoints = points.filter((p) => p.lat != null && p.lon != null);
 
   if (validPoints.length < 2) {
     return { distance: 0, duration: null };
@@ -162,7 +160,7 @@ export function calculateStats(points: TrackPoint[]): WorkoutStats {
   }
 
   // Calculate total duration
-  const pointsWithTime = validPoints.filter(p => p.time instanceof Date);
+  const pointsWithTime = validPoints.filter((p) => p.time instanceof Date);
   let totalDuration: number | null = null;
   if (pointsWithTime.length > 1) {
     // Ensure points are sorted by time just in case
@@ -186,8 +184,8 @@ Zmodyfikuj istniejący `workout.service.ts` (lub inny serwis odpowiedzialny za i
 ```typescript
 // src/lib/services/workout.service.ts (przykład modyfikacji)
 
-import { calculateStats } from './workout-stats.service';
-import type { TrackPoint, Workout } from 'src/types';
+import { calculateStats } from "./workout-stats.service";
+import type { TrackPoint, Workout } from "src/types";
 // ... inne importy
 
 // Wewnątrz funkcji, która przetwarza sparsowane dane GPX
@@ -200,7 +198,7 @@ const parsedPoints: TrackPoint[] = parseGpx(gpxData); // funkcja parseGpx jest t
 const stats = calculateStats(parsedPoints);
 
 // Użyj statystyk podczas tworzenia obiektu do zapisu w bazie danych
-const newWorkoutData: Omit<Workout, 'id' | 'createdAt' | 'updatedAt'> = {
+const newWorkoutData: Omit<Workout, "id" | "createdAt" | "updatedAt"> = {
   userId,
   name,
   // ... inne pola

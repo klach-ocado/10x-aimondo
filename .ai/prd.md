@@ -178,11 +178,11 @@ Użytkownicy, którzy regularnie uprawiają sport (np. bieganie, jazda na rowerz
 - Tytuł: Reset hasła użytkownika
 - Opis: Jako zarejestrowany użytkownik, chcę móc zresetować hasło do mojego konta, aby uzyskać dostęp do moich treningów.
 - Kryteria akceptacji:
-    - Mogę przejść do formularza resetu hasła.
-    - Formularz wymaga podania e-maila.
-    - Aplikacja wysyła link do resetu hasła na podany adres email, jeśli takie konto istnieje.
-    - Aplikacja nie informuje, czy e-mail istnieje w systemie, aby chronić prywatność użytkowników.
-    - Po pomyślnym resecie hasła jestem przekierowany do widoku listy moich treningów.
+  - Mogę przejść do formularza resetu hasła.
+  - Formularz wymaga podania e-maila.
+  - Aplikacja wysyła link do resetu hasła na podany adres email, jeśli takie konto istnieje.
+  - Aplikacja nie informuje, czy e-mail istnieje w systemie, aby chronić prywatność użytkowników.
+  - Po pomyślnym resecie hasła jestem przekierowany do widoku listy moich treningów.
 
 ## 6. Metryki sukcesu
 

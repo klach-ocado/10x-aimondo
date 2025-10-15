@@ -22,14 +22,14 @@ Głównym celem testów jest zapewnienie wysokiej jakości, niezawodności, bezp
 
 - **Moduł autentykacji:** Rejestracja, logowanie, wylogowywanie, resetowanie hasła, zmiana hasła.
 - **Zarządzanie treningami (CRUD):**
-    - Dodawanie nowego treningu poprzez upload pliku GPX.
-    - Wyświetlanie listy treningów z paginacją i filtrowaniem.
-    - Edycja metadanych treningu (np. nazwa, opis).
-    - Usuwanie treningu.
+  - Dodawanie nowego treningu poprzez upload pliku GPX.
+  - Wyświetlanie listy treningów z paginacją i filtrowaniem.
+  - Edycja metadanych treningu (np. nazwa, opis).
+  - Usuwanie treningu.
 - **Wizualizacja danych:**
-    - Wyświetlanie pojedynczej trasy treningu na mapie.
-    - Generowanie i wyświetlanie mapy ciepła (heatmap) dla wszystkich treningów.
-    - Wyświetlanie statystyk dla wybranego treningu.
+  - Wyświetlanie pojedynczej trasy treningu na mapie.
+  - Generowanie i wyświetlanie mapy ciepła (heatmap) dla wszystkich treningów.
+  - Wyświetlanie statystyk dla wybranego treningu.
 - **API Endpoints:** Walidacja danych wejściowych, autoryzacja i poprawność odpowiedzi dla wszystkich punktów końcowych.
 - **Middleware:** Weryfikacja logiki ochrony tras i modyfikacji żądań/odpowiedzi.
 
@@ -47,9 +47,9 @@ Głównym celem testów jest zapewnienie wysokiej jakości, niezawodności, bezp
 2.  **Testy Integracyjne (Integration Tests):**
     - **Cel:** Sprawdzenie poprawności współpracy pomiędzy różnymi modułami aplikacji.
     - **Zakres:**
-        - Integracja komponentów React z API (np. formularz logowania -> API logowania).
-        - Integracja API z bazą danych (np. endpoint tworzenia treningu -> zapis w tabeli `workouts`).
-        - Działanie middleware w kontekście żądań do chronionych endpointów.
+      - Integracja komponentów React z API (np. formularz logowania -> API logowania).
+      - Integracja API z bazą danych (np. endpoint tworzenia treningu -> zapis w tabeli `workouts`).
+      - Działanie middleware w kontekście żądań do chronionych endpointów.
 
 3.  **Testy End-to-End (E2E):**
     - **Cel:** Symulacja rzeczywistych scenariuszy użytkowania aplikacji z perspektywy użytkownika końcowego.
@@ -62,24 +62,24 @@ Głównym celem testów jest zapewnienie wysokiej jakości, niezawodności, bezp
 5.  **Testy Wydajnościowe (Performance Tests):**
     - **Cel:** Ocena szybkości działania i responsywności aplikacji pod obciążeniem.
     - **Zakres:**
-        - Czas ładowania strony głównej i panelu dashboard.
-        - Czas przetwarzania i importu dużych plików GPX.
-        - Czas generowania mapy ciepła przy dużej liczbie punktów danych.
+      - Czas ładowania strony głównej i panelu dashboard.
+      - Czas przetwarzania i importu dużych plików GPX.
+      - Czas generowania mapy ciepła przy dużej liczbie punktów danych.
 
 ## 4. Scenariusze Testowe dla Kluczowych Funkcjonalności
 
-| Funkcjonalność | Scenariusz | Oczekiwany Rezultat | Priorytet |
-| :--- | :--- | :--- | :--- |
-| **Rejestracja** | Użytkownik podaje poprawne i unikalne dane. | Konto zostaje utworzone, użytkownik jest zalogowany i przekierowany do panelu. | Wysoki |
-| | Użytkownik podaje zajęty adres e-mail. | Wyświetlany jest komunikat o błędzie. | Wysoki |
-| **Logowanie** | Użytkownik podaje poprawne dane. | Użytkownik jest zalogowany i przekierowany do panelu. | Wysoki |
-| | Użytkownik podaje błędne hasło. | Wyświetlany jest komunikat o błędzie. | Wysoki |
-| **Dodawanie treningu**| Zalogowany użytkownik wysyła poprawny plik GPX. | Plik jest przetwarzany, trening zostaje zapisany w bazie i pojawia się na liście. | Wysoki |
-| | Użytkownik wysyła plik w innym formacie niż GPX. | Wyświetlany jest błąd walidacji formatu pliku. | Średni |
-| **Wyświetlanie listy**| Zalogowany użytkownik przechodzi do panelu. | Wyświetlana jest lista jego treningów z poprawną paginacją. | Wysoki |
-| **Dostęp do danych**| Użytkownik A próbuje uzyskać dostęp do treningu użytkownika B przez API. | Odpowiedź API to błąd autoryzacji (np. 403 Forbidden lub 404 Not Found). | Krytyczny |
-| **Mapa Ciepła** | Użytkownik z wieloma treningami otwiera widok mapy ciepła. | Mapa jest generowana i wyświetla punkty na podstawie wszystkich treningów użytkownika. | Wysoki |
-| **Usuwanie treningu**| Użytkownik usuwa swój trening. | Trening znika z listy i nie jest uwzględniany na mapie ciepła. | Wysoki |
+| Funkcjonalność         | Scenariusz                                                               | Oczekiwany Rezultat                                                                    | Priorytet |
+| :--------------------- | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------- | :-------- |
+| **Rejestracja**        | Użytkownik podaje poprawne i unikalne dane.                              | Konto zostaje utworzone, użytkownik jest zalogowany i przekierowany do panelu.         | Wysoki    |
+|                        | Użytkownik podaje zajęty adres e-mail.                                   | Wyświetlany jest komunikat o błędzie.                                                  | Wysoki    |
+| **Logowanie**          | Użytkownik podaje poprawne dane.                                         | Użytkownik jest zalogowany i przekierowany do panelu.                                  | Wysoki    |
+|                        | Użytkownik podaje błędne hasło.                                          | Wyświetlany jest komunikat o błędzie.                                                  | Wysoki    |
+| **Dodawanie treningu** | Zalogowany użytkownik wysyła poprawny plik GPX.                          | Plik jest przetwarzany, trening zostaje zapisany w bazie i pojawia się na liście.      | Wysoki    |
+|                        | Użytkownik wysyła plik w innym formacie niż GPX.                         | Wyświetlany jest błąd walidacji formatu pliku.                                         | Średni    |
+| **Wyświetlanie listy** | Zalogowany użytkownik przechodzi do panelu.                              | Wyświetlana jest lista jego treningów z poprawną paginacją.                            | Wysoki    |
+| **Dostęp do danych**   | Użytkownik A próbuje uzyskać dostęp do treningu użytkownika B przez API. | Odpowiedź API to błąd autoryzacji (np. 403 Forbidden lub 404 Not Found).               | Krytyczny |
+| **Mapa Ciepła**        | Użytkownik z wieloma treningami otwiera widok mapy ciepła.               | Mapa jest generowana i wyświetla punkty na podstawie wszystkich treningów użytkownika. | Wysoki    |
+| **Usuwanie treningu**  | Użytkownik usuwa swój trening.                                           | Trening znika z listy i nie jest uwzględniany na mapie ciepła.                         | Wysoki    |
 
 ## 5. Środowisko Testowe
 
@@ -110,24 +110,24 @@ Testowanie powinno być procesem ciągłym, zintegrowanym z cyklem rozwoju oprog
 
 - **Kryterium wejścia:** Nowa funkcjonalność została zaimplementowana i pomyślnie przeszła testy jednostkowe na środowisku deweloperskim.
 - **Kryterium wyjścia:**
-    - 100% testów jednostkowych i integracyjnych dla nowej funkcjonalności kończy się sukcesem.
-    - Wszystkie krytyczne i wysokopriorytetowe scenariusze E2E kończą się sukcesem.
-    - Nie istnieją żadne znane, niezaakceptowane błędy o priorytecie krytycznym lub wysokim.
-    - Code coverage na poziomie co najmniej 80% dla nowo dodanego kodu.
+  - 100% testów jednostkowych i integracyjnych dla nowej funkcjonalności kończy się sukcesem.
+  - Wszystkie krytyczne i wysokopriorytetowe scenariusze E2E kończą się sukcesem.
+  - Nie istnieją żadne znane, niezaakceptowane błędy o priorytecie krytycznym lub wysokim.
+  - Code coverage na poziomie co najmniej 80% dla nowo dodanego kodu.
 
 ## 9. Role i Odpowiedzialności
 
 - **Deweloperzy:**
-    - Pisanie testów jednostkowych i integracyjnych dla tworzonego kodu.
-    - Naprawianie błędów znalezionych na wszystkich etapach testowania.
+  - Pisanie testów jednostkowych i integracyjnych dla tworzonego kodu.
+  - Naprawianie błędów znalezionych na wszystkich etapach testowania.
 - **Inżynier QA / Tester:**
-    - Projektowanie i implementacja scenariuszy testowych E2E.
-    - Przeprowadzanie testów manualnych (eksploracyjnych).
-    - Konfiguracja i utrzymanie testów wydajnościowych i bezpieczeństwa.
-    - Zarządzanie procesem raportowania błędów.
+  - Projektowanie i implementacja scenariuszy testowych E2E.
+  - Przeprowadzanie testów manualnych (eksploracyjnych).
+  - Konfiguracja i utrzymanie testów wydajnościowych i bezpieczeństwa.
+  - Zarządzanie procesem raportowania błędów.
 - **Product Owner / Manager Projektu:**
-    - Definiowanie priorytetów dla testowanych funkcjonalności.
-    - Akceptacja wyników testów i podejmowanie decyzji o wdrożeniu.
+  - Definiowanie priorytetów dla testowanych funkcjonalności.
+  - Akceptacja wyników testów i podejmowanie decyzji o wdrożeniu.
 
 ## 10. Procedury Raportowania Błędów
 

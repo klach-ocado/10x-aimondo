@@ -30,16 +30,16 @@ Niniejszy dokument opisuje architekturę i plan wdrożenia funkcjonalności uwie
 ### 2.3. Modyfikacje Istniejących Elementów
 
 - **`src/layouts/Layout.astro`**:
-    - W sekcji `<head>` lub na końcu `<body>` należy dodać warunkowo renderowany element nawigacji.
-    - Korzystając z `Astro.locals.session`, layout zdecyduje, które linki wyświetlić:
-        - **Tryb `auth`**: Linki do "Dashboard", "Heatmap" oraz przycisk/link "Wyloguj", który będzie formularzem POST wysyłanym do `api/auth/logout`.
-        - **Tryb `non-auth`**: Linki "Zaloguj się" i "Zarejestruj się".
+  - W sekcji `<head>` lub na końcu `<body>` należy dodać warunkowo renderowany element nawigacji.
+  - Korzystając z `Astro.locals.session`, layout zdecyduje, które linki wyświetlić:
+    - **Tryb `auth`**: Linki do "Dashboard", "Heatmap" oraz przycisk/link "Wyloguj", który będzie formularzem POST wysyłanym do `api/auth/logout`.
+    - **Tryb `non-auth`**: Linki "Zaloguj się" i "Zarejestruj się".
 - **`src/pages/index.astro`**:
-    - Ta strona stanie się głównym punktem wejścia. Jej jedynym zadaniem będzie sprawdzenie statusu sesji (`Astro.locals.session`) i wykonanie przekierowania:
-        - Jeśli sesja istnieje: `return Astro.redirect('/dashboard');`
-        - Jeśli sesja nie istnieje: `return Astro.redirect('/login');`
+  - Ta strona stanie się głównym punktem wejścia. Jej jedynym zadaniem będzie sprawdzenie statusu sesji (`Astro.locals.session`) i wykonanie przekierowania:
+    - Jeśli sesja istnieje: `return Astro.redirect('/dashboard');`
+    - Jeśli sesja nie istnieje: `return Astro.redirect('/login');`
 - **`src/pages/dashboard.astro`, `heatmap.astro`, `workouts/[id].astro`**:
-    - Te strony stają się chronione. Logika ochrony zostanie zaimplementowana centralnie w middleware.
+  - Te strony stają się chronione. Logika ochrony zostanie zaimplementowana centralnie w middleware.
 
 ### 2.4. Walidacja i Obsługa Błędów
 
@@ -56,8 +56,8 @@ Middleware jest kluczowym elementem integracji z Supabase w trybie SSR.
 - **Inicjalizacja klienta Supabase**: Na każde żądanie, middleware utworzy serwerowego klienta Supabase, przekazując mu ciasteczka z żądania. Pozwoli to Supabase na odczytanie i zweryfikowanie tokenu JWT.
 - **Zarządzanie sesją**: Pobierze aktualną sesję (`supabase.auth.getSession()`) i umieści ją wraz z klientem Supabase w `context.locals`. Dzięki temu każda strona i endpoint API w projekcie będzie miał dostęp do `Astro.locals.supabase` i `Astro.locals.session`.
 - **Ochrona tras**: Zaimplementuje logikę przekierowań:
-    - Jeśli `Astro.locals.session` nie istnieje, a żądanie dotyczy chronionej ścieżki (np. `/dashboard`, `/api/workouts`), użytkownik zostanie przekierowany na `/login`.
-    - Jeśli `Astro.locals.session` istnieje, a żądanie dotyczy stron `/login` lub `/register`, użytkownik zostanie przekierowany na `/dashboard`.
+  - Jeśli `Astro.locals.session` nie istnieje, a żądanie dotyczy chronionej ścieżki (np. `/dashboard`, `/api/workouts`), użytkownik zostanie przekierowany na `/login`.
+  - Jeśli `Astro.locals.session` istnieje, a żądanie dotyczy stron `/login` lub `/register`, użytkownik zostanie przekierowany na `/dashboard`.
 - **Obsługa `Set-Cookie`**: Middleware będzie odpowiedzialny za przechwycenie nagłówków `Set-Cookie` (zawierających odświeżone tokeny) z odpowiedzi Supabase i dołączenie ich do finalnej odpowiedzi serwera.
 
 ### 3.2. Endpointy API (w `src/pages/api/auth/`)
@@ -65,31 +65,31 @@ Middleware jest kluczowym elementem integracji z Supabase w trybie SSR.
 Wszystkie endpointy będą asynchroniczne i będą korzystać z klienta Supabase udostępnionego przez middleware (`Astro.locals.supabase`).
 
 - **`login.ts` (`POST`)**:
-    1. Walidacja (zod): `email`, `password`.
-    2. Wywołanie `supabase.auth.signInWithPassword()`.
-    3. W przypadku błędu, zwrot statusu 401 i komunikatu.
-    4. W przypadku sukcesu, zwrot statusu 200. Ciasteczka sesyjne zostaną automatycznie obsłużone przez middleware.
+  1. Walidacja (zod): `email`, `password`.
+  2. Wywołanie `supabase.auth.signInWithPassword()`.
+  3. W przypadku błędu, zwrot statusu 401 i komunikatu.
+  4. W przypadku sukcesu, zwrot statusu 200. Ciasteczka sesyjne zostaną automatycznie obsłużone przez middleware.
 - **`register.ts` (`POST`)**:
-    1. Walidacja (zod): `email`, `password`.
-    2. Wywołanie `supabase.auth.signUp()`. Przy wyłączonej weryfikacji e-mail, metoda ta zwróci dane użytkownika i sesję.
-    3. Endpoint musi ręcznie ustawić ciasteczko sesji za pomocą `Astro.cookies.set()`, aby zalogować użytkownika.
-    4. Zwrot statusu 200 w przypadku sukcesu lub 400/409 w przypadku błędu (np. słabe hasło, użytkownik istnieje).
+  1. Walidacja (zod): `email`, `password`.
+  2. Wywołanie `supabase.auth.signUp()`. Przy wyłączonej weryfikacji e-mail, metoda ta zwróci dane użytkownika i sesję.
+  3. Endpoint musi ręcznie ustawić ciasteczko sesji za pomocą `Astro.cookies.set()`, aby zalogować użytkownika.
+  4. Zwrot statusu 200 w przypadku sukcesu lub 400/409 w przypadku błędu (np. słabe hasło, użytkownik istnieje).
 - **`logout.ts` (`POST`)**:
-    1. Wywołanie `supabase.auth.signOut()`.
-    2. Zwrot statusu 200 i przekierowanie na stronę logowania.
+  1. Wywołanie `supabase.auth.signOut()`.
+  2. Zwrot statusu 200 i przekierowanie na stronę logowania.
 - **`password-reset.ts` (`POST`)**:
-    1. Walidacja (zod): `email`.
-    2. Wywołanie `supabase.auth.resetPasswordForEmail()` z adresem URL do strony `update-password`.
-    3. Zawsze zwraca status 200, aby nie ujawniać, czy dany e-mail istnieje w bazie.
+  1. Walidacja (zod): `email`.
+  2. Wywołanie `supabase.auth.resetPasswordForEmail()` z adresem URL do strony `update-password`.
+  3. Zawsze zwraca status 200, aby nie ujawniać, czy dany e-mail istnieje w bazie.
 - **`update-password.ts` (`POST`)**:
-    1. Walidacja (zod): `password`.
-    2. Wywołanie `supabase.auth.updateUser()` z nowym hasłem. Sesja użytkownika jest pobierana z tokenu odzyskiwania.
-    3. W przypadku sukcesu, zwrot statusu 200. Klient po otrzymaniu odpowiedzi powinien przekierować użytkownika na stronę `/login` z komunikatem o pomyślnej zmianie hasła.
+  1. Walidacja (zod): `password`.
+  2. Wywołanie `supabase.auth.updateUser()` z nowym hasłem. Sesja użytkownika jest pobierana z tokenu odzyskiwania.
+  3. W przypadku sukcesu, zwrot statusu 200. Klient po otrzymaniu odpowiedzi powinien przekierować użytkownika na stronę `/login` z komunikatem o pomyślnej zmianie hasła.
 - **`callback.ts` (`GET`)**:
-    1. Endpoint obsługujący callbacki od Supabase (np. w przyszłości dla logowania OAuth).
-    2. Odczytuje `code` z parametrów URL.
-    3. Wywołuje `supabase.auth.exchangeCodeForSession(code)`.
-    4. Przekierowuje użytkownika do `/dashboard`.
+  1. Endpoint obsługujący callbacki od Supabase (np. w przyszłości dla logowania OAuth).
+  2. Odczytuje `code` z parametrów URL.
+  3. Wywołuje `supabase.auth.exchangeCodeForSession(code)`.
+  4. Przekierowuje użytkownika do `/dashboard`.
 
 ### 3.3. Modele Danych i Walidacja
 
@@ -108,18 +108,18 @@ Wszystkie endpointy będą asynchroniczne i będą korzystać z klienta Supabase
 
 - **Wyłączenie weryfikacji e-mail**: Aby zapewnić automatyczne logowanie po rejestracji (zgodnie z US-001), w panelu Supabase (`Authentication -> Providers -> Email`) należy wyłączyć opcję "Confirm email".
 - **Szablony e-mail**: W panelu Supabase należy dostosować szablon "Reset password", aby link w nim zawarty kierował do odpowiedniej strony w aplikacji AImondo:
-    - Link resetujący hasło: `https://<twoja-domena>/update-password` (Supabase automatycznie dołączy tokeny).
+  - Link resetujący hasło: `https://<twoja-domena>/update-password` (Supabase automatycznie dołączy tokeny).
 - **Dostawcy OAuth**: Konfiguracja jest opcjonalna, ale w przyszłości można łatwo dodać logowanie przez Google, GitHub itp.
 
 ### 4.2. Bezpieczeństwo Danych (Row Level Security)
 
 - **Włączenie RLS**: Należy aktywować RLS na tabeli `workouts` oraz wszystkich przyszłych tabelach przechowujących dane użytkownika.
 - **Polityki dostępu**: Należy utworzyć polityki SQL, które powiążą dostęp do danych z ID zalogowanego użytkownika.
-    - Przykład polityki `SELECT` dla tabeli `workouts`:
-      ```sql
-      CREATE POLICY "Użytkownicy mogą odczytywać tylko własne treningi."
-      ON public.workouts FOR SELECT
-      USING ( auth.uid() = user_id );
-      ```
-    - Podobne polityki należy stworzyć dla operacji `INSERT`, `UPDATE` i `DELETE`.
+  - Przykład polityki `SELECT` dla tabeli `workouts`:
+    ```sql
+    CREATE POLICY "Użytkownicy mogą odczytywać tylko własne treningi."
+    ON public.workouts FOR SELECT
+    USING ( auth.uid() = user_id );
+    ```
+  - Podobne polityki należy stworzyć dla operacji `INSERT`, `UPDATE` i `DELETE`.
 - **Kolumna `user_id`**: Tabela `workouts` musi posiadać kolumnę `user_id` typu `uuid`, która będzie przechowywać identyfikator użytkownika z `auth.users`. Należy ustawić jej wartość domyślną na `auth.uid()`.

@@ -1,4 +1,4 @@
-import type { Coordinate, TrackPoint, WorkoutStats } from 'src/types';
+import type { Coordinate, TrackPoint, WorkoutStats } from "src/types";
 
 const EARTH_RADIUS_METERS = 6371000;
 
@@ -17,7 +17,7 @@ function calculateHaversineDistance(point1: Coordinate, point2: Coordinate): num
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  
+
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return EARTH_RADIUS_METERS * c;
@@ -34,9 +34,7 @@ export function calculateStats(points: TrackPoint[]): WorkoutStats {
     return { distance: 0, duration: null };
   }
 
-  const validPoints = points.filter(p => 
-    p.lat != null && p.lon != null
-  );
+  const validPoints = points.filter((p) => p.lat != null && p.lon != null);
 
   if (validPoints.length < 2) {
     return { distance: 0, duration: null };
@@ -49,7 +47,7 @@ export function calculateStats(points: TrackPoint[]): WorkoutStats {
   }
 
   // Calculate total duration
-  const pointsWithTime = validPoints.filter(p => p.time instanceof Date);
+  const pointsWithTime = validPoints.filter((p) => p.time instanceof Date);
   let totalDuration: number | null = null;
   if (pointsWithTime.length > 1) {
     // Ensure points are sorted by time just in case

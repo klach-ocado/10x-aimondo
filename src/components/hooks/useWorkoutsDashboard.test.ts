@@ -1,4 +1,3 @@
-
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { useWorkoutsDashboard } from "./useWorkoutsDashboard";
@@ -198,9 +197,7 @@ describe("useWorkoutsDashboard", () => {
       });
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
-      expect(mockFetch).toHaveBeenLastCalledWith(
-        "/api/workouts?page=1&limit=10&sortBy=date&order=desc&name=abc"
-      );
+      expect(mockFetch).toHaveBeenLastCalledWith("/api/workouts?page=1&limit=10&sortBy=date&order=desc&name=abc");
     });
   });
 

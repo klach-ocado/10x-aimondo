@@ -4,6 +4,7 @@ Na podstawie dostarczonych dokumentów, oto analiza architektury UI dla modułu 
 ### 1. Zidentyfikowane komponenty i strony:
 
 **Strony Astro (`src/pages/`):**
+
 - `index.astro`: Główny punkt wejściowy, przekierowujący na podstawie sesji.
 - `login.astro`: Strona hostująca formularz logowania.
 - `register.astro`: Strona hostująca formularz rejestracji.
@@ -14,18 +15,22 @@ Na podstawie dostarczonych dokumentów, oto analiza architektury UI dla modułu 
 - `workouts/[id].astro`: Chroniona strona z widokiem pojedynczego treningu.
 
 **Komponenty React (`src/components/auth/`):**
+
 - `LoginForm.tsx`: Interaktywny formularz logowania.
 - `RegisterForm.tsx`: Interaktywny formularz rejestracji.
 - `PasswordResetForm.tsx`: Interaktywny formularz do inicjowania resetu hasła.
 - `UpdatePasswordForm.tsx`: Interaktywny formularz do ustawiania nowego hasła.
 
 **Layouty i Komponenty Modyfikowane:**
+
 - `Layout.astro`: Główny layout aplikacji, który będzie warunkowo renderował nawigację w zależności od statusu zalogowania.
 
 **Endpointy API (`src/pages/api/auth/`):**
+
 - `login.ts`, `register.ts`, `logout.ts`, `password-reset.ts`, `update-password.ts`: Logika backendowa obsługująca żądania z komponentów React.
 
 ### 2. Główne strony i ich komponenty:
+
 - Strona `login.astro` będzie renderować w sobie komponent `LoginForm.tsx`.
 - Strona `register.astro` będzie renderować `RegisterForm.tsx`.
 - Strona `password-reset.astro` będzie renderować `PasswordResetForm.tsx`.
@@ -33,6 +38,7 @@ Na podstawie dostarczonych dokumentów, oto analiza architektury UI dla modułu 
 - Wszystkie strony będą opakowane w `Layout.astro`.
 
 ### 3. Przepływ danych między komponentami:
+
 1.  Użytkownik wchodzi na stronę `.astro` (np. `login.astro`).
 2.  Strona Astro renderuje statyczną strukturę i osadza w niej interaktywny komponent React (np. `LoginForm.tsx`).
 3.  Komponent React zarządza swoim stanem (dane formularza, błędy walidacji).
@@ -41,6 +47,7 @@ Na podstawie dostarczonych dokumentów, oto analiza architektury UI dla modułu 
 6.  Komponent React odbiera odpowiedź i aktualizuje swój stan (np. wyświetla błąd) lub wykonuje przekierowanie po stronie klienta.
 
 ### 4. Opis funkcjonalności każdego komponentu:
+
 - **`index.astro`**: Działa jak router. Sprawdza `Astro.locals.session` i przekierowuje do `/login` (brak sesji) lub `/dashboard` (aktywna sesja).
 - **Strony `.astro` z formularzami**: Służą jako "hosty" dla komponentów React, dostarczając kontekst renderowania po stronie serwera.
 - **Komponenty `.tsx` z formularzami**: Odpowiadają za całą interaktywność formularzy, walidację po stronie klienta i komunikację z API.
@@ -50,6 +57,7 @@ Na podstawie dostarczonych dokumentów, oto analiza architektury UI dla modułu 
 </architecture_analysis>
 
 <mermaid_diagram>
+
 ```mermaid
 flowchart TD
     classDef astroComponent fill:#FF5E00,stroke:#000,stroke-width:2px,color:#fff;
@@ -127,4 +135,5 @@ flowchart TD
     Middleware -- Chroni --> Heatmap
     Middleware -- Chroni --> WorkoutDetails
 ```
+
 </mermaid_diagram>

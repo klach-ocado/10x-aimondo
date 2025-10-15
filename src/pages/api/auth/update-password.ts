@@ -10,13 +10,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   const validatedFields = UpdatePasswordSchema.safeParse(formData);
 
   if (!validatedFields.success) {
-    return new Response(
-      JSON.stringify({ errors: validatedFields.error.flatten().fieldErrors }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ errors: validatedFields.error.flatten().fieldErrors }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const { password } = validatedFields.data;

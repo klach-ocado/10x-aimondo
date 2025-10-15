@@ -24,27 +24,41 @@ const { user } = Astro.locals;
       <div class="container mx-auto flex justify-between items-center">
         <nav class="flex items-center space-x-4">
           <a href="/" class="text-xl font-bold">AImondo</a>
-          {user && (
-            <>
-              <a href="/dashboard" class="hover:text-gray-300 text-sm">Dashboard</a>
-              <a href="/heatmap" class="hover:text-gray-300 text-sm">Heatmap</a>
-            </>
-          )}
+          {
+            user && (
+              <>
+                <a href="/dashboard" class="hover:text-gray-300 text-sm">
+                  Dashboard
+                </a>
+                <a href="/heatmap" class="hover:text-gray-300 text-sm">
+                  Heatmap
+                </a>
+              </>
+            )
+          }
         </nav>
         <div class="flex items-center space-x-4">
-          {user ? (
-            <>
-              <span class="text-sm">{user.email}</span>
-              <form method="POST" action="/api/auth/logout">
-                <button type="submit" class="hover:text-gray-300 text-sm">Logout</button>
-              </form>
-            </>
-          ) : (
-            <>
-              <a href="/auth/login" class="hover:text-gray-300 text-sm">Login</a>
-              <a href="/auth/register" class="hover:text-gray-300 text-sm">Register</a>
-            </>
-          )}
+          {
+            user ? (
+              <>
+                <span class="text-sm">{user.email}</span>
+                <form method="POST" action="/api/auth/logout">
+                  <button type="submit" class="hover:text-gray-300 text-sm">
+                    Logout
+                  </button>
+                </form>
+              </>
+            ) : (
+              <>
+                <a href="/auth/login" class="hover:text-gray-300 text-sm">
+                  Login
+                </a>
+                <a href="/auth/register" class="hover:text-gray-300 text-sm">
+                  Register
+                </a>
+              </>
+            )
+          }
         </div>
       </div>
     </header>
