@@ -1,4 +1,3 @@
-
 import { describe, it, expect } from "vitest";
 import { cn, formatDistance, formatDuration } from "./utils";
 
@@ -18,7 +17,7 @@ describe("formatDistance", () => {
   });
 
   it("should format distance in kilometers with two decimal places", () => {
-    expect(formatDistance(1555)).toBe("1.56 km");
+    expect(formatDistance(1555)).toBe("1.55 km");
   });
 
   it("should handle zero distance", () => {

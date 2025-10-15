@@ -1,4 +1,3 @@
-
 import { describe, it, expect } from "vitest";
 import { calculateStats } from "./workout-stats.service";
 import type { TrackPoint } from "src/types";
