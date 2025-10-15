@@ -17,7 +17,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   }
 
   const { password } = validatedFields.data;
-  const supabase = createSupabaseServerClient({ cookies });
+  const supabase = createSupabaseServerClient({ cookies, headers: request.headers });
 
   // The user's session is automatically handled by the ssr library
   // using the recovery token from the cookie.

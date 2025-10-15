@@ -18,7 +18,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
   const { email, password } = validatedFields.data;
 
-  const supabase = createSupabaseServerClient({ cookies });
+  const supabase = createSupabaseServerClient({ cookies, headers: request.headers });
 
   const { error } = await supabase.auth.signUp({
     email,

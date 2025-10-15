@@ -10,7 +10,7 @@ import type {
   WorkoutDetailsDto,
   WorkoutDto,
 } from "../../types";
-import type { SupabaseClient } from "../../db/supabase.client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { parseGPXWithCustomParser } from "@we-gold/gpxjs";
 import { DOMParser } from "xmldom-qsa";
 import { calculateStats } from "./workout-stats.service";

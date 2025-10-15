@@ -8,7 +8,7 @@ const publicRoutes = ["/", "/auth", "/api/auth"];
 const authRoutes = ["/auth/login", "/auth/register"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const supabase = createSupabaseServerClient(context);
+  const supabase = createSupabaseServerClient({ cookies: context.cookies, headers: context.request.headers });
   context.locals.supabase = supabase;
 
   const {

@@ -34,7 +34,7 @@ const mockWorkouts: WorkoutListItemDto[] = [
 const mockPaginatedResponse: PaginatedWorkoutsDto = {
   data: mockWorkouts,
   pagination: {
-    currentPage: 1,
+    page: 1,
     totalPages: 2,
     totalItems: 20,
     limit: 10,

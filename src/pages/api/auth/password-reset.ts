@@ -15,7 +15,7 @@ export const POST: APIRoute = async ({ request, cookies, url }) => {
   }
 
   const { email } = validatedFields.data;
-  const supabase = createSupabaseServerClient({ cookies });
+  const supabase = createSupabaseServerClient({ cookies, headers: request.headers });
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${url.origin}/auth/update-password`,

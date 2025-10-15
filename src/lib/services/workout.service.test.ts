@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { WorkoutService } from "./workout.service";
-import type { SupabaseClient } from "../../db/supabase.client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CreateWorkoutCommand } from "../../types";
 import { parseGPXWithCustomParser } from "@we-gold/gpxjs";
 import * as workoutStatsService from "./workout-stats.service";
