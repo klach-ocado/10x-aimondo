@@ -92,6 +92,7 @@ describe("DeleteConfirmationDialog", () => {
     // Arrange
     const user = userEvent.setup();
     // Make the promise hang so we can check the intermediate state
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     mockOnConfirm.mockImplementation(() => new Promise(() => {}));
     renderComponent();
     const continueButton = screen.getByRole("button", { name: /continue/i });

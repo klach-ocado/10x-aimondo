@@ -24,7 +24,8 @@ interface DeleteConfirmationDialogProps {
 export function DeleteConfirmationDialog({ workout, isOpen, onOpenChange, onConfirm }: DeleteConfirmationDialogProps) {
   const [isDeleting, setIsDeleting] = React.useState(false);
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (e: React.MouseEvent) => {
+    e.preventDefault();
     if (!workout) return;
 
     setIsDeleting(true);

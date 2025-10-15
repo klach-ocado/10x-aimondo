@@ -83,7 +83,9 @@ describe("FiltersPanel", () => {
 
     // Assert
     const expectedParams = new URLSearchParams({
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       name: filtersWithDate.name!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       type: filtersWithDate.type!,
       dateFrom: filtersWithDate.dateFrom,
       dateTo: filtersWithDate.dateTo,
