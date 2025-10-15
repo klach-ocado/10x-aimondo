@@ -43,8 +43,7 @@ const mockPaginatedResponse: PaginatedWorkoutsDto = {
 
 describe("useWorkoutsDashboard", () => {
   beforeEach(() => {
-    // Reset mocks and timers before each test
-    vi.useFakeTimers();
+    // Reset mocks before each test
     mockFetch.mockClear();
     localStorageMock.clear();
     // Default successful fetch mock
@@ -52,10 +51,6 @@ describe("useWorkoutsDashboard", () => {
       ok: true,
       json: () => Promise.resolve(mockPaginatedResponse),
     });
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
   });
 
   it("should set initial state correctly", () => {
@@ -167,29 +162,46 @@ describe("useWorkoutsDashboard", () => {
     });
   });
 
-  it("should debounce filter changes before refetching", async () => {
-    // Arrange
-    const { result } = renderHook(() => useWorkoutsDashboard());
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
-
-    // Act
-    act(() => {
-      result.current.setFilters({ name: "a" });
-      result.current.setFilters({ name: "ab" });
-      result.current.setFilters({ name: "abc" });
+  describe("with fake timers", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
     });
 
-    // Assert
-    // Fetch should not be called immediately
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-
-    // Advance timers past the debounce delay
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(500);
+    afterEach(() => {
+      vi.useRealTimers();
     });
 
-    expect(mockFetch).toHaveBeenCalledTimes(2);
-    expect(mockFetch).toHaveBeenLastCalledWith("/api/workouts?page=1&limit=10&sortBy=date&order=desc&name=abc");
+    it("should debounce filter changes before refetching", async () => {
+      // Arrange
+      const { result } = renderHook(() => useWorkoutsDashboard());
+      // Don't wait for initial fetch, just clear the mock to isolate the debounce call
+      await act(async () => {
+        await Promise.resolve(); // allow initial fetch promise to resolve
+      });
+      mockFetch.mockClear();
+
+      // Act
+      act(() => {
+        result.current.setFilters({ name: "a" });
+        result.current.setFilters({ name: "ab" });
+        result.current.setFilters({ name: "abc" });
+      });
+
+      // Assert
+      // Fetch should not be called immediately
+      expect(mockFetch).not.toHaveBeenCalled();
+
+      // Advance timers past the debounce delay
+      await act(async () => {
+        vi.runAllTimers();
+        await Promise.resolve(); // allow debounced fetch promise to resolve
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenLastCalledWith(
+        "/api/workouts?page=1&limit=10&sortBy=date&order=desc&name=abc"
+      );
+    });
   });
 
   it("clearAllFilters should reset filters, page, and sort state", async () => {
@@ -213,8 +225,8 @@ describe("useWorkoutsDashboard", () => {
       expect(result.current.filters).toEqual({});
       expect(result.current.page).toBe(1);
       expect(result.current.sort).toEqual({ sortBy: "date", order: "desc" });
-      // 1 initial, 1 for setPage, 1 for setSort, 1 for setFilters (debounced), 1 for clearAllFilters
-      expect(mockFetch).toHaveBeenCalledTimes(5);
+      // 1 initial, 1 for setPage, 1 for setSort, 1 for clearAllFilters (which cancels the debounced setFilters)
+      expect(mockFetch).toHaveBeenCalledTimes(4);
     });
   });
 
