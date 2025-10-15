@@ -5,15 +5,20 @@ import Map from "./Map";
 import maplibregl from "maplibre-gl";
 
 // --- Pełne mockowanie biblioteki maplibre-gl ---
+const routeSourceMock = { setData: vi.fn() };
+const heatmapSourceMock = { setData: vi.fn() };
+
 const mockMapInstance = {
   addControl: vi.fn(),
   on: vi.fn(),
   off: vi.fn(),
   addSource: vi.fn(),
   addLayer: vi.fn(),
-  getSource: vi.fn(() => ({
-    setData: vi.fn(),
-  })),
+  getSource: vi.fn((sourceId) => {
+    if (sourceId === "route-source") return routeSourceMock;
+    if (sourceId === "heatmap-source") return heatmapSourceMock;
+    return undefined;
+  }),
   setLayoutProperty: vi.fn(),
   fitBounds: vi.fn(),
   getBounds: vi.fn(() => ({
@@ -27,14 +32,17 @@ const mockMapInstance = {
   remove: vi.fn(),
 };
 
-// Mockowanie konstruktora Map
+const mockBoundsInstance = {
+  extend: vi.fn(function () {
+    return this;
+  }), // Return `this` for chaining
+};
+
 vi.mock("maplibre-gl", () => ({
   default: {
     Map: vi.fn(() => mockMapInstance),
     NavigationControl: vi.fn(),
-    LngLatBounds: vi.fn().mockImplementation(() => ({
-      extend: vi.fn(),
-    })),
+    LngLatBounds: vi.fn().mockImplementation(() => mockBoundsInstance),
   },
 }));
 
@@ -54,56 +62,46 @@ const localStorageMock = (() => {
 Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
 describe("Map", () => {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  let loadCallback: () => void = () => {};
+
   beforeEach(() => {
-    // Czyszczenie wszystkich mocków przed każdym testem
     vi.clearAllMocks();
     localStorageMock.clear();
 
-    // Umożliwia ręczne wywoływanie zdarzeń mapy w testach
     mockMapInstance.on.mockImplementation((event, callback) => {
       if (event === "load") {
-        // Automatyczne wywołanie 'load' po renderowaniu, aby symulować inicjalizację mapy
-        setTimeout(callback, 0);
+        loadCallback = callback;
       }
     });
   });
 
   it("should initialize the map on mount", async () => {
-    // Arrange
     const onLoad = vi.fn();
-
-    // Act
     render(<Map displayMode="track" trackPoints={[]} onLoad={onLoad} />);
+    loadCallback();
 
-    // Assert
     await waitFor(() => {
-      expect(maplibregl.Map).toHaveBeenCalledOnce(); // Sprawdzenie, czy mapa została utworzona
-      expect(mockMapInstance.addControl).toHaveBeenCalledOnce(); // Sprawdzenie, czy kontrolki zostały dodane
+      expect(maplibregl.Map).toHaveBeenCalledOnce();
+      expect(mockMapInstance.addControl).toHaveBeenCalledOnce();
       expect(mockMapInstance.addSource).toHaveBeenCalledWith("route-source", expect.any(Object));
       expect(mockMapInstance.addSource).toHaveBeenCalledWith("heatmap-source", expect.any(Object));
-      expect(onLoad).toHaveBeenCalledOnce(); // Sprawdzenie, czy callback onLoad został wywołany
+      expect(onLoad).toHaveBeenCalledOnce();
     });
   });
 
   it('should render in "track" mode and fit bounds to points', async () => {
-    // Arrange
     const trackPoints = [
       { lat: 40, lng: -74 },
       { lat: 41, lng: -75 },
     ];
-
-    // Act
     render(<Map displayMode="track" trackPoints={trackPoints} />);
+    loadCallback();
 
-    // Assert
     await waitFor(() => {
-      // Sprawdzenie, czy warstwy są poprawnie przełączane
       expect(mockMapInstance.setLayoutProperty).toHaveBeenCalledWith("route-layer", "visibility", "visible");
       expect(mockMapInstance.setLayoutProperty).toHaveBeenCalledWith("heatmap-layer", "visibility", "none");
-
-      // Sprawdzenie, czy dane trasy zostały ustawione
-      const sourceMock = mockMapInstance.getSource("route-source");
-      expect(sourceMock.setData).toHaveBeenCalledWith(
+      expect(routeSourceMock.setData).toHaveBeenCalledWith(
         expect.objectContaining({
           geometry: {
             type: "LineString",
@@ -114,40 +112,31 @@ describe("Map", () => {
           },
         })
       );
-      // Sprawdzenie, czy mapa dopasowuje widok do trasy
       expect(mockMapInstance.fitBounds).toHaveBeenCalledOnce();
     });
   });
 
   it('should render in "heatmap" mode with provided data', async () => {
-    // Arrange
-    const heatmapData = { type: "FeatureCollection", features: [] } as any;
-
-    // Act
+    const heatmapData = { type: "FeatureCollection", features: [] };
     render(<Map displayMode="heatmap" heatmapData={heatmapData} initialViewState={{ center: [0, 0], zoom: 1 }} />);
+    loadCallback();
 
-    // Assert
     await waitFor(() => {
-      // Sprawdzenie, czy warstwy są poprawnie przełączane
       expect(mockMapInstance.setLayoutProperty).toHaveBeenCalledWith("heatmap-layer", "visibility", "visible");
       expect(mockMapInstance.setLayoutProperty).toHaveBeenCalledWith("route-layer", "visibility", "none");
-
-      // Sprawdzenie, czy dane heatmapy zostały ustawione
-      const sourceMock = mockMapInstance.getSource("heatmap-source");
-      expect(sourceMock.setData).toHaveBeenCalledWith(heatmapData);
+      expect(heatmapSourceMock.setData).toHaveBeenCalledWith(heatmapData);
     });
   });
 
   it("should save view state to localStorage on move", async () => {
-    // Arrange
     const onMoveEnd = vi.fn();
     const setItemSpy = vi.spyOn(localStorageMock, "setItem");
-
-    // Ręczna obsługa zdarzeń dla tego testu
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     let moveEndCallback: () => void = () => {};
+
     mockMapInstance.on.mockImplementation((event, callback) => {
-      if (event === "load") setTimeout(callback, 0);
-      if (event === "moveend") moveEndCallback = callback; // Przechwycenie callbacku
+      if (event === "load") loadCallback = callback;
+      if (event === "moveend") moveEndCallback = callback;
     });
 
     render(
@@ -158,12 +147,9 @@ describe("Map", () => {
         onMoveEnd={onMoveEnd}
       />
     );
+    loadCallback();
+    moveEndCallback();
 
-    // Act
-    await waitFor(() => expect(mockMapInstance.addControl).toHaveBeenCalled()); // Czekanie na załadowanie
-    moveEndCallback(); // Ręczne wywołanie zdarzenia 'moveend'
-
-    // Assert
     await waitFor(() => {
       expect(onMoveEnd).toHaveBeenCalledOnce();
       expect(setItemSpy).toHaveBeenCalledWith("mapViewState", JSON.stringify({ center: [0, 0], zoom: 2 }));
