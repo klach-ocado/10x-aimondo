@@ -43,7 +43,7 @@ const { user } = Astro.locals;
               <>
                 <span class="text-sm">{user.email}</span>
                 <form method="POST" action="/api/auth/logout">
-                  <button type="submit" class="hover:text-gray-300 text-sm">
+                  <button type="submit" class="hover:text-gray-300 text-sm" data-testid="logout-button">
                     Logout
                   </button>
                 </form>
