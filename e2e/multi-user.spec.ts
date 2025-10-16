@@ -50,11 +50,11 @@ test.describe("Multi-user data isolation", () => {
 
     // --- USER 2: Login and verify empty dashboard ---
     await login(page, TEST_USER_2_EMAIL, TEST_USER_2_PASSWORD);
-    await cleanupWorkouts(page); // Clean up just in case
 
     // Verify dashboard is empty
     await expect(page.getByTestId("no-results-row")).toBeVisible();
     await expect(page.getByText("User 1 Workout")).not.toBeVisible();
+    await cleanupWorkouts(page); // Clean up to check later that User 1's workout is unaffected
 
     // Logout
     await logout(page);
