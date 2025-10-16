@@ -48,7 +48,7 @@ Na podstawie dostarczonych dokumentów, oto analiza architektury UI dla modułu 
 
 ### 4. Opis funkcjonalności każdego komponentu:
 
-- **`index.astro`**: Działa jak router. Sprawdza `Astro.locals.session` i przekierowuje do `/login` (brak sesji) lub `/dashboard` (aktywna sesja).
+- **`index.astro`**: Działa jak router. Sprawdza `Astro.locals.user` i przekierowuje do `/login` (brak zalogowania) lub `/dashboard` (user zalogowany).
 - **Strony `.astro` z formularzami**: Służą jako "hosty" dla komponentów React, dostarczając kontekst renderowania po stronie serwera.
 - **Komponenty `.tsx` z formularzami**: Odpowiadają za całą interaktywność formularzy, walidację po stronie klienta i komunikację z API.
 - **`Layout.astro`**: Odpowiada za spójny wygląd aplikacji i renderuje nawigację odpowiednią dla zalogowanego lub niezalogowanego użytkownika.

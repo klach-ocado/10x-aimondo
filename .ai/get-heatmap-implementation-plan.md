@@ -112,7 +112,7 @@ Celem tego punktu końcowego jest dostarczenie danych do generowania mapy ciepln
     - Zdefiniować `export const prerender = false;`.
     - Stworzyć schemę walidacji `zod` dla parametrów zapytania, w tym transformację `bbox` na osobne wartości liczbowe.
     - Zaimplementować handler `GET`, który:
-      a. Pobiera `supabase` i `session` z `context.locals`.
+      a. Pobiera `supabase` i `user` z `context.locals`.
       b. Sprawdza, czy sesja istnieje.
       c. Waliduje parametry zapytania.
       d. Tworzy `GetHeatmapDataCommand`.

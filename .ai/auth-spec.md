@@ -8,7 +8,7 @@ Niniejszy dokument opisuje architekturę i plan wdrożenia funkcjonalności uwie
 
 ### 2.1. Podział Odpowiedzialności (Astro vs. React)
 
-- **Strony Astro (`.astro`)**: Będą pełnić rolę "szkieletów" (hostów) dla komponentów interaktywnych oraz renderować statyczne elementy. Będą również odpowiedzialne za logikę po stronie serwera, taką jak ochrona tras i przekierowania w oparciu o status sesji użytkownika.
+- **Strony Astro (`.astro`)**: Będą pełnić rolę "szkieletów" (hostów) dla komponentów interaktywnych oraz renderować statyczne elementy. Będą również odpowiedzialne za logikę po stronie serwera, taką jak ochrona tras i przekierowania w oparciu o status zalogowania użytkownika.
 - **Komponenty React (`.tsx`)**: Zostaną użyte do budowy interaktywnych formularzy (logowanie, rejestracja, etc.). Będą zarządzać własnym stanem (wprowadzane dane, błędy walidacji) i komunikować się z dedykowanymi endpointami API w celu wykonania operacji autentykacyjnych.
 
 ### 2.2. Nowe Strony i Komponenty
@@ -31,11 +31,11 @@ Niniejszy dokument opisuje architekturę i plan wdrożenia funkcjonalności uwie
 
 - **`src/layouts/Layout.astro`**:
   - W sekcji `<head>` lub na końcu `<body>` należy dodać warunkowo renderowany element nawigacji.
-  - Korzystając z `Astro.locals.session`, layout zdecyduje, które linki wyświetlić:
+  - Korzystając z `Astro.locals.user`, layout zdecyduje, które linki wyświetlić:
     - **Tryb `auth`**: Linki do "Dashboard", "Heatmap" oraz przycisk/link "Wyloguj", który będzie formularzem POST wysyłanym do `api/auth/logout`.
     - **Tryb `non-auth`**: Linki "Zaloguj się" i "Zarejestruj się".
 - **`src/pages/index.astro`**:
-  - Ta strona stanie się głównym punktem wejścia. Jej jedynym zadaniem będzie sprawdzenie statusu sesji (`Astro.locals.session`) i wykonanie przekierowania:
+  - Ta strona stanie się głównym punktem wejścia. Jej jedynym zadaniem będzie sprawdzenie statusu zalogowania usera (`Astro.locals.user`) i wykonanie przekierowania:
     - Jeśli sesja istnieje: `return Astro.redirect('/dashboard');`
     - Jeśli sesja nie istnieje: `return Astro.redirect('/login');`
 - **`src/pages/dashboard.astro`, `heatmap.astro`, `workouts/[id].astro`**:
@@ -54,10 +54,10 @@ Niniejszy dokument opisuje architekturę i plan wdrożenia funkcjonalności uwie
 Middleware jest kluczowym elementem integracji z Supabase w trybie SSR.
 
 - **Inicjalizacja klienta Supabase**: Na każde żądanie, middleware utworzy serwerowego klienta Supabase, przekazując mu ciasteczka z żądania. Pozwoli to Supabase na odczytanie i zweryfikowanie tokenu JWT.
-- **Zarządzanie sesją**: Pobierze aktualną sesję (`supabase.auth.getSession()`) i umieści ją wraz z klientem Supabase w `context.locals`. Dzięki temu każda strona i endpoint API w projekcie będzie miał dostęp do `Astro.locals.supabase` i `Astro.locals.session`.
+- **Zarządzanie stanem zalogowania użytkownika**: Pobierze aktualnego użytkownika (`supabase.auth.getUser()`) i umieści go wraz z klientem Supabase w `context.locals`. Dzięki temu każda strona i endpoint API w projekcie będzie miał dostęp do `Astro.locals.supabase` i `Astro.locals.user`.
 - **Ochrona tras**: Zaimplementuje logikę przekierowań:
-  - Jeśli `Astro.locals.session` nie istnieje, a żądanie dotyczy chronionej ścieżki (np. `/dashboard`, `/api/workouts`), użytkownik zostanie przekierowany na `/login`.
-  - Jeśli `Astro.locals.session` istnieje, a żądanie dotyczy stron `/login` lub `/register`, użytkownik zostanie przekierowany na `/dashboard`.
+  - Jeśli `Astro.locals.user` nie istnieje, a żądanie dotyczy chronionej ścieżki (np. `/dashboard`, `/api/workouts`), użytkownik zostanie przekierowany na `/login`.
+  - Jeśli `Astro.locals.user` istnieje, a żądanie dotyczy stron `/login` lub `/register`, użytkownik zostanie przekierowany na `/dashboard`.
 - **Obsługa `Set-Cookie`**: Middleware będzie odpowiedzialny za przechwycenie nagłówków `Set-Cookie` (zawierających odświeżone tokeny) z odpowiedzi Supabase i dołączenie ich do finalnej odpowiedzi serwera.
 
 ### 3.2. Endpointy API (w `src/pages/api/auth/`)
@@ -85,7 +85,7 @@ Wszystkie endpointy będą asynchroniczne i będą korzystać z klienta Supabase
   1. Walidacja (zod): `password`.
   2. Wywołanie `supabase.auth.updateUser()` z nowym hasłem. Sesja użytkownika jest pobierana z tokenu odzyskiwania.
   3. W przypadku sukcesu, zwrot statusu 200. Klient po otrzymaniu odpowiedzi powinien przekierować użytkownika na stronę `/login` z komunikatem o pomyślnej zmianie hasła.
-- **`callback.ts` (`GET`)**:
+- **`callback.ts` (`GET`)** (być może w przyszłości):
   1. Endpoint obsługujący callbacki od Supabase (np. w przyszłości dla logowania OAuth).
   2. Odczytuje `code` z parametrów URL.
   3. Wywołuje `supabase.auth.exchangeCodeForSession(code)`.
