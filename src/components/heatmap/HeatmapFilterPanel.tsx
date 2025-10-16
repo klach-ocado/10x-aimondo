@@ -62,7 +62,7 @@ export function HeatmapFilterPanel({ filters, onFiltersChange, isDisabled }: Hea
   }, [filters]);
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full space-y-2">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full space-y-2" data-testid="heatmap-filter-panel">
       <div className="flex items-center justify-between space-x-4 px-4">
         <h4 className="text-sm font-semibold">Filters</h4>
         <CollapsibleTrigger asChild>
@@ -81,6 +81,7 @@ export function HeatmapFilterPanel({ filters, onFiltersChange, isDisabled }: Hea
             onChange={handleInputChange}
             disabled={isDisabled}
             className="max-w-sm"
+            data-testid="name-filter-input"
           />
           <Input
             placeholder="Filter by type..."
@@ -89,9 +90,10 @@ export function HeatmapFilterPanel({ filters, onFiltersChange, isDisabled }: Hea
             onChange={handleInputChange}
             disabled={isDisabled}
             className="max-w-sm"
+            data-testid="type-filter-input"
           />
           <Popover>
-            <PopoverTrigger asChild>
+            <PopoverTrigger asChild data-testid="date-range-picker-trigger">
               <Button
                 id="date"
                 variant={"outline"}
@@ -130,7 +132,12 @@ export function HeatmapFilterPanel({ filters, onFiltersChange, isDisabled }: Hea
             </Button>
           )}
           {areFiltersActive && (
-            <Button variant="secondary" onClick={handleClearAll} disabled={isDisabled}>
+            <Button
+              variant="secondary"
+              onClick={handleClearAll}
+              disabled={isDisabled}
+              data-testid="clear-all-filters-button"
+            >
               Clear All
             </Button>
           )}

@@ -35,10 +35,10 @@ const HeatmapView = () => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="flex flex-col h-full w-full" data-testid="heatmap-view">
       <header className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center space-x-2">
-          <BackButton onClick={handleBack} />
+          <BackButton onClick={handleBack} data-testid="back-button" />
           <h1 className="text-xl font-semibold">Heatmap</h1>
         </div>
         <RefreshButton onClick={handleManualRefresh} isDisabled={isLoading} />
@@ -66,6 +66,7 @@ const HeatmapView = () => {
           onMoveEnd={handleMapMove}
           onLoad={handleMapLoad}
           className="h-full w-full"
+          data-testid="heatmap-map"
         />
       </div>
     </div>
