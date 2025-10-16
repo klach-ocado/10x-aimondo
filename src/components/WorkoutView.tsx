@@ -48,9 +48,9 @@ const WorkoutView: React.FC<WorkoutViewProps> = ({ workoutId }) => {
   }
 
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="flex flex-col h-full w-full" data-testid="workout-view">
       <header className="flex items-center space-x-4 p-4 border-b">
-        <BackButton onClick={handleBack} />
+        <BackButton onClick={handleBack} data-testid="back-button" />
         <h1 className="text-xl font-semibold">Workout Details</h1>
       </header>
 
@@ -59,7 +59,12 @@ const WorkoutView: React.FC<WorkoutViewProps> = ({ workoutId }) => {
         <StatsOverlay distance={workout.distance} duration={workout.duration} />
         <div className="flex-grow">
           {workout.track_points && workout.track_points.length > 0 ? (
-            <Map displayMode="track" trackPoints={workout.track_points} className="h-full w-full" />
+            <Map
+              displayMode="track"
+              trackPoints={workout.track_points}
+              className="h-full w-full"
+              data-testid="workout-map"
+            />
           ) : (
             <div className="flex items-center justify-center h-96 w-full rounded-md border border-dashed">
               <p className="text-muted-foreground">No track data available for this workout.</p>

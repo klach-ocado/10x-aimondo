@@ -42,7 +42,7 @@ export function DeleteConfirmationDialog({ workout, isOpen, onOpenChange, onConf
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent data-testid="delete-confirmation-dialog">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -52,7 +52,7 @@ export function DeleteConfirmationDialog({ workout, isOpen, onOpenChange, onConf
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm} disabled={isDeleting}>
+          <AlertDialogAction onClick={handleConfirm} disabled={isDeleting} data-testid="confirm-delete-button">
             {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Continue
           </AlertDialogAction>

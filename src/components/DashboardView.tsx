@@ -37,7 +37,9 @@ export default function DashboardView() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <Button onClick={() => setIsAddDialogOpen(true)}>Add Workout</Button>
+        <Button onClick={() => setIsAddDialogOpen(true)} data-testid="add-workout-dialog-button">
+          Add Workout
+        </Button>
       </div>
 
       <FiltersPanel filters={filters} onFiltersChange={setFilters} disabled={isLoading} onClearAll={clearAllFilters} />

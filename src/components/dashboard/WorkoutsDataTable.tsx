@@ -92,7 +92,7 @@ export function WorkoutsDataTable({
         const workout = row.original;
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild data-testid="actions-menu-button">
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
@@ -100,8 +100,14 @@ export function WorkoutsDataTable({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onEdit(workout)}>Edit</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(workout)} className="text-red-600">
+              <DropdownMenuItem onClick={() => onEdit(workout)} data-testid="edit-workout-button">
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onDelete(workout)}
+                className="text-red-600"
+                data-testid="delete-workout-button"
+              >
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -124,7 +130,7 @@ export function WorkoutsDataTable({
   });
 
   return (
-    <div>
+    <div data-testid="workouts-table">
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -147,6 +153,7 @@ export function WorkoutsDataTable({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer"
+                  data-testid={`workout-row-${row.original.id}`}
                   onClick={() => {
                     window.location.href = `/workouts/${row.original.id}`;
                   }}
@@ -166,7 +173,7 @@ export function WorkoutsDataTable({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
+              <TableRow data-testid="no-results-row">
                 <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>

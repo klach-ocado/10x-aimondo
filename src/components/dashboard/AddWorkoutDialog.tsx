@@ -53,7 +53,7 @@ export function AddWorkoutDialog({ isOpen, onOpenChange, onSuccess }: AddWorkout
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" data-testid="add-workout-dialog">
         <DialogHeader>
           <DialogTitle>Add New Workout</DialogTitle>
           <DialogDescription>Upload a GPX file to add a new workout to your list.</DialogDescription>
@@ -67,7 +67,7 @@ export function AddWorkoutDialog({ isOpen, onOpenChange, onSuccess }: AddWorkout
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Evening Bike Ride" {...field} />
+                    <Input placeholder="Evening Bike Ride" {...field} data-testid="workout-name-input" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -80,13 +80,13 @@ export function AddWorkoutDialog({ isOpen, onOpenChange, onSuccess }: AddWorkout
                 <FormItem>
                   <FormLabel>GPX File</FormLabel>
                   <FormControl>
-                    <Input type="file" accept=".gpx" {...form.register("gpxFile")} />
+                    <Input type="file" accept=".gpx" {...form.register("gpxFile")} data-testid="gpx-file-input" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting} data-testid="add-workout-button">
               {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Add Workout
             </Button>
