@@ -133,3 +133,21 @@ When modifying the directory structure, always update this section.
 - Structure tests for maintainability - Group related tests with descriptive `describe` blocks, use explicit assertion messages, and follow the Arrange-Act-Assert pattern to make tests self-documenting.
 - Leverage TypeScript type checking in tests - Enable strict typing in your tests to catch type errors early, use `expectTypeOf()` for type-level assertions, and ensure mocks preserve the original type signatures.
 - Follow 'Arrange', 'Act', 'Assert' approach to test structure for simplicity and readability.
+
+### Guidelines for E2E Testing
+
+#### Playwright
+
+- Initialize configuration only with Chromium/Desktop Chrome browser
+- Use browser contexts for isolating test environments
+- Implement the Page Object Model for maintainable tests in ./e2e/page-objects
+- Use `data-testid` attributes when introducing resilient test-oriented selectors
+- When following `data-testid` convention, locate elements by `await page.getByTestId('selectorName')`
+- Leverage API testing for backend validation
+- Implement visual comparison with expect(page).toHaveScreenshot()
+- Use the codegen tool for test recording
+- Leverage trace viewer for debugging test failures
+- Implement test hooks for setup and teardown
+- Use expect assertions with specific matchers
+- Leverage parallel execution for faster test runs
+- Follow 'Arrange', 'Act', 'Assert' approach to test structure for simplicity and readability.
