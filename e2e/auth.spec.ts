@@ -38,4 +38,37 @@ test.describe("Authentication", () => {
     await expect(toast).toBeVisible();
     await expect(toast).toContainText("Login Failed");
   });
+
+  test("should show an error message when email is already taken", async ({ page }) => {
+    // Arrange
+    await page.goto("/auth/register", { waitUntil: "networkidle" });
+
+    // Act
+    await page.getByTestId("email-input").fill(TEST_USER_EMAIL);
+    await page.getByTestId("password-input").fill("password123");
+    await page.getByTestId("confirm-password-input").fill("password123");
+    await page.getByTestId("register-button").click();
+
+    // Assert
+    await expect(page).toHaveURL("/auth/register");
+    const toast = page.locator("[data-sonner-toast]");
+    await expect(toast).toBeVisible();
+    await expect(toast).toContainText("Registration Failed");
+  });
+
+  test("should show a validation error for short password", async ({ page }) => {
+    // Arrange
+    await page.goto("/auth/register", { waitUntil: "networkidle" });
+
+    // Act
+    await page.getByTestId("email-input").fill("new-user@example.com");
+    await page.getByTestId("password-input").fill("1234567");
+    await page.getByTestId("confirm-password-input").fill("1234567");
+    await page.getByTestId("register-button").click();
+
+    // Assert
+    await expect(page).toHaveURL("/auth/register");
+    const errorMessage = page.getByText("Password must be at least 8 characters.");
+    await expect(errorMessage).toBeVisible();
+  });
 });
