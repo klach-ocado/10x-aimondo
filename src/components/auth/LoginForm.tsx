@@ -53,7 +53,7 @@ export function LoginForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" data-testid="login-form">
             <FormField
               control={form.control}
               name="email"
@@ -61,7 +61,7 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="m@example.com" {...field} />
+                    <Input placeholder="m@example.com" {...field} data-testid="email-input" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -74,13 +74,13 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input type="password" {...field} data-testid="password-input" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={form.formState.isSubmitting} className="w-full">
+            <Button type="submit" disabled={form.formState.isSubmitting} className="w-full" data-testid="login-button">
               {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Login
             </Button>
