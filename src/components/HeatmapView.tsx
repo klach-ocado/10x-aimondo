@@ -4,7 +4,7 @@ import { HeatmapFilterPanel } from "./heatmap/HeatmapFilterPanel";
 import Map from "./Map";
 import RefreshButton from "./heatmap/RefreshButton";
 import BackButton from "./common/BackButton";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
 
@@ -36,7 +36,6 @@ const HeatmapView = () => {
 
   return (
     <div className="flex flex-col h-full w-full">
-      <Toaster />
       <header className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center space-x-2">
           <BackButton onClick={handleBack} />

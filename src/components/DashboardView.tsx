@@ -9,7 +9,6 @@ import { EditWorkoutDialog } from "./dashboard/EditWorkoutDialog";
 import { DeleteConfirmationDialog } from "./dashboard/DeleteConfirmationDialog";
 import { AddWorkoutDialog } from "./dashboard/AddWorkoutDialog";
 import { Button } from "@/components/ui/button";
-import { Toaster } from "@/components/ui/sonner";
 
 export default function DashboardView() {
   const {
@@ -36,7 +35,6 @@ export default function DashboardView() {
 
   return (
     <div className="space-y-8">
-      <Toaster richColors />
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <Button onClick={() => setIsAddDialogOpen(true)}>Add Workout</Button>
