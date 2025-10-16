@@ -22,4 +22,4 @@ CI/CD i Hosting:
 Testy:
 
 - Vitest do testów jednostkowych i integracyjnych
-- Playwright do testów End-to-End (E2E)
+- Playwright do testów End-to-End (E2E), w pełni skonfigurowany do weryfikacji kluczowych ścieżek użytkownika, takich jak CRUD na treningach i izolacja danych.
