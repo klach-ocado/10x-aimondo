@@ -209,7 +209,7 @@ const Map: React.FC<MapProps> = (props) => {
     }
   }, [isLoaded, displayMode, props.trackPoints, props.heatmapData]);
 
-  return <div ref={mapContainer} className={cn("h-96 w-full rounded-md", className)} />;
+  return <div ref={mapContainer} className={cn("h-96 w-full rounded-md", className)} data-testid="main-map" />;
 };
 
 export default Map;

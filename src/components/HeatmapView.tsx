@@ -66,7 +66,6 @@ const HeatmapView = () => {
           onMoveEnd={handleMapMove}
           onLoad={handleMapLoad}
           className="h-full w-full"
-          data-testid="heatmap-map"
         />
       </div>
     </div>

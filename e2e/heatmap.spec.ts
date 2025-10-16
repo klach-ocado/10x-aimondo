@@ -45,7 +45,7 @@ test.describe("Heatmap", () => {
 
     // 5. Verify heatmap
     await expect(page.getByTestId("heatmap-view")).toBeVisible();
-    await expect(page.getByTestId("heatmap-map")).toBeVisible();
+    await expect(page.getByTestId("main-map")).toBeVisible();
 
     // 6. Go back to dashboard
     await page.getByTestId("back-button").click();
