@@ -8,11 +8,8 @@ if (!TEST_USER_EMAIL || !TEST_USER_PASSWORD) {
 }
 
 test.describe("Workouts CRUD", () => {
-  let page;
-
-  test.beforeEach(async ({ browser }) => {
-    page = await browser.newPage();
-    await page.goto("/auth/login");
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/auth/login", { waitUntil: "networkidle" });
     await page.getByTestId("email-input").fill(TEST_USER_EMAIL);
     await page.getByTestId("password-input").fill(TEST_USER_PASSWORD);
     await page.getByTestId("login-button").click();
@@ -25,7 +22,7 @@ test.describe("Workouts CRUD", () => {
     await page.reload();
   });
 
-  test("should allow a user to add, view, and delete a workout", async () => {
+  test("should allow a user to add, view, and delete a workout", async ({ page }) => {
     // 1. Empty dashboard
     await expect(page.getByTestId("no-results-row")).toBeVisible();
 
@@ -35,7 +32,7 @@ test.describe("Workouts CRUD", () => {
     await expect(addWorkoutDialog).toBeVisible();
 
     await page.getByTestId("workout-name-input").fill("My Test Workout");
-    await page.getByTestId("gpx-file-input").setInputFiles("example.gpx");
+    await page.getByTestId("gpx-file-input").setInputFiles("e2e/example-1.gpx");
     await page.getByTestId("add-workout-button").click();
 
     // 3. Workout visible on dashboard

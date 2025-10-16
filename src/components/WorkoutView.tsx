@@ -50,7 +50,7 @@ const WorkoutView: React.FC<WorkoutViewProps> = ({ workoutId }) => {
   return (
     <div className="flex flex-col h-full w-full" data-testid="workout-view">
       <header className="flex items-center space-x-4 p-4 border-b">
-        <BackButton onClick={handleBack} data-testid="back-button" />
+        <BackButton onClick={handleBack} />
         <h1 className="text-xl font-semibold">Workout Details</h1>
       </header>
 

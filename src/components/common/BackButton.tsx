@@ -8,7 +8,7 @@ interface BackButtonProps {
 
 const BackButton: React.FC<BackButtonProps> = ({ onClick }) => {
   return (
-    <Button variant="outline" size="icon" onClick={onClick}>
+    <Button variant="outline" size="icon" onClick={onClick} data-testid="back-button">
       <ArrowLeft className="h-4 w-4" />
     </Button>
   );
