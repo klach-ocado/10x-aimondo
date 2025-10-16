@@ -96,6 +96,17 @@ The following scripts are available in the `package.json`:
 - `npm run lint`: Lints the codebase using ESLint.
 - `npm run lint:fix`: Lints the codebase and automatically fixes issues.
 - `npm run format`: Formats the code using Prettier.
+- `npm test`: Runs unit and integration tests using Vitest.
+- `npm run test:e2e`: Runs end-to-end tests using Playwright (not yet configured).
+
+## Testing
+
+This project uses a combination of testing strategies to ensure code quality and application stability:
+
+- **Unit & Integration Tests**: [Vitest](https://vitest.dev/) is used for testing individual components, functions, and services in isolation. These tests are located alongside the source code in `*.test.ts` files.
+- **End-to-End (E2E) Tests**: [Playwright](https://playwright.dev/) is planned for simulating real user scenarios across the entire application stack. This ensures that critical user flows, such as authentication and workout management, work as expected.
+
+All tests are automated and run via [GitHub Actions](https://github.com/features/actions) on every push to the repository to maintain a high standard of quality.
 
 ## Project Scope
 
