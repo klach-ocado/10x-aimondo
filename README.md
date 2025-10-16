@@ -91,13 +91,16 @@ To run this project locally, follow these steps.
 The following scripts are available in the `package.json`:
 
 - `npm run dev`: Starts the development server.
+- `npm run dev:e2e`: Starts the development server in test mode.
 - `npm run build`: Builds the application for production.
 - `npm run preview`: Previews the production build locally.
 - `npm run lint`: Lints the codebase using ESLint.
 - `npm run lint:fix`: Lints the codebase and automatically fixes issues.
 - `npm run format`: Formats the code using Prettier.
 - `npm test`: Runs unit and integration tests using Vitest.
+- `npm run test:ui`: Runs unit and integration tests with a graphical interface.
 - `npm run test:e2e`: Runs end-to-end tests using Playwright.
+- `npm run test:e2e:ui`: Runs end-to-end tests with the Playwright UI for debugging.
 
 ## Testing
 
