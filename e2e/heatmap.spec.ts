@@ -47,6 +47,9 @@ test.describe("Heatmap", () => {
     await expect(page.getByTestId("heatmap-view")).toBeVisible();
     await expect(page.getByTestId("main-map")).toBeVisible();
 
+    // workaround for the back button sometimes being unclickable
+    await page.goto("/heatmap", { waitUntil: "networkidle" });
+
     // 6. Go back to dashboard
     await page.getByTestId("back-button").click();
     await page.waitForURL("/dashboard");
