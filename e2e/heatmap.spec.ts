@@ -54,6 +54,6 @@ test.describe("Heatmap", () => {
     await page.getByTestId("back-button").click();
     await page.waitForURL("/dashboard");
     await expect(page.getByText("Test Workout 1")).toBeVisible();
-    await expect(page.getByText("Test Workout 2")).toBeVisible();
+    await expect(page.getByText("Expect failing assertion")).toBeVisible();
   });
 });
