@@ -1,0 +1,1 @@
+export PLAYWRIGHT_BROWSERS_PATH=node_modules/.cache/playwright
