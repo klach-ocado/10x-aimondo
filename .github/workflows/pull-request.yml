@@ -2,7 +2,7 @@ name: Pull Request CI
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   lint:
@@ -15,8 +15,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -35,8 +35,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -49,6 +49,7 @@ jobs:
         with:
           name: vitest-coverage-report
           path: coverage/
+          retention-days: 8
 
   e2e-test:
     name: E2E Tests
@@ -62,8 +63,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -87,22 +88,29 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-      
-      - name: Upload Playwright test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-test-results
-          path: test-results/
+          retention-days: 8
 
   status-comment:
     name: Post Status Comment
     runs-on: ubuntu-latest
-    needs: [unit-test, e2e-test]
-    if: success()
+    needs: [lint, unit-test, e2e-test]
+    if: always()
     steps:
+#      - name: Download unit test coverage
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: vitest-coverage-report
+#          path: vitest-coverage-report
+#
+#      - name: Download E2E report
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: playwright-report
+#          path: playwright-report
+
       - name: Post success comment
         uses: actions/github-script@v7
+        if: ${{ needs.unit-test.result == 'success' && needs.e2e-test.result == 'success' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -110,5 +118,26 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '✅ All checks passed successfully! Linting, unit tests, and E2E tests are green.'
+              body: '✅ All checks passed successfully! Linting, unit tests, and E2E tests are green.\n\n' +
+                'Coverage reports should be available as artifacts.'
+            })
+
+      - name: Post failure comment
+        uses: actions/github-script@v7
+        if: ${{ needs.unit-test.result != 'success' || needs.e2e-test.result != 'success' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const lintStatus = "${{ needs.lint.result }}" === "success" ? "✅" : "❌";
+            const unitStatus = "${{ needs.unit-test.result }}" === "success" ? "✅" : "❌";
+            const e2eStatus = "${{ needs.e2e-test.result }}" === "success" ? "✅" : "❌";
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ Checks failed!\n\n' +
+                `- Linting: ${lintStatus}\n` +
+                `- Unit tests: ${unitStatus}\n` +
+                `E2E tests: ${e2eStatus}\n\n` +
+                'Please fix those issues before merging the PR. Detailed reports should be available as artifacts.'
             })
