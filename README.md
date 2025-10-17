@@ -99,6 +99,7 @@ The following scripts are available in the `package.json`:
 - `npm run format`: Formats the code using Prettier.
 - `npm test`: Runs unit and integration tests using Vitest.
 - `npm run test:ui`: Runs unit and integration tests with a graphical interface.
+- `npm run test:coverage`: Runs unit and integration tests and generates coverage report.
 - `npm run test:e2e`: Runs end-to-end tests using Playwright.
 - `npm run test:e2e:ui`: Runs end-to-end tests with the Playwright UI for debugging.
 
