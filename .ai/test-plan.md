@@ -95,7 +95,7 @@ Głównym celem testów jest zapewnienie wysokiej jakości, niezawodności, bezp
 - **Asercje:** Biblioteka asercji wbudowana w Vitest/Playwright.
 - **Testy Wydajnościowe:** Narzędzia deweloperskie przeglądarki (Lighthouse), `k6` lub `JMeter` do testów obciążeniowych API.
 - **Testy Bezpieczeństwa:** OWASP ZAP, `sqlmap` (do weryfikacji zabezpieczeń przed SQLi), manualna weryfikacja reguł RLS w panelu Supabase.
-- **CI/CD:** GitHub Actions do automatycznego uruchamiania testów po każdym pushu do repozytorium.
+- **CI/CD:** GitHub Actions do automatycznego uruchamiania testów w każdym pull requeście do głównego brancha.
 
 ## 7. Harmonogram Testów
 

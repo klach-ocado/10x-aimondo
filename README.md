@@ -37,7 +37,7 @@ AImondo is designed for users who regularly track their activities (like running
 ### CI/CD & Hosting
 
 - **CI/CD**: [GitHub Actions](https://github.com/features/actions)
-- **Hosting**: [DigitalOcean](https://www.digitalocean.com/) via Docker
+- **Hosting**: [Cloudflare Pages](https://pages.cloudflare.com/)
 
 ## Getting Started Locally
 
@@ -77,7 +77,7 @@ To run this project locally, follow these steps.
 
     ```
     SUPABASE_URL="your-supabase-url"
-    SUPABASE_ANON_KEY="your-supabase-anon-key"
+    SUPABASE_KEY="your-supabase-anon-key"
     ```
 
 4.  **Run the development server:**
@@ -110,7 +110,7 @@ This project uses a combination of testing strategies to ensure code quality and
 - **Unit & Integration Tests**: [Vitest](https://vitest.dev/) is used for testing individual components, functions, and services in isolation. These tests are located alongside the source code in `*.test.ts` files.
 - **End-to-End (E2E) Tests**: [Playwright](https://playwright.dev/) is used for simulating real user scenarios across the entire application stack. These tests cover critical user flows, such as authentication, workout management (CRUD), and data isolation between users. E2E tests are located in the `e2e` directory.
 
-All tests are automated and run via [GitHub Actions](https://github.com/features/actions) on every push to the repository to maintain a high standard of quality.
+All tests are automated and run via [GitHub Actions](https://github.com/features/actions) on every pull request to the main branch to maintain a high standard of quality.
 
 ## Project Scope
 
