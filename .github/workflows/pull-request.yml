@@ -96,18 +96,6 @@ jobs:
     needs: [lint, unit-test, e2e-test]
     if: always()
     steps:
-#      - name: Download unit test coverage
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: vitest-coverage-report
-#          path: vitest-coverage-report
-#
-#      - name: Download E2E report
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: playwright-report
-#          path: playwright-report
-
       - name: Post success comment
         uses: actions/github-script@v7
         if: ${{ needs.unit-test.result == 'success' && needs.e2e-test.result == 'success' }}
