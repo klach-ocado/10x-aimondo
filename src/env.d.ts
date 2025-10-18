@@ -12,11 +12,12 @@ declare global {
   }
 }
 
-interface ImportMetaEnv {
-  readonly SUPABASE_URL: string;
-  readonly SUPABASE_KEY: string;
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
-}
+// replaced by "astro:env/server" due to Cloudflare Pages requirement
+// interface ImportMetaEnv {
+//   readonly SUPABASE_URL: string;
+//   readonly SUPABASE_KEY: string;
+// }
+//
+// interface ImportMeta {
+//   readonly env: ImportMetaEnv;
+// }

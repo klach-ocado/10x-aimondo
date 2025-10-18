@@ -2,9 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AstroCookies } from "astro";
 import { createServerClient, parseCookieHeader, type CookieOptionsWithName } from "@supabase/ssr";
 import type { Database } from "./database.types.ts";
-
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
+import { SUPABASE_URL, SUPABASE_KEY } from "astro:env/server";
 
 export const cookieOptions: CookieOptionsWithName = {
   path: "/",
@@ -20,7 +18,7 @@ interface SupabaseContext {
 
 // This is the server-side client
 export const createSupabaseServerClient = (context: SupabaseContext): SupabaseClient<Database> => {
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
+  return createServerClient(SUPABASE_URL, SUPABASE_KEY, {
     cookieOptions,
     cookies: {
       // @ts-expect-error - correct implementation per Supabase docs
