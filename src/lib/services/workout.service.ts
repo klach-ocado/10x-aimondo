@@ -12,7 +12,7 @@ import type {
 } from "../../types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { parseGPXWithCustomParser } from "@we-gold/gpxjs";
-import { DOMParser } from "xmldom-qsa";
+import { DOMParser } from "linkedom";
 import { calculateStats } from "./workout-stats.service";
 
 export class WorkoutService {
@@ -138,6 +138,7 @@ export class WorkoutService {
 
   async createWorkout(command: CreateWorkoutCommand): Promise<WorkoutDto> {
     const customParseMethod = (txt: string): Document | null => {
+      // @ts-expect-error we need only subset of XML features
       return new DOMParser().parseFromString(txt, "text/xml");
     };
     const [parsedGpx, error] = parseGPXWithCustomParser(command.gpxFileContent, customParseMethod);
