@@ -4,7 +4,7 @@ import type { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { WorkoutFilters } from "../hooks/useWorkoutsDashboard";
-import { DateRangePicker } from "./DateRangePicker";
+import { DateRangePicker } from "@/components/common/DateRangePicker";
 
 interface FiltersPanelProps {
   filters: WorkoutFilters;

@@ -1,14 +1,11 @@
 import * as React from "react";
-import { CalendarIcon, ChevronsUpDown, X } from "lucide-react";
-import { format } from "date-fns";
+import { ChevronsUpDown } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { DateRangePicker } from "@/components/common/DateRangePicker";
 
 export interface HeatmapFiltersViewModel {
   name?: string;
@@ -43,14 +40,6 @@ export function HeatmapFilterPanel({ filters, onFiltersChange, isDisabled }: Hea
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onFiltersChange({ ...filters, [e.target.name]: e.target.value });
-  };
-
-  const handleClearDates = () => {
-    setDate(undefined);
-    onFiltersChange({
-      ...filters,
-      dateRange: undefined,
-    });
   };
 
   const handleClearAll = () => {
@@ -92,45 +81,7 @@ export function HeatmapFilterPanel({ filters, onFiltersChange, isDisabled }: Hea
             className="max-w-sm"
             data-testid="type-filter-input"
           />
-          <Popover>
-            <PopoverTrigger asChild data-testid="date-range-picker-trigger">
-              <Button
-                id="date"
-                variant={"outline"}
-                className={cn("w-[300px] justify-start text-left font-normal", !date && "text-muted-foreground")}
-                disabled={isDisabled}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date?.from ? (
-                  date.to ? (
-                    <>
-                      {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
-                    </>
-                  ) : (
-                    format(date.from, "LLL dd, y")
-                  )
-                ) : (
-                  <span>Pick a date range</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                initialFocus
-                mode="range"
-                defaultMonth={date?.from}
-                selected={date}
-                onSelect={handleDateChange}
-                numberOfMonths={2}
-              />
-            </PopoverContent>
-          </Popover>
-          {date?.from && (
-            <Button variant="ghost" onClick={handleClearDates} disabled={isDisabled} className="-ml-8 h-9 w-9 p-0">
-              <X className="h-4 w-4 text-muted-foreground" />
-              <span className="sr-only">Clear date filter</span>
-            </Button>
-          )}
+          <DateRangePicker date={date} onDateChange={handleDateChange} disabled={isDisabled} />
           {areFiltersActive && (
             <Button
               variant="secondary"
