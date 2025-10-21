@@ -7,7 +7,7 @@ export const prerender = false;
 
 const workoutIdSchema = z.string().uuid();
 
-export async function GET(context: APIContext): Promise<Response> {
+export const GET = async (context: APIContext): Promise<Response> => {
   const { params, locals } = context;
 
   const validationResult = workoutIdSchema.safeParse(params.id);
@@ -49,7 +49,7 @@ export async function GET(context: APIContext): Promise<Response> {
   }
 }
 
-export async function DELETE(context: APIContext): Promise<Response> {
+export const DELETE = async (context: APIContext): Promise<Response> => {
   const { params, locals } = context;
 
   const validationResult = workoutIdSchema.safeParse(params.id);
@@ -95,7 +95,7 @@ export async function DELETE(context: APIContext): Promise<Response> {
   }
 }
 
-export async function PUT(context: APIContext): Promise<Response> {
+export const PUT = async (context: APIContext): Promise<Response> => {
   const { params, locals, request } = context;
 
   const idValidationResult = workoutIdSchema.safeParse(params.id);

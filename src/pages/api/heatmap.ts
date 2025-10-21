@@ -19,7 +19,7 @@ const GetHeatmapDataQuerySchema = z.object({
   type: z.string().optional(),
 });
 
-export async function GET(context: APIContext): Promise<Response> {
+export const GET = async (context: APIContext): Promise<Response> => {
   const { locals, url } = context;
   const { user, supabase } = locals;
 
