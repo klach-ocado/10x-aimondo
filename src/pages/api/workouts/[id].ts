@@ -1,4 +1,4 @@
-import type { APIContext } from "astro";
+import type { APIRoute } from "astro";
 import { z } from "zod";
 import { WorkoutService } from "../../../lib/services/workout.service";
 import { WorkoutUpdateSchema } from "../../../types";
@@ -7,9 +7,7 @@ export const prerender = false;
 
 const workoutIdSchema = z.string().uuid();
 
-export const GET = async (context: APIContext): Promise<Response> => {
-  const { params, locals } = context;
-
+export const GET: APIRoute = async ({ params, locals }) => {
   const validationResult = workoutIdSchema.safeParse(params.id);
   if (!validationResult.success) {
     return new Response(JSON.stringify({ error: "Invalid workout ID format" }), {
@@ -47,11 +45,9 @@ export const GET = async (context: APIContext): Promise<Response> => {
       headers: { "Content-Type": "application/json" },
     });
   }
-}
+};
 
-export const DELETE = async (context: APIContext): Promise<Response> => {
-  const { params, locals } = context;
-
+export const DELETE: APIRoute = async ({ params, locals }) => {
   const validationResult = workoutIdSchema.safeParse(params.id);
   if (!validationResult.success) {
     return new Response(JSON.stringify({ error: "Invalid workout ID format" }), {
@@ -93,11 +89,9 @@ export const DELETE = async (context: APIContext): Promise<Response> => {
       headers: { "Content-Type": "application/json" },
     });
   }
-}
+};
 
-export const PUT = async (context: APIContext): Promise<Response> => {
-  const { params, locals, request } = context;
-
+export const PUT: APIRoute = async ({ params, locals, request }) => {
   const idValidationResult = workoutIdSchema.safeParse(params.id);
   if (!idValidationResult.success) {
     return new Response(JSON.stringify({ error: "Invalid workout ID format" }), {
@@ -153,4 +147,4 @@ export const PUT = async (context: APIContext): Promise<Response> => {
       headers: { "Content-Type": "application/json" },
     });
   }
-}
+};

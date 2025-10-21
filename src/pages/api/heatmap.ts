@@ -1,4 +1,4 @@
-import type { APIContext } from "astro";
+import type { APIRoute } from "astro";
 import { z } from "zod";
 import type { GetHeatmapDataCommand } from "../../types";
 import { WorkoutService } from "../../lib/services/workout.service";
@@ -19,8 +19,7 @@ const GetHeatmapDataQuerySchema = z.object({
   type: z.string().optional(),
 });
 
-export const GET = async (context: APIContext): Promise<Response> => {
-  const { locals, url } = context;
+export const GET: APIRoute = async ({ locals, url }) => {
   const { user, supabase } = locals;
 
   const queryParams = Object.fromEntries(url.searchParams.entries());
@@ -56,4 +55,4 @@ export const GET = async (context: APIContext): Promise<Response> => {
     console.error("Error in GET /api/heatmap:", error);
     return new Response(JSON.stringify({ message: "Internal Server Error" }), { status: 500 });
   }
-}
+};
