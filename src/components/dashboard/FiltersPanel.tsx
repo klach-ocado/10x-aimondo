@@ -1,14 +1,10 @@
 import * as React from "react";
-import { CalendarIcon, X } from "lucide-react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
-
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { WorkoutFilters } from "../hooks/useWorkoutsDashboard";
+import { DateRangePicker } from "./DateRangePicker";
 
 interface FiltersPanelProps {
   filters: WorkoutFilters;
@@ -47,15 +43,6 @@ export function FiltersPanel({ filters, onFiltersChange, onClearAll, disabled }:
     onFiltersChange({ ...filters, [e.target.name]: e.target.value });
   };
 
-  const handleClearDates = () => {
-    setDate(undefined);
-    onFiltersChange({
-      ...filters,
-      dateFrom: undefined,
-      dateTo: undefined,
-    });
-  };
-
   return (
     <div className="flex items-center space-x-2">
       <Input
@@ -74,45 +61,7 @@ export function FiltersPanel({ filters, onFiltersChange, onClearAll, disabled }:
         disabled={disabled}
         className="max-w-sm"
       />
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            id="date"
-            variant={"outline"}
-            className={cn("w-[300px] justify-start text-left font-normal", !date && "text-muted-foreground")}
-            disabled={disabled}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
-                </>
-              ) : (
-                format(date.from, "LLL dd, y")
-              )
-            ) : (
-              <span>Pick a date range</span>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            initialFocus
-            mode="range"
-            defaultMonth={date?.from}
-            selected={date}
-            onSelect={handleDateChange}
-            numberOfMonths={2}
-          />
-        </PopoverContent>
-      </Popover>
-      {date?.from && (
-        <Button variant="ghost" onClick={handleClearDates} disabled={disabled} className="-ml-8 h-9 w-9 p-0">
-          <X className="h-4 w-4 text-muted-foreground" />
-          <span className="sr-only">Clear date filter</span>
-        </Button>
-      )}
+      <DateRangePicker date={date} onDateChange={handleDateChange} disabled={disabled} />
       {areFiltersActive && (
         <Button variant="secondary" onClick={onClearAll} disabled={disabled}>
           Clear All

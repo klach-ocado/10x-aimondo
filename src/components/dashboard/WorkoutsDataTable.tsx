@@ -1,19 +1,10 @@
 import * as React from "react";
+import { getColumns } from "./WorkoutsDataTableColumns.tsx";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import type { ColumnDef, SortingState } from "@tanstack/react-table";
-import { formatDuration } from "@/lib/utils";
-import { MoreHorizontal, ArrowUpDown } from "lucide-react";
+import type { SortingState } from "@tanstack/react-table";
 import { DataTablePagination } from "./DataTablePagination";
 import type { Pagination, WorkoutListItemDto } from "@/types";
 import type { WorkoutSort } from "../hooks/useWorkoutsDashboard";
-import { Button } from "@/components/ui/button.tsx";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu.tsx";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx";
 
 interface WorkoutsDataTableProps {
@@ -38,84 +29,7 @@ export function WorkoutsDataTable({
   const [sorting, setSorting] = React.useState<SortingState>([{ id: sort.sortBy, desc: sort.order === "desc" }]);
   const [rowSelection] = React.useState({});
 
-  const columns: ColumnDef<WorkoutListItemDto>[] = [
-    {
-      accessorKey: "name",
-      header: () => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() =>
-              onSortChange({ sortBy: "name", order: sort.sortBy === "name" && sort.order === "asc" ? "desc" : "asc" })
-            }
-          >
-            Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-    },
-    {
-      accessorKey: "type",
-      header: "Type",
-    },
-    {
-      accessorKey: "date",
-      header: () => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() =>
-              onSortChange({ sortBy: "date", order: sort.sortBy === "date" && sort.order === "asc" ? "desc" : "asc" })
-            }
-          >
-            Date
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => new Date(row.getValue("date")).toLocaleDateString(),
-    },
-    {
-      accessorKey: "distance",
-      header: "Distance (km)",
-      cell: ({ row }) => `${(row.getValue<number>("distance") / 1000).toFixed(2)} km`,
-    },
-    {
-      accessorKey: "duration",
-      header: "Duration (HH:MM:SS)",
-      cell: ({ row }) => formatDuration(row.getValue("duration")),
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => {
-        const workout = row.original;
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild data-testid="actions-menu-button">
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onEdit(workout)} data-testid="edit-workout-button">
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onDelete(workout)}
-                className="text-red-600"
-                data-testid="delete-workout-button"
-              >
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
-    },
-  ];
+  const columns = getColumns({ onSortChange, sort, onEdit, onDelete });
 
   const table = useReactTable({
     data,
