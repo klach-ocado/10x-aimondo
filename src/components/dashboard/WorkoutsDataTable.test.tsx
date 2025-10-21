@@ -2,7 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { WorkoutsDataTable } from "./WorkoutsDataTable";
-import type { Pagination, WorkoutListItemDto, WorkoutSort } from "@/types";
+import type { Pagination, WorkoutListItemDto } from "@/types";
+import type { WorkoutSort } from "@/components/hooks/useWorkoutsDashboard.ts";
 
 // Mock window.location.href
 const originalLocation = window.location;
@@ -27,7 +28,7 @@ const mockData: WorkoutListItemDto[] = [
 ];
 
 const mockPagination: Pagination = {
-  currentPage: 1,
+  page: 1,
   totalPages: 5,
   totalItems: 50,
   limit: 10,

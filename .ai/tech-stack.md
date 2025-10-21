@@ -9,7 +9,7 @@ Frontend - Astro z React dla komponentów interaktywnych:
 
 Backend - Supabase jako kompleksowe rozwiązanie backendowe:
 
-- Zapewnia bazę danych PostgreSQL
+- Zapewnia bazę danych PostgreSQL z rozszerzeniem PostGIS do obsługi danych geograficznych
 - Zapewnia SDK w wielu językach, które posłużą jako Backend-as-a-Service
 - Jest rozwiązaniem open source, które można hostować lokalnie lub na własnym serwerze
 - Posiada wbudowaną autentykację użytkowników
