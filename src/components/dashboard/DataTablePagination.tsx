@@ -3,29 +3,18 @@ import { Button } from "@/components/ui/button";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
-  onPageChange: (page: number) => void;
 }
 
-export function DataTablePagination<TData>({ table, onPageChange }: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
   return (
     <div className="flex items-center justify-end space-x-2 py-4">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(table.getState().pagination.pageIndex - 1)}
-        disabled={!table.getCanPreviousPage()}
-      >
+      <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
         Previous
       </Button>
       <span className="text-sm">
         Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
       </span>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(table.getState().pagination.pageIndex + 1)}
-        disabled={!table.getCanNextPage()}
-      >
+      <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
         Next
       </Button>
     </div>

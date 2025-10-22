@@ -29,6 +29,16 @@ export function WorkoutsDataTable({
   const [sorting, setSorting] = React.useState<SortingState>([{ id: sort.sortBy, desc: sort.order === "desc" }]);
   const [rowSelection] = React.useState({});
 
+  React.useEffect(() => {
+    const newSort = sorting[0];
+    if (newSort && (newSort.id !== sort.sortBy || (newSort.desc ? "desc" : "asc") !== sort.order)) {
+      onSortChange({
+        sortBy: newSort.id,
+        order: newSort.desc ? "desc" : "asc",
+      });
+    }
+  }, [sorting, sort.sortBy, sort.order, onSortChange]);
+
   const columns = getColumns({ onSortChange, sort, onEdit, onDelete });
 
   const table = useReactTable({
@@ -36,10 +46,24 @@ export function WorkoutsDataTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
     pageCount: pagination.totalPages,
+    manualPagination: true,
+    manualSorting: true,
     onSortingChange: setSorting,
+    onPaginationChange: (updater) => {
+      if (typeof updater === "function") {
+        const newPagination = updater(table.getState().pagination);
+        onPageChange(newPagination.pageIndex + 1);
+      } else {
+        onPageChange(updater.pageIndex + 1);
+      }
+    },
     state: {
       sorting,
       rowSelection,
+      pagination: {
+        pageIndex: pagination.page - 1,
+        pageSize: pagination.limit,
+      },
     },
   });
 
@@ -96,7 +120,7 @@ export function WorkoutsDataTable({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} onPageChange={onPageChange} />
+      <DataTablePagination table={table} />
     </div>
   );
 }
