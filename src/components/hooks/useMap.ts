@@ -65,7 +65,7 @@ export function useMap({
         type: "line",
         source: ROUTE_SOURCE_ID,
         layout: { "line-join": "round", "line-cap": "round", visibility: "none" },
-        paint: { "line-color": "#3887be", "line-width": 5, "line-opacity": 0.75 },
+        paint: { "line-color": "rgb(178,24,43)", "line-width": 5, "line-opacity": 0.75 },
       });
 
       mapInstance.addSource(HEATMAP_SOURCE_ID, {
