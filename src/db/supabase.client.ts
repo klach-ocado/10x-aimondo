@@ -2,6 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AstroCookies } from "astro";
 import { createServerClient, parseCookieHeader, type CookieOptionsWithName } from "@supabase/ssr";
 import type { Database } from "./database.types.ts";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore module declared at build time, it may not exist yet
 import { SUPABASE_URL, SUPABASE_KEY } from "astro:env/server";
 
 export const cookieOptions: CookieOptionsWithName = {
