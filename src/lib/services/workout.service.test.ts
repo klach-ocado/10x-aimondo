@@ -31,6 +31,7 @@ describe("WorkoutService", () => {
 
   describe("createWorkout logic (pre-database)", () => {
     it("should throw an error if GPX parsing fails", async () => {
+      // @ts-expect-error incomplete mock
       vi.mocked(parseGPXWithCustomParser).mockReturnValue([null, { message: "Invalid GPX" }]);
       const command: CreateWorkoutCommand = { gpxFileContent: "invalid-gpx", name: "test", user_id: "user-1" };
 
@@ -38,6 +39,7 @@ describe("WorkoutService", () => {
     });
 
     it("should throw an error if the GPX file has no tracks", async () => {
+      // @ts-expect-error incomplete mock
       vi.mocked(parseGPXWithCustomParser).mockReturnValue([{ tracks: [] }, null]);
       const command: CreateWorkoutCommand = { gpxFileContent: "<gpx></gpx>", name: "test", user_id: "user-1" };
 
@@ -45,6 +47,7 @@ describe("WorkoutService", () => {
     });
 
     it("should throw an error if the tracks contain no points", async () => {
+      // @ts-expect-error incomplete mock
       vi.mocked(parseGPXWithCustomParser).mockReturnValue([{ tracks: [{ points: [] }] }, null]);
       const command: CreateWorkoutCommand = { gpxFileContent: "<gpx></gpx>", name: "test", user_id: "user-1" };
 
@@ -56,6 +59,7 @@ describe("WorkoutService", () => {
         { latitude: 1, longitude: 1, time: new Date("2025-01-01T12:00:00Z") },
         { latitude: 2, longitude: 2, time: new Date("2025-01-01T12:01:00Z") },
       ];
+      // @ts-expect-error incomplete mock
       vi.mocked(parseGPXWithCustomParser).mockReturnValue([{ tracks: [{ points: trackPoints }] }, null]);
       const calculateStatsSpy = vi
         .spyOn(workoutStatsService, "calculateStats")

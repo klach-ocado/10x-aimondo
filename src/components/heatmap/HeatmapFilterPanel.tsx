@@ -9,10 +9,7 @@ import { DateRangePicker } from "@/components/common/DateRangePicker";
 
 export interface HeatmapFiltersViewModel {
   name?: string;
-  dateRange?: {
-    from?: Date;
-    to?: Date;
-  };
+  dateRange?: DateRange;
   type?: string;
 }
 

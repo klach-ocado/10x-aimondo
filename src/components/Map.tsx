@@ -37,7 +37,7 @@ type MapProps = TrackMapProps | HeatmapMapProps;
 
 const Map: React.FC<MapProps> = (props) => {
   const { className } = props;
-  const mapContainer = useRef<HTMLDivElement>(null);
+  const mapContainer = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
 
   useMap({
     mapContainer,

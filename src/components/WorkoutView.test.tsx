@@ -1,12 +1,13 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import WorkoutView from "./WorkoutView";
 import { useWorkoutView } from "./hooks/useWorkoutView";
 
 // Mockowanie zależności (hook i komponenty podrzędne)
 vi.mock("./hooks/useWorkoutView");
 vi.mock("./StatsOverlay", () => ({
+  // @ts-expect-error any for mock
   default: ({ distance, duration }) => (
     <div data-testid="stats-overlay">
       {distance} km, {duration} s
@@ -17,10 +18,11 @@ vi.mock("./Map", () => ({
   default: () => <div data-testid="map-component"></div>,
 }));
 vi.mock("./common/BackButton", () => ({
+  // @ts-expect-error any for mock
   default: ({ onClick }) => <button data-testid="back-button" onClick={onClick}></button>,
 }));
 
-const mockUseWorkoutView = useWorkoutView as vi.Mock;
+const mockUseWorkoutView = useWorkoutView as Mock;
 
 describe("WorkoutView", () => {
   beforeEach(() => {

@@ -34,6 +34,7 @@ const mockMapInstance = {
 
 const mockBoundsInstance = {
   extend: vi.fn(function () {
+    // @ts-expect-error `this` context
     return this;
   }), // Return `this` for chaining
 };
@@ -77,7 +78,7 @@ describe("useMap", () => {
   });
 
   it("should initialize the map on mount", async () => {
-    const mapContainer = React.createRef<HTMLDivElement>();
+    const mapContainer = React.createRef<HTMLDivElement>() as React.RefObject<HTMLDivElement>;
     mapContainer.current = document.createElement("div");
     const onLoad = vi.fn();
 
@@ -104,7 +105,7 @@ describe("useMap", () => {
   });
 
   it('should update data for "track" mode', async () => {
-    const mapContainer = React.createRef<HTMLDivElement>();
+    const mapContainer = React.createRef<HTMLDivElement>() as React.RefObject<HTMLDivElement>;
     mapContainer.current = document.createElement("div");
     const trackPoints = [
       { lat: 40, lng: -74 },
@@ -127,6 +128,7 @@ describe("useMap", () => {
       loadCallback();
     });
 
+    // @ts-expect-error limitation of TypeScript inference
     rerender({ displayMode: "track", points: trackPoints });
 
     await waitFor(() => {
@@ -148,7 +150,7 @@ describe("useMap", () => {
   });
 
   it('should update data for "heatmap" mode', async () => {
-    const mapContainer = React.createRef<HTMLDivElement>();
+    const mapContainer = React.createRef<HTMLDivElement>() as React.RefObject<HTMLDivElement>;
     mapContainer.current = document.createElement("div");
     const heatmapData = { type: "FeatureCollection", features: [] };
 
@@ -169,6 +171,7 @@ describe("useMap", () => {
       loadCallback();
     });
 
+    // @ts-expect-error limitation of TypeScript inference
     rerender({ displayMode: "heatmap", data: heatmapData });
 
     await waitFor(() => {
@@ -179,7 +182,7 @@ describe("useMap", () => {
   });
 
   it("should save view state to localStorage on move", async () => {
-    const mapContainer = React.createRef<HTMLDivElement>();
+    const mapContainer = React.createRef<HTMLDivElement>() as React.RefObject<HTMLDivElement>;
     mapContainer.current = document.createElement("div");
     const onMoveEnd = vi.fn();
     const setItemSpy = vi.spyOn(localStorageMock, "setItem");

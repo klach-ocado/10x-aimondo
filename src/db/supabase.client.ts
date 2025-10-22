@@ -18,6 +18,7 @@ interface SupabaseContext {
 
 // This is the server-side client
 export const createSupabaseServerClient = (context: SupabaseContext): SupabaseClient<Database> => {
+  // @ts-expect-error - correct implementation per Supabase docs
   return createServerClient(SUPABASE_URL, SUPABASE_KEY, {
     cookieOptions,
     cookies: {
