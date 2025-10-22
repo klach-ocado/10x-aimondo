@@ -6,7 +6,7 @@ on:
 
 jobs:
   lint:
-    name: Lint
+    name: Lint and Type Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,6 +23,9 @@ jobs:
 
       - name: Run linter
         run: npm run lint
+
+      - name: Run type checker
+        run: npm run tsc
 
   unit-test:
     name: Unit Tests
