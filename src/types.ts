@@ -80,6 +80,12 @@ export type CreateWorkoutCommand = Pick<WorkoutDto, "name" | "user_id"> & {
   gpxFileContent: string;
 };
 
+export interface LoadEndomondoDataCommand {
+  jsonContent: string;
+  fileName: string;
+  user_id: string;
+}
+
 /**
  * Command model for updating an existing workout.
  * All fields are optional, allowing for partial updates.

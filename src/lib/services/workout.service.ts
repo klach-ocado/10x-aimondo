@@ -5,6 +5,7 @@ import type {
   GetWorkoutsCommand,
   HeatmapDto,
   HeatmapPoint,
+  LoadEndomondoDataCommand,
   PaginatedWorkoutsDto,
   UpdateWorkoutCommand,
   WorkoutDetailsDto,
@@ -201,6 +202,62 @@ export class WorkoutService {
     if (trackPointsError) {
       // TODO: Create a custom error for this
       // We should also delete the workout we just created
+      throw new Error("Failed to insert track points");
+    }
+
+    return workout;
+  }
+
+  async loadEndomondoData(command: LoadEndomondoDataCommand): Promise<WorkoutDto> {
+    const endomondoData = JSON.parse(command.jsonContent).reduce((acc: any, item: any) => {
+      const key = Object.keys(item)[0];
+      acc[key] = item[key];
+      return acc;
+    }, {});
+
+    const workoutToInsert = {
+      user_id: command.user_id,
+      name: command.fileName.replace(".json", ""),
+      date: new Date(endomondoData.start_time).toISOString(),
+      type: endomondoData.sport,
+      distance: Math.round(endomondoData.distance_km * 1000),
+      duration: endomondoData.duration_s ? Math.round(endomondoData.duration_s) : null,
+    };
+
+    const { data: workout, error: workoutError } = await this.supabase
+      .from("workouts")
+      .insert(workoutToInsert)
+      .select()
+      .single();
+
+    if (workoutError) {
+      throw new Error("Failed to insert workout");
+    }
+
+    const trackPointsToInsert = endomondoData.points.map((pointData: any[], index: number) => {
+      const pointDetails: any = {};
+      pointData.forEach((detail) => {
+        const key = Object.keys(detail)[0];
+        pointDetails[key] = detail[key];
+      });
+
+      const lat = pointDetails.location[0][0].latitude;
+      const lon = pointDetails.location[0][1].longitude;
+
+      return {
+        workout_id: workout.id,
+        location: `POINT(${lon} ${lat})`,
+        elevation: pointDetails.altitude || null,
+        timestamp: new Date(pointDetails.timestamp).toISOString(),
+        sequence_number: index,
+      };
+    });
+
+    const { error: trackPointsError } = await this.supabase.from("track_points").insert(trackPointsToInsert);
+
+    if (trackPointsError) {
+      // We should also delete the workout we just created
+      await this.supabase.from("workouts").delete().match({ id: workout.id });
       throw new Error("Failed to insert track points");
     }
 
