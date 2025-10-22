@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import { authService } from "@/lib/services/auth.service";
 import { UpdatePasswordSchema } from "@/lib/auth/schemas";
 
 export function UpdatePasswordForm() {
@@ -22,34 +23,31 @@ export function UpdatePasswordForm() {
   });
 
   const onSubmit = useCallback(async (values: z.infer<typeof UpdatePasswordSchema>) => {
-    const response = await fetch("/api/auth/update-password", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    const result = await authService.updatePassword(values);
 
-    if (response.ok) {
-      toast.success("Password updated successfully!");
-      // Redirect to dashboard after a short delay
-      setTimeout(() => {
-        // eslint-disable-next-line react-compiler/react-compiler
-        window.location.href = "/dashboard";
-      }, 1000);
-    } else if (response.status === 401) {
-      toast.error("Invalid or Expired Link", {
-        description: "Your password reset link is invalid or has expired. Please request a new one.",
-      });
-      // Redirect to login page after a short delay
-      setTimeout(() => {
-        window.location.href = "/auth/login";
-      }, 3000);
-    } else {
-      const errorData = await response.json();
-      toast.error("Failed to update password", {
-        description: errorData.error || "An unexpected error occurred. Please try again.",
-      });
+    switch (result.status) {
+      case "success":
+        toast.success("Password updated successfully!");
+        // Redirect to dashboard after a short delay
+        setTimeout(() => {
+          // eslint-disable-next-line react-compiler/react-compiler
+          window.location.href = "/dashboard";
+        }, 1000);
+        break;
+      case "unauthorized":
+        toast.error("Invalid or Expired Link", {
+          description: "Your password reset link is invalid or has expired. Please request a new one.",
+        });
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          window.location.href = "/auth/login";
+        }, 3000);
+        break;
+      case "error":
+        toast.error("Failed to update password", {
+          description: result.error,
+        });
+        break;
     }
   }, []);
 

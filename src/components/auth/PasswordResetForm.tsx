@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import { authService } from "@/lib/services/auth.service";
 import { PasswordResetSchema } from "@/lib/auth/schemas";
 
 export function PasswordResetForm() {
@@ -21,13 +22,7 @@ export function PasswordResetForm() {
   });
 
   const onSubmit = useCallback(async (values: z.infer<typeof PasswordResetSchema>) => {
-    await fetch("/api/auth/password-reset", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    await authService.requestPasswordReset(values);
 
     toast.success("Password Reset Email Sent", {
       description: "If an account with this email exists, a password reset link has been sent.",

@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import { authService } from "@/lib/services/auth.service";
 import { RegisterSchema } from "@/lib/auth/schemas";
 
 export function RegisterForm() {
@@ -23,21 +24,14 @@ export function RegisterForm() {
   });
 
   const onSubmit = useCallback(async (values: z.infer<typeof RegisterSchema>) => {
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    const result = await authService.register(values);
 
-    if (response.ok) {
+    if (result.ok) {
       // eslint-disable-next-line react-compiler/react-compiler
       window.location.href = "/dashboard";
     } else {
-      const errorData = await response.json();
       toast.error("Registration Failed", {
-        description: errorData.error || "An unexpected error occurred. Please try again.",
+        description: result.error,
       });
     }
   }, []);

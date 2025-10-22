@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import { authService } from "@/lib/services/auth.service";
+
 const formSchema = z.object({
   email: z.string().email("Invalid email address."),
   password: z.string().min(1, "Password is required."),
@@ -26,21 +28,14 @@ export function LoginForm() {
   });
 
   const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    const result = await authService.login(values);
 
-    if (response.ok) {
+    if (result.ok) {
       // eslint-disable-next-line react-compiler/react-compiler
       window.location.href = "/dashboard";
     } else {
-      const errorData = await response.json();
       toast.error("Login Failed", {
-        description: errorData.error || "An unexpected error occurred. Please try again.",
+        description: result.error,
       });
     }
   }, []);
