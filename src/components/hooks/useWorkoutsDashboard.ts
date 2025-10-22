@@ -14,7 +14,6 @@ export interface WorkoutSort {
 }
 
 const DEBOUNCE_DELAY = 500;
-const LOCAL_STORAGE_KEY = "dashboardFilters";
 
 export function useWorkoutsDashboard() {
   const [workouts, setWorkouts] = useState<WorkoutListItemDto[]>([]);
@@ -22,36 +21,32 @@ export function useWorkoutsDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<WorkoutFilters>(() => {
-    if (typeof window === "undefined") {
-      return {};
-    }
-    try {
-      const savedFilters = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-      return savedFilters ? JSON.parse(savedFilters) : {};
-    } catch (error) {
-      console.error("Error reading from localStorage", error);
-      return {};
-    }
+  const [page, setPage] = useState(() => {
+    if (typeof window === "undefined") return 1;
+    const params = new URLSearchParams(window.location.search);
+    return parseInt(params.get("page") || "1", 10);
   });
-  const [sort, setSort] = useState<WorkoutSort>({ sortBy: "date", order: "desc" });
+
+  const [sort, setSort] = useState<WorkoutSort>(() => {
+    if (typeof window === "undefined") return { sortBy: "date", order: "desc" };
+    const params = new URLSearchParams(window.location.search);
+    const sortBy = params.get("sortBy") || "date";
+    const order = (params.get("order") as "asc" | "desc") || "desc";
+    return { sortBy, order };
+  });
+
+  const [filters, setFilters] = useState<WorkoutFilters>(() => {
+    if (typeof window === "undefined") return {};
+    const params = new URLSearchParams(window.location.search);
+    const newFilters: WorkoutFilters = {};
+    if (params.has("name")) newFilters.name = params.get("name")!;
+    if (params.has("type")) newFilters.type = params.get("type")!;
+    if (params.has("dateFrom")) newFilters.dateFrom = params.get("dateFrom")!;
+    if (params.has("dateTo")) newFilters.dateTo = params.get("dateTo")!;
+    return newFilters;
+  });
 
   const [debouncedFilters, setDebouncedFilters] = useState<WorkoutFilters>(filters);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(filters));
-    } catch (error) {
-      console.error("Error writing to localStorage", error);
-    }
-  }, [filters]);
-
-  const clearAllFilters = () => {
-    setFilters({});
-    setPage(1);
-    setSort({ sortBy: "date", order: "desc" });
-  };
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -72,12 +67,19 @@ export function useWorkoutsDashboard() {
       params.append("sortBy", sort.sortBy);
       params.append("order", sort.order);
 
-      if (debouncedFilters.name) params.append("name", debouncedFilters.name);
-      if (debouncedFilters.type) params.append("type", debouncedFilters.type);
-      if (debouncedFilters.dateFrom) params.append("dateFrom", debouncedFilters.dateFrom);
-      if (debouncedFilters.dateTo) params.append("dateTo", debouncedFilters.dateTo);
+      Object.entries(debouncedFilters).forEach(([key, value]) => {
+        if (value) {
+          params.append(key, value);
+        }
+      });
 
-      const response = await fetch(`/api/workouts?${params.toString()}`);
+      const searchString = params.toString();
+      const newUrl = `${window.location.pathname}?${searchString}`;
+      if (newUrl !== `${window.location.pathname}${window.location.search}`) {
+        window.history.pushState({ path: newUrl }, "", newUrl);
+      }
+
+      const response = await fetch(`/api/workouts?${searchString}`);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: "Failed to fetch workouts" }));
@@ -93,6 +95,12 @@ export function useWorkoutsDashboard() {
       setIsLoading(false);
     }
   }, [page, sort, debouncedFilters]);
+
+  const clearAllFilters = () => {
+    setFilters({});
+    setPage(1);
+    setSort({ sortBy: "date", order: "desc" });
+  };
 
   const updateWorkout = async (id: string, data: UpdateWorkoutCommand) => {
     try {
