@@ -12,31 +12,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { WorkoutListItemDto } from "@/types";
 import { formatDuration } from "@/lib/utils";
-import type { WorkoutSort } from "../hooks/useWorkoutsDashboard";
 
 interface GetColumnsProps {
-  onSortChange: (sort: WorkoutSort) => void;
-  sort: WorkoutSort;
   onEdit: (workout: WorkoutListItemDto) => void;
   onDelete: (workout: WorkoutListItemDto) => void;
 }
 
-export const getColumns = ({
-  onSortChange,
-  sort,
-  onEdit,
-  onDelete,
-}: GetColumnsProps): ColumnDef<WorkoutListItemDto>[] => [
+export const getColumns = ({ onEdit, onDelete }: GetColumnsProps): ColumnDef<WorkoutListItemDto>[] => [
   {
     accessorKey: "name",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() =>
-            onSortChange({ sortBy: "name", order: sort.sortBy === "name" && sort.order === "asc" ? "desc" : "asc" })
-          }
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -49,14 +36,9 @@ export const getColumns = ({
   },
   {
     accessorKey: "date",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() =>
-            onSortChange({ sortBy: "date", order: sort.sortBy === "date" && sort.order === "asc" ? "desc" : "asc" })
-          }
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>

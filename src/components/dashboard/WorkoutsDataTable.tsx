@@ -39,7 +39,7 @@ export function WorkoutsDataTable({
     }
   }, [sorting, sort.sortBy, sort.order, onSortChange]);
 
-  const columns = getColumns({ onSortChange, sort, onEdit, onDelete });
+  const columns = getColumns({ onEdit, onDelete });
 
   const table = useReactTable({
     data,
