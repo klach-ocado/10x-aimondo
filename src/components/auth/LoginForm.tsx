@@ -12,22 +12,18 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 
 import { authService } from "@/lib/services/auth.service";
-
-const formSchema = z.object({
-  email: z.string().email("Invalid email address."),
-  password: z.string().min(1, "Password is required."),
-});
+import { LoginSchema } from "@/lib/auth/schemas.ts";
 
 export function LoginForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = useCallback(async (values: z.infer<typeof LoginSchema>) => {
     const result = await authService.login(values);
 
     if (result.ok) {

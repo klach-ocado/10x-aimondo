@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
-import type { GetWorkoutsCommand, CreateWorkoutCommand } from "@/types";
+import { type GetWorkoutsCommand, type CreateWorkoutCommand, WorkoutCreateSchema } from "@/types";
 import { WorkoutService } from "@/lib/services/workout.service";
 
 export const prerender = false;
@@ -14,10 +14,6 @@ const GetWorkoutsQuerySchema = z.object({
   type: z.string().optional(),
   sortBy: z.string().optional().default("date"),
   order: z.enum(["asc", "desc"]).optional().default("desc"),
-});
-
-const WorkoutCreateSchema = z.object({
-  name: z.string().min(3).max(300),
 });
 
 export const GET: APIRoute = async ({ request, locals }) => {
