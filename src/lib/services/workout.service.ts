@@ -200,7 +200,8 @@ export class WorkoutService {
 
     if (trackPointsError) {
       // TODO: Create a custom error for this
-      // We should also delete the workout we just created
+      // We should delete the workout we just created
+      await this.supabase.from("workouts").delete().match({ id: workout.id });
       throw new Error("Failed to insert track points");
     }
 
