@@ -15,6 +15,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { parseGPXWithCustomParser } from "@we-gold/gpxjs";
 import { DOMParser } from "linkedom";
 import { calculateStats } from "./workout-stats.service";
+import { readdirSync, readFileSync } from "fs";
+import { join } from "path";
 
 export class WorkoutService {
   private supabase: SupabaseClient;
@@ -123,16 +125,34 @@ export class WorkoutService {
   }
 
   async deleteWorkout(id: string, userId: string): Promise<{ error: Error | null; notFound: boolean }> {
-    const { error, count } = await this.supabase.from("workouts").delete().match({ id: id, user_id: userId });
+    const dirPath = join(process.cwd(), "test-data");
+    const files = readdirSync(dirPath).filter((file) => file.endsWith(".json"));
 
-    if (error) {
-      console.error("Error deleting workout:", error);
-      return { error: new Error("Failed to delete workout"), notFound: false };
-    }
+    for (const file of files) {
+      const filePath = join(dirPath, file);
 
-    if (count === 0) {
-      return { error: null, notFound: true };
+      try {
+        const content = readFileSync(filePath, "utf-8");
+
+        await this.loadEndomondoData({
+          user_id: userId,
+          fileName: file,
+          jsonContent: content,
+        });
+      } catch (err) {
+        console.error(`❌ Błąd przy wczytywaniu ${file}:`, err);
+      }
     }
+    // const { error, count } = await this.supabase.from("workouts").delete().match({ id: id, user_id: userId });
+    //
+    // if (error) {
+    //   console.error("Error deleting workout:", error);
+    //   return { error: new Error("Failed to delete workout"), notFound: false };
+    // }
+    //
+    // if (count === 0) {
+    //   return { error: null, notFound: true };
+    // }
 
     return { error: null, notFound: false };
   }
@@ -201,7 +221,8 @@ export class WorkoutService {
 
     if (trackPointsError) {
       // TODO: Create a custom error for this
-      // We should also delete the workout we just created
+      // We should delete the workout we just created
+      await this.supabase.from("workouts").delete().match({ id: workout.id });
       throw new Error("Failed to insert track points");
     }
 
@@ -209,7 +230,9 @@ export class WorkoutService {
   }
 
   async loadEndomondoData(command: LoadEndomondoDataCommand): Promise<WorkoutDto> {
-    const endomondoData = JSON.parse(command.jsonContent).reduce((acc: any, item: any) => {
+    const json = JSON.parse(command.jsonContent);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const endomondoData = json.reduce((acc: any, item: any) => {
       const key = Object.keys(item)[0];
       acc[key] = item[key];
       return acc;
@@ -217,9 +240,9 @@ export class WorkoutService {
 
     const workoutToInsert = {
       user_id: command.user_id,
-      name: command.fileName.replace(".json", ""),
+      name: json[0].name || command.fileName.replace(".json", ""),
       date: new Date(endomondoData.start_time).toISOString(),
-      type: endomondoData.sport,
+      type: endomondoData.sport.toLowerCase(),
       distance: Math.round(endomondoData.distance_km * 1000),
       duration: endomondoData.duration_s ? Math.round(endomondoData.duration_s) : null,
     };
@@ -234,7 +257,9 @@ export class WorkoutService {
       throw new Error("Failed to insert workout");
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const trackPointsToInsert = endomondoData.points.map((pointData: any[], index: number) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const pointDetails: any = {};
       pointData.forEach((detail) => {
         const key = Object.keys(detail)[0];
@@ -253,10 +278,16 @@ export class WorkoutService {
       };
     });
 
+    if (trackPointsToInsert.length === 0) {
+      // We should delete the workout we just created
+      await this.supabase.from("workouts").delete().match({ id: workout.id });
+      throw new Error("JSON file does not contain any track points");
+    }
+
     const { error: trackPointsError } = await this.supabase.from("track_points").insert(trackPointsToInsert);
 
     if (trackPointsError) {
-      // We should also delete the workout we just created
+      // We should delete the workout we just created
       await this.supabase.from("workouts").delete().match({ id: workout.id });
       throw new Error("Failed to insert track points");
     }
