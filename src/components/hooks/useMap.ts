@@ -76,11 +76,9 @@ export function useMap({
         id: HEATMAP_LAYER_ID,
         type: "heatmap",
         source: HEATMAP_SOURCE_ID,
-        maxzoom: 20,
         layout: { visibility: "none" },
         paint: {
-          "heatmap-weight": ["coalesce", ["get", "mag"], 1],
-          "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 1, 9, 3],
+          "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 1, 20, 5],
           "heatmap-color": [
             "interpolate",
             ["linear"],
@@ -98,8 +96,8 @@ export function useMap({
             1,
             "rgb(178,24,43)",
           ],
-          "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 2, 9, 20],
-          "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 7, 1, 20, 0],
+          "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 5, 2, 20, 20],
+          "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 7, 1, 20, 0.1],
         },
       });
 
