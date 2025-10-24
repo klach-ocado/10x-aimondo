@@ -34,7 +34,7 @@ Sample screenshots of the application can be found in the [screenshots](./screen
 ### Backend
 
 - **Platform**: [Supabase](https://supabase.com/)
-  - PostgreSQL Database
+  - PostgreSQL Database with PostGIS extension
   - Backend-as-a-Service (BaaS)
   - User Authentication
 
