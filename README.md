@@ -16,6 +16,10 @@ A web application for outdoor enthusiasts to visualize their GPX-recorded workou
 
 AImondo is designed for users who regularly track their activities (like running or cycling) using GPS and want a simple, aggregated view of all their routes. The application allows users to upload GPX files, manage their workouts, and visualize the tracks on a map. Its key feature is a global heatmap, which helps users see their most frequented paths and discover unexplored areas. User authentication is handled by Supabase to ensure data privacy.
 
+## Screenshots
+
+Sample screenshots of the application can be found in the [screenshots](./screenshots) directory.
+
 ## Tech Stack
 
 ### Frontend
