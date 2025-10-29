@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev --mode localdb",
     "dev:e2e": "astro dev --mode test",
+    "dev:toolbar:disable": "astro preferences disable devToolbar",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
